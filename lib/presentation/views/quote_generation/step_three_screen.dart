@@ -77,7 +77,7 @@ class StepThreeScreen extends StatelessWidget {
         // Export as PNG button
         CustomButton(
           text: AppStrings.exportAsPngButton,
-          style: ButtonStyle.secondary,
+          style: CustomButtonStyle.secondary,
           onPressed: () => _exportAsPng(context, viewModel),
           icon: const Icon(Icons.image),
           isLoading: viewModel.isGeneratingImage,
@@ -93,7 +93,7 @@ class StepThreeScreen extends StatelessWidget {
         Expanded(
           child: CustomButton(
             text: AppStrings.backButton,
-            style: ButtonStyle.secondary,
+            style: CustomButtonStyle.secondary,
             onPressed: viewModel.previousStep,
           ),
         ),
@@ -101,7 +101,7 @@ class StepThreeScreen extends StatelessWidget {
         Expanded(
           child: CustomButton(
             text: AppStrings.backToHomeButton,
-            style: ButtonStyle.tertiary,
+            style: CustomButtonStyle.tertiary,
             onPressed: () => _backToHome(viewModel),
           ),
         ),

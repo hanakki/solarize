@@ -21,9 +21,12 @@ void main() async {
     MultiProvider(
       providers: [
         // Repositories
-        Provider<QuoteRepository>(create: (_) => QuoteRepository()),
-        Provider<PresetRepository>(create: (_) => PresetRepository()),
-        Provider<SettingsRepository>(create: (_) => SettingsRepository()),
+        Provider<QuoteRepository>(
+            create: (_) => QuoteRepository(LocalStorageService())),
+        Provider<PresetRepository>(
+            create: (_) => PresetRepository(LocalStorageService())),
+        Provider<SettingsRepository>(
+            create: (_) => SettingsRepository(LocalStorageService())),
 
         // ViewModels
         ChangeNotifierProvider<HomeViewModel>(create: (_) => HomeViewModel()),

@@ -175,7 +175,7 @@ class _AddRowScreenState extends State<AddRowScreen> {
                           Expanded(
                             child: CustomButton(
                               text: 'Cancel',
-                              style: ButtonStyle.secondary,
+                              style: CustomButtonStyle.secondary,
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),

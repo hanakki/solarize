@@ -15,7 +15,7 @@ class SolarizeApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         primaryColor: AppColors.primaryColor,
         scaffoldBackgroundColor: AppColors.backgroundColor,
-        fontFamily: 'Roboto',
+        // fontFamily: 'Roboto',
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,

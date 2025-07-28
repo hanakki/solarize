@@ -43,7 +43,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
       final details = viewModel.projectDetails!;
       _projectNameController.text = details.projectName;
       _clientNameController.text = details.clientName;
-      _locationController.text = details.projectLocation;
+      _locationController.text = details.location;
       _projectRows = List.from(details.rows);
     } else {
       // Add default rows based on calculation results
@@ -218,7 +218,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
         Expanded(
           child: CustomButton(
             text: AppStrings.addRowButton,
-            style: ButtonStyle.secondary,
+            style: CustomButtonStyle.secondary,
             onPressed: _addRow,
             icon: const Icon(Icons.add),
           ),
@@ -227,7 +227,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
         Expanded(
           child: CustomButton(
             text: AppStrings.loadPresetButton,
-            style: ButtonStyle.tertiary,
+            style: CustomButtonStyle.tertiary,
             onPressed: _loadPreset,
             icon: const Icon(Icons.download),
           ),
@@ -243,7 +243,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
         Expanded(
           child: CustomButton(
             text: AppStrings.backButton,
-            style: ButtonStyle.secondary,
+            style: CustomButtonStyle.secondary,
             onPressed: viewModel.previousStep,
           ),
         ),
@@ -277,7 +277,9 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
       final projectDetails = ProjectDetailsModel(
         projectName: _projectNameController.text.trim(),
         clientName: _clientNameController.text.trim(),
-        projectLocation: _locationController.text.trim(),
+        location: _locationController.text.trim(),
+        installationDate:
+            DateTime.now().toString().split(' ')[0], // Today's date as string
         rows: _projectRows,
       );
 

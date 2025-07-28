@@ -272,21 +272,21 @@ class CalculatorViewModel extends ChangeNotifier {
 
       // Create detailed results
       _detailedResults = {
-        'dailyProduction': dailyEnergyProduction,
-        'monthlyProduction': monthlyEnergyProduction,
-        'annualProduction': annualEnergyProduction,
-        'systemCost': systemCost,
-        'batteryCost': batteryCost,
-        'installationCost': _installationCost,
-        'totalSystemCost': totalSystemCost,
-        'monthlySavings': monthlySavings,
-        'annualSavings': annualSavings,
-        'paybackPeriod': paybackPeriod,
-        'netPresentValue': netPresentValue,
-        'panelArea': panelAreaM2,
-        'temperatureDerating': temperatureDerating,
-        'totalLosses': totalLosses,
-        'lifetimeSavings': totalLifetimeSavings,
+        'dailyProduction': dailyEnergyProduction.toDouble(),
+        'monthlyProduction': monthlyEnergyProduction.toDouble(),
+        'annualProduction': annualEnergyProduction.toDouble(),
+        'systemCost': systemCost.toDouble(),
+        'batteryCost': batteryCost.toDouble(),
+        'installationCost': _installationCost.toDouble(),
+        'totalSystemCost': totalSystemCost.toDouble(),
+        'monthlySavings': monthlySavings.toDouble(),
+        'annualSavings': annualSavings.toDouble(),
+        'paybackPeriod': paybackPeriod.toDouble(),
+        'netPresentValue': netPresentValue.toDouble(),
+        'panelArea': panelAreaM2.toDouble(),
+        'temperatureDerating': temperatureDerating.toDouble(),
+        'totalLosses': totalLosses.toDouble(),
+        'lifetimeSavings': totalLifetimeSavings.toDouble(),
       };
 
       // Create calculation result

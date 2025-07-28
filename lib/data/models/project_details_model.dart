@@ -1,53 +1,42 @@
 import 'project_row_model.dart';
 
-/// Model class representing project details for Step 2 of quote generation
-/// Contains client information and project-specific data
+/// Model representing project details for quotes
 class ProjectDetailsModel {
   final String projectName;
   final String clientName;
-  final String projectLocation;
+  final String location;
+  final String installationDate;
   final List<ProjectRowModel> rows;
-  final String? notes;
 
   const ProjectDetailsModel({
     required this.projectName,
     required this.clientName,
-    required this.projectLocation,
+    required this.location,
+    required this.installationDate,
     required this.rows,
-    this.notes,
   });
+
+  /// Calculate total project cost
+  double get totalCost => rows.fold(0.0, (sum, row) => sum + row.totalPrice);
+
+  /// Get number of items
+  int get itemCount => rows.length;
 
   /// Create a copy with updated values
   ProjectDetailsModel copyWith({
     String? projectName,
     String? clientName,
-    String? projectLocation,
+    String? location,
+    String? installationDate,
     List<ProjectRowModel>? rows,
-    String? notes,
   }) {
     return ProjectDetailsModel(
       projectName: projectName ?? this.projectName,
       clientName: clientName ?? this.clientName,
-      projectLocation: projectLocation ?? this.projectLocation,
+      location: location ?? this.location,
+      installationDate: installationDate ?? this.installationDate,
       rows: rows ?? this.rows,
-      notes: notes ?? this.notes,
     );
-  }
-
-  /// Calculate total price of all rows
-  double get totalPrice {
-    return rows.fold(0.0, (sum, row) => sum + row.totalPrice);
-  }
-
-  /// Get number of items
-  int get itemCount => rows.length;
-
-  /// Check if all required fields are filled
-  bool get isValid {
-    return projectName.trim().isNotEmpty &&
-        clientName.trim().isNotEmpty &&
-        projectLocation.trim().isNotEmpty &&
-        rows.isNotEmpty;
   }
 
   /// Convert to JSON
@@ -55,9 +44,9 @@ class ProjectDetailsModel {
     return {
       'projectName': projectName,
       'clientName': clientName,
-      'projectLocation': projectLocation,
+      'location': location,
+      'installationDate': installationDate,
       'rows': rows.map((row) => row.toJson()).toList(),
-      'notes': notes,
     };
   }
 
@@ -66,16 +55,38 @@ class ProjectDetailsModel {
     return ProjectDetailsModel(
       projectName: json['projectName'] as String,
       clientName: json['clientName'] as String,
-      projectLocation: json['projectLocation'] as String,
+      location: json['location'] as String,
+      installationDate: json['installationDate'] as String,
       rows: (json['rows'] as List)
           .map((row) => ProjectRowModel.fromJson(row as Map<String, dynamic>))
           .toList(),
-      notes: json['notes'] as String?,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ProjectDetailsModel &&
+        other.projectName == projectName &&
+        other.clientName == clientName &&
+        other.location == location &&
+        other.installationDate == installationDate &&
+        other.rows.length == rows.length;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      projectName,
+      clientName,
+      location,
+      installationDate,
+      rows.length,
     );
   }
 
   @override
   String toString() {
-    return 'ProjectDetailsModel(projectName: $projectName, clientName: $clientName, itemCount: $itemCount)';
+    return 'ProjectDetailsModel(projectName: $projectName, clientName: $clientName, totalCost: ₱$totalCost)';
   }
 }

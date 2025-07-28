@@ -225,9 +225,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         monthlyBillKwh: actualMonthlyKwh,
         billOffsetPercentage: _billOffsetPercentage,
         sunHoursPerDay: _sunHoursPerDay,
-        backupHours: _isOffGrid ? _backupHours : null,
-        usedPhpBilling: _usedPhpBilling,
-        electricityRate: _usedPhpBilling ? _electricityRate : null,
       );
     } catch (e) {
       _setError('Calculation failed: ${e.toString()}');
@@ -332,20 +329,20 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         id: _uuid.v4(),
         projectName: _projectDetails!.projectName,
         clientName: _projectDetails!.clientName,
-        projectLocation: _projectDetails!.projectLocation,
+        projectLocation: _projectDetails!.location,
         systemSize: _calculationResult!.systemSize,
         isOffGrid: _calculationResult!.isOffGrid,
         batterySize: _calculationResult!.batterySize,
         rows: _projectDetails!.rows,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
-        totalPrice: _projectDetails!.totalPrice,
+        totalPrice: _projectDetails!.totalCost,
         monthlyBillKwh: _calculationResult!.monthlyBillKwh,
         billOffsetPercentage: _calculationResult!.billOffsetPercentage,
         sunHoursPerDay: _calculationResult!.sunHoursPerDay,
-        backupHours: _calculationResult!.backupHours,
-        usedPhpBilling: _calculationResult!.usedPhpBilling,
-        electricityRate: _calculationResult!.electricityRate,
+        backupHours: _isOffGrid ? _backupHours : null,
+        usedPhpBilling: _usedPhpBilling,
+        electricityRate: _usedPhpBilling ? _electricityRate : null,
       );
 
       // Save quote

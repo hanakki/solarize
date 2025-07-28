@@ -26,8 +26,8 @@ class AppRoutes {
   static const String settings = '/settings';
 
   // Route generator
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
+  static Route<dynamic> generateRoute(RouteSettings routeSettings) {
+    switch (routeSettings.name) {
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
 
@@ -49,7 +49,7 @@ class AppRoutes {
         );
 
       case addRow:
-        final args = settings.arguments as Map<String, dynamic>?;
+        final args = routeSettings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
           builder: (_) => AddRowScreen(
             existingRow: args?['existingRow'],
@@ -58,29 +58,38 @@ class AppRoutes {
         );
 
       case presetList:
-        return MaterialPageRoute(builder: (_) => const PresetListScreen());
+        return MaterialPageRoute(
+            builder: (_) => const Scaffold(
+                  body: Center(child: Text('Preset List Screen - Coming Soon')),
+                ));
 
       case presetDetail:
-        final args = settings.arguments as Map<String, dynamic>?;
+        final args = routeSettings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => PresetDetailScreen(
-            preset: args?['preset'],
-            isEditing: args?['isEditing'] ?? false,
+          builder: (_) => Scaffold(
+            body: Center(child: Text('Preset Detail Screen - Coming Soon')),
           ),
         );
 
       case advancedCalculator:
         return MaterialPageRoute(
-          builder: (_) => const AdvancedCalculatorScreen(),
+          builder: (_) => const Scaffold(
+            body:
+                Center(child: Text('Advanced Calculator Screen - Coming Soon')),
+          ),
         );
 
       case settings:
-        return MaterialPageRoute(builder: (_) => const SettingsScreen());
+        return MaterialPageRoute(
+            builder: (_) => const Scaffold(
+                  body: Center(child: Text('Settings Screen - Coming Soon')),
+                ));
 
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Center(child: Text('No route defined for ${settings.name}')),
+            body: Center(
+                child: Text('No route defined for ${routeSettings.name}')),
           ),
         );
     }

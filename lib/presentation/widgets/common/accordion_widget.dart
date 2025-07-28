@@ -57,9 +57,9 @@ class AccordionWidget extends StatelessWidget {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Colors.grey50,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(AppConstants.borderRadius),
                   bottomRight: Radius.circular(AppConstants.borderRadius),
                 ),

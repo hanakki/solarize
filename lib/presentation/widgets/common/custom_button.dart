@@ -7,7 +7,7 @@ import '../../../core/constants/app_constants.dart';
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
-  final ButtonStyle style;
+  final CustomButtonStyle style;
   final bool isLoading;
   final Widget? icon;
 
@@ -15,7 +15,7 @@ class CustomButton extends StatelessWidget {
     super.key,
     required this.text,
     this.onPressed,
-    this.style = ButtonStyle.primary,
+    this.style = CustomButtonStyle.primary,
     this.isLoading = false,
     this.icon,
   });
@@ -55,9 +55,9 @@ class CustomButton extends StatelessWidget {
   }
 
   /// Get button style based on type
-  ElevatedButton.StyleData _getButtonStyle() {
+  ButtonStyle _getButtonStyle() {
     switch (style) {
-      case ButtonStyle.primary:
+      case CustomButtonStyle.primary:
         return ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryButtonColor,
           foregroundColor: Colors.white,
@@ -66,7 +66,7 @@ class CustomButton extends StatelessWidget {
           ),
           elevation: 2,
         );
-      case ButtonStyle.secondary:
+      case CustomButtonStyle.secondary:
         return ElevatedButton.styleFrom(
           backgroundColor: AppColors.secondaryButtonColor,
           foregroundColor: AppColors.primaryTextColor,
@@ -75,7 +75,7 @@ class CustomButton extends StatelessWidget {
           ),
           elevation: 1,
         );
-      case ButtonStyle.tertiary:
+      case CustomButtonStyle.tertiary:
         return ElevatedButton.styleFrom(
           backgroundColor: AppColors.tertiaryButtonColor,
           foregroundColor: AppColors.primaryColor,
@@ -98,7 +98,7 @@ class CustomButton extends StatelessWidget {
 }
 
 /// Enum for button styles
-enum ButtonStyle {
+enum CustomButtonStyle {
   primary,
   secondary,
   tertiary,

@@ -1,20 +1,14 @@
-/// Model class representing the results of solar system calculations
-/// Used to pass calculation results between screens
+/// Model representing solar calculation results
 class CalculationResultModel {
   final double systemSize; // in kW
-  final double batterySize; // in kWh (0 if grid-tied)
+  final double batterySize; // in kWh
   final bool isOffGrid;
   final double estimatedCost;
   final double monthlySavings;
-  final double paybackPeriod; // in years
-
-  // Input parameters used for calculation
+  final double paybackPeriod;
   final double monthlyBillKwh;
   final double billOffsetPercentage;
   final double sunHoursPerDay;
-  final double? backupHours;
-  final bool usedPhpBilling;
-  final double? electricityRate;
 
   const CalculationResultModel({
     required this.systemSize,
@@ -26,10 +20,10 @@ class CalculationResultModel {
     required this.monthlyBillKwh,
     required this.billOffsetPercentage,
     required this.sunHoursPerDay,
-    this.backupHours,
-    this.usedPhpBilling = false,
-    this.electricityRate,
   });
+
+  /// Get system type description
+  String get systemType => isOffGrid ? 'Off-Grid System' : 'Grid-Tied System';
 
   /// Create a copy with updated values
   CalculationResultModel copyWith({
@@ -42,9 +36,6 @@ class CalculationResultModel {
     double? monthlyBillKwh,
     double? billOffsetPercentage,
     double? sunHoursPerDay,
-    double? backupHours,
-    bool? usedPhpBilling,
-    double? electricityRate,
   }) {
     return CalculationResultModel(
       systemSize: systemSize ?? this.systemSize,
@@ -56,14 +47,8 @@ class CalculationResultModel {
       monthlyBillKwh: monthlyBillKwh ?? this.monthlyBillKwh,
       billOffsetPercentage: billOffsetPercentage ?? this.billOffsetPercentage,
       sunHoursPerDay: sunHoursPerDay ?? this.sunHoursPerDay,
-      backupHours: backupHours ?? this.backupHours,
-      usedPhpBilling: usedPhpBilling ?? this.usedPhpBilling,
-      electricityRate: electricityRate ?? this.electricityRate,
     );
   }
-
-  /// Get system type as string
-  String get systemType => isOffGrid ? 'Off-Grid/Hybrid' : 'Grid-Tied';
 
   /// Convert to JSON
   Map<String, dynamic> toJson() {
@@ -77,9 +62,6 @@ class CalculationResultModel {
       'monthlyBillKwh': monthlyBillKwh,
       'billOffsetPercentage': billOffsetPercentage,
       'sunHoursPerDay': sunHoursPerDay,
-      'backupHours': backupHours,
-      'usedPhpBilling': usedPhpBilling,
-      'electricityRate': electricityRate,
     };
   }
 
@@ -95,18 +77,41 @@ class CalculationResultModel {
       monthlyBillKwh: (json['monthlyBillKwh'] as num).toDouble(),
       billOffsetPercentage: (json['billOffsetPercentage'] as num).toDouble(),
       sunHoursPerDay: (json['sunHoursPerDay'] as num).toDouble(),
-      backupHours: json['backupHours'] != null
-          ? (json['backupHours'] as num).toDouble()
-          : null,
-      usedPhpBilling: json['usedPhpBilling'] as bool? ?? false,
-      electricityRate: json['electricityRate'] != null
-          ? (json['electricityRate'] as num).toDouble()
-          : null,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is CalculationResultModel &&
+        other.systemSize == systemSize &&
+        other.batterySize == batterySize &&
+        other.isOffGrid == isOffGrid &&
+        other.estimatedCost == estimatedCost &&
+        other.monthlySavings == monthlySavings &&
+        other.paybackPeriod == paybackPeriod &&
+        other.monthlyBillKwh == monthlyBillKwh &&
+        other.billOffsetPercentage == billOffsetPercentage &&
+        other.sunHoursPerDay == sunHoursPerDay;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      systemSize,
+      batterySize,
+      isOffGrid,
+      estimatedCost,
+      monthlySavings,
+      paybackPeriod,
+      monthlyBillKwh,
+      billOffsetPercentage,
+      sunHoursPerDay,
     );
   }
 
   @override
   String toString() {
-    return 'CalculationResultModel(systemSize: $systemSize kW, batterySize: $batterySize kWh, cost: ₱$estimatedCost)';
+    return 'CalculationResultModel(systemSize: $systemSize kW, estimatedCost: ₱$estimatedCost, paybackPeriod: $paybackPeriod years)';
   }
 }

@@ -1,4 +1,4 @@
-name: Solarize
+name: solarize
 description: AN app for solar consultants to create professional quotations
 publish_to: "none"
 version: 1.0.0+1
@@ -30,7 +30,7 @@ dependencies:
   share_plus: ^7.2.1
 
   # File Picker
-  file_picker: ^6.1.1
+  # file_picker: ^6.1.1
   image_picker: ^1.0.4
 
   # UI Components
@@ -55,11 +55,11 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/fonts/
+    # - assets/fonts/
 
-  fonts:
-    - family: Roboto
-      fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
-        - asset: assets/fonts/Roboto-Bold.ttf
-          weight: 700
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: assets/fonts/Roboto-Regular.ttf
+  #       - asset: assets/fonts/Roboto-Bold.ttf
+  #         weight: 700

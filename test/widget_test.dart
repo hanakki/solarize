@@ -7,24 +7,55 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
-import 'package:solarize/main.dart';
+import 'package:solarize/app/app.dart';
+import 'package:solarize/core/services/local_storage_service.dart';
+import 'package:solarize/data/repositories/quote_repository.dart';
+import 'package:solarize/data/repositories/preset_repository.dart';
+import 'package:solarize/data/repositories/settings_repository.dart';
+import 'package:solarize/presentation/viewmodels/home_viewmodel.dart';
+import 'package:solarize/presentation/viewmodels/quote_generation_viewmodel.dart';
+import 'package:solarize/presentation/viewmodels/preset_viewmodel.dart';
+import 'package:solarize/presentation/viewmodels/calculator_viewmodel.dart';
+import 'package:solarize/presentation/viewmodels/settings_viewmodel.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Solarize app smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          // Repositories
+          Provider<QuoteRepository>(
+              create: (_) => QuoteRepository(LocalStorageService())),
+          Provider<PresetRepository>(
+              create: (_) => PresetRepository(LocalStorageService())),
+          Provider<SettingsRepository>(
+              create: (_) => SettingsRepository(LocalStorageService())),
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+          // ViewModels
+          ChangeNotifierProvider<HomeViewModel>(create: (_) => HomeViewModel()),
+          ChangeNotifierProvider<QuoteGenerationViewModel>(
+            create: (context) =>
+                QuoteGenerationViewModel(context.read<QuoteRepository>()),
+          ),
+          ChangeNotifierProvider<PresetViewModel>(
+            create: (context) =>
+                PresetViewModel(context.read<PresetRepository>()),
+          ),
+          ChangeNotifierProvider<CalculatorViewModel>(
+              create: (_) => CalculatorViewModel()),
+          ChangeNotifierProvider<SettingsViewModel>(
+            create: (context) =>
+                SettingsViewModel(context.read<SettingsRepository>()),
+          ),
+        ],
+        child: const SolarizeApp(),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the app loads without errors
+    expect(find.byType(MaterialApp), findsOneWidget);
   });
 }
