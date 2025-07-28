@@ -14,8 +14,10 @@ class AppConstants {
   static const double batteryPricePerKwh = 25000.0; // ₱25,000 per kWh
 
   // UI Constants
-  static const double cardImageRatio = 0.5; // 50% for image, 50% for text
-  static const double borderRadius = 12.0;
+  static const double cardImageRatio = 0.5;
+  static const double borderRadiusBig = 24.0;
+  static const double borderRadiusSmall = 4.0;
+  static const double borderRadiusMedium = 16.0;
   static const double defaultPadding = 16.0;
 
   // Storage Keys

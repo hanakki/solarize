@@ -60,8 +60,8 @@ class AccordionWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(AppConstants.borderRadius),
-                  bottomRight: Radius.circular(AppConstants.borderRadius),
+                  bottomLeft: Radius.circular(AppConstants.borderRadiusMedium),
+                  bottomRight: Radius.circular(AppConstants.borderRadiusMedium),
                 ),
               ),
               child: content,

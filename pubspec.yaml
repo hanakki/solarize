@@ -35,6 +35,7 @@ dependencies:
 
   # UI Components
   dotted_border: ^2.1.0
+  flutter_svg: ^2.0.9
 
   # Date Formatting
   intl: ^0.18.1
@@ -55,11 +56,66 @@ flutter:
 
   assets:
     - assets/images/
-    # - assets/fonts/
+    - assets/fonts/
+    - assets/icons/
 
-  # fonts:
-  #   - family: Roboto
-  #     fonts:
-  #       - asset: assets/fonts/Roboto-Regular.ttf
-  #       - asset: assets/fonts/Roboto-Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: LeagueSpartanBold
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-Bold.ttf
+    - family: LeagueSpartanRegular
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-Regular.ttf
+    - family: LeagueSpartanMedium
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-Medium.ttf
+    - family: LeagueSpartanSemiBold
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-SemiBold.ttf
+    - family: LeagueSpartanBlack
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-Black.ttf
+    - family: LeagueSpartanExtraBold
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-ExtraBold.ttf
+    - family: LeagueSpartanExtraLight
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-ExtraLight.ttf
+    - family: LeagueSpartanLight
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-Light.ttf
+    - family: LeagueSpartanThin
+      fonts:
+        - asset: assets/fonts/League_Spartan/static/LeagueSpartan-Thin.ttf
+
+    # Inter Regular styles
+    - family: InterRegular
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Regular.ttf
+    - family: InterSemiBold
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-SemiBold.ttf
+    - family: InterBold
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Bold.ttf
+    - family: InterItalic
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Italic.ttf
+    - family: InterMedium
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Medium.ttf
+    - family: InterLight
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Light.ttf
+    - family: InterExtraLight
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-ExtraLight.ttf
+    - family: InterThin
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Thin.ttf
+    - family: InterBlack
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Black.ttf
+    - family: InterExtraBold
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-ExtraBold.ttf

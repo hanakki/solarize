@@ -62,7 +62,8 @@ class CustomButton extends StatelessWidget {
           backgroundColor: AppColors.primaryButtonColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+            borderRadius:
+                BorderRadius.circular(AppConstants.borderRadiusMedium),
           ),
           elevation: 2,
         );
@@ -71,7 +72,8 @@ class CustomButton extends StatelessWidget {
           backgroundColor: AppColors.secondaryButtonColor,
           foregroundColor: AppColors.primaryTextColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+            borderRadius:
+                BorderRadius.circular(AppConstants.borderRadiusMedium),
           ),
           elevation: 1,
         );
@@ -80,7 +82,8 @@ class CustomButton extends StatelessWidget {
           backgroundColor: AppColors.tertiaryButtonColor,
           foregroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+            borderRadius:
+                BorderRadius.circular(AppConstants.borderRadiusMedium),
             side: const BorderSide(color: AppColors.primaryColor),
           ),
           elevation: 0,

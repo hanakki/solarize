@@ -4,8 +4,8 @@ import '../../viewmodels/home_viewmodel.dart';
 import '../../widgets/common/background_container.dart';
 import 'widgets/feature_card_widget.dart';
 import 'widgets/date_display_widget.dart';
-import '../../../core/constants/colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/typography.dart';
 
 /// Home screen displaying the main navigation cards
 /// Shows today's date and four feature cards for main app functions
@@ -25,17 +25,17 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // App title (optional, can be removed if not needed)
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Today section
                     _buildTodaySection(viewModel),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 32),
 
                     // Feature cards grid
                     _buildFeatureCardsGrid(context, viewModel),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 32),
                   ],
                 ),
               );
@@ -54,11 +54,7 @@ class HomeScreen extends StatelessWidget {
         // "Today" label
         Text(
           viewModel.todayLabel,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w300,
-            color: AppColors.primaryTextColor,
-          ),
+          style: AppTypography.leagueSpartanBold57_64_0_black,
         ),
 
         const SizedBox(height: 8),
@@ -75,25 +71,15 @@ class HomeScreen extends StatelessWidget {
   Widget _buildFeatureCardsGrid(BuildContext context, HomeViewModel viewModel) {
     final cards = viewModel.featureCards;
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.85, // Adjust this to control card height
-      ),
-      itemCount: cards.length,
-      itemBuilder: (context, index) {
-        final card = cards[index];
+    return Column(
+      children: cards.map((card) {
         return FeatureCardWidget(
           title: card.title,
           description: card.description,
-          iconPath: card.iconPath,
+          imagePath: card.iconPath, // Using iconPath as imagePath for now
           onTap: () => viewModel.navigateToFeature(context, card.route),
         );
-      },
+      }).toList(),
     );
   }
 }

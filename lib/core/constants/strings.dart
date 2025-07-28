@@ -30,15 +30,15 @@ class AppStrings {
       'Double-check the details, then send it directly to your client or save it for later.';
 
   // Form Labels
-  static const String monthlyElectricBillLabel = 'Monthly Electric Bill (kWh)';
+  static const String monthlyElectricBillLabel = 'MONTHLY ELECTRIC BILL (KWH)';
   static const String monthlyElectricBillPhpLabel =
-      'Monthly Electric Bill (PHP)';
+      'MONTHLY ELECTRIC BILL (PHP)';
   static const String electricityProviderRateLabel =
-      'Electricity Provider Rate (₱/kWh)';
-  static const String billOffsetPercentageLabel = 'Bill Offset Percentage';
+      'ELECTRICTY PROVIDER RATE (₱/KWH)';
+  static const String billOffsetPercentageLabel = 'BILL OFFSET PERCENTAGE';
   static const String billOffsetDescription =
       'The portion of your electric bill you want to cover with solar energy';
-  static const String sunHoursLabel = 'Sun Hours Per Day';
+  static const String sunHoursLabel = 'SUN HOURS PER DAY';
   static const String sunHoursDescription =
       'Avg. sunlight hours per day (e.g., 5-6 hours on clear days, less on rainy days)';
   static const String offGridSetupLabel = 'Off-grid / Hybrid setup';

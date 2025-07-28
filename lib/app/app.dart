@@ -14,13 +14,14 @@ class SolarizeApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         primaryColor: AppColors.primaryColor,
-        scaffoldBackgroundColor: AppColors.backgroundColor,
-        // fontFamily: 'Roboto',
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        fontFamily: 'Inter', // Default font family
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
           titleTextStyle: TextStyle(
+            fontFamily: 'LeagueSpartan',
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,

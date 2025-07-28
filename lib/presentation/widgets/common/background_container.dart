@@ -19,9 +19,7 @@ class BackgroundContainer extends StatelessWidget {
       height: double.infinity,
       decoration: BoxDecoration(
         image: DecorationImage(
-          // Use placeholder background for now
-          // TODO: Replace with actual background image asset
-          image: const AssetImage('assets/images/background.png'),
+          image: const AssetImage('assets/images/bg.png'),
           fit: BoxFit.cover, // Ensures responsive resizing
           onError: (exception, stackTrace) {
             // Fallback to gradient background if image fails to load

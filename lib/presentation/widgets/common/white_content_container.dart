@@ -24,8 +24,8 @@ class WhiteContentContainer extends StatelessWidget {
       decoration: const BoxDecoration(
         color: AppColors.cardBackgroundColor,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(AppConstants.borderRadius * 2),
-          topRight: Radius.circular(AppConstants.borderRadius * 2),
+          topLeft: Radius.circular(AppConstants.borderRadiusMedium * 2),
+          topRight: Radius.circular(AppConstants.borderRadiusMedium * 2),
         ),
         boxShadow: [
           BoxShadow(

@@ -9,6 +9,7 @@ import 'widgets/step_header_widget.dart';
 import 'widgets/slider_input_widget.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/constants/strings.dart';
+import '../../../core/constants/typography.dart';
 
 /// Step 1: Calculate System Size
 /// Collects user inputs for solar system calculations
@@ -59,7 +60,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
                 description: stepInfo.description,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 21),
 
               // Form content
               Expanded(
@@ -133,58 +134,43 @@ class _StepOneScreenState extends State<StepOneScreen> {
   /// Build monthly bill input section
   Widget _buildMonthlyBillSection(QuoteGenerationViewModel viewModel) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Toggle between kWh and PHP
-        Row(
-          children: [
-            Expanded(
-              child: CustomCheckbox(
-                label: 'Enter in kWh',
-                value: !viewModel.usedPhpBilling,
-                onChanged: (value) =>
-                    viewModel.togglePhpBilling(!(value ?? false)),
-                isToggleStyle: true,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomCheckbox(
-                label: 'Enter in PHP',
-                value: viewModel.usedPhpBilling,
-                onChanged: (value) =>
-                    viewModel.togglePhpBilling(value ?? false),
-                isToggleStyle: true,
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 16),
-
-        // Monthly bill input
-        CustomTextField(
-          label: viewModel.usedPhpBilling
-              ? AppStrings.monthlyElectricBillPhpLabel
-              : AppStrings.monthlyElectricBillLabel,
-          controller: _monthlyBillController,
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-          ],
-          validator: (value) =>
-              Validators.validatePositiveNumber(value, 'Monthly bill'),
-          onChanged: (value) {
-            final numValue = double.tryParse(value) ?? 0;
-            viewModel.updateMonthlyBillKwh(numValue);
-          },
-          prefixIcon: Icon(
-            viewModel.usedPhpBilling ? Icons.currency_exchange : Icons.flash_on,
+        // PHP input (default)
+        if (!viewModel.usedPhpBilling) ...[
+          CustomTextField(
+            label: AppStrings.monthlyElectricBillPhpLabel,
+            controller: _monthlyBillController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+            ],
+            validator: (value) =>
+                Validators.validatePositiveNumber(value, 'Monthly bill'),
+            onChanged: (value) {
+              final numValue = double.tryParse(value) ?? 0;
+              viewModel.updateMonthlyBillKwh(numValue);
+            },
           ),
-        ),
+        ],
 
-        // Electricity rate input (only for PHP billing)
+        // kWh input (when checked)
         if (viewModel.usedPhpBilling) ...[
-          const SizedBox(height: 16),
+          CustomTextField(
+            label: AppStrings.monthlyElectricBillLabel,
+            controller: _monthlyBillController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+            ],
+            validator: (value) =>
+                Validators.validatePositiveNumber(value, 'Monthly bill (kWh)'),
+            onChanged: (value) {
+              final numValue = double.tryParse(value) ?? 0;
+              viewModel.updateMonthlyBillKwh(numValue);
+            },
+          ),
+          const SizedBox(height: 24),
           CustomTextField(
             label: AppStrings.electricityProviderRateLabel,
             controller: _electricityRateController,
@@ -198,9 +184,19 @@ class _StepOneScreenState extends State<StepOneScreen> {
               final numValue = double.tryParse(value) ?? 0;
               viewModel.updateElectricityRate(numValue);
             },
-            prefixIcon: const Icon(Icons.attach_money),
           ),
         ],
+
+        // Checkbox below the text field(s)
+        Row(
+          children: [
+            Checkbox(
+              value: viewModel.usedPhpBilling,
+              onChanged: (value) => viewModel.togglePhpBilling(value ?? false),
+            ),
+            const Text('Enter in kWh'),
+          ],
+        ),
       ],
     );
   }
