@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../viewmodels/quote_generation_viewmodel.dart';
+import '../../../../core/constants/colors.dart';
 
 /// Widget for displaying step progress in quote generation
+/// Uses custom icons: ProgressActive, ProgressDisabled, ProgressDone
 class ProgressIndicatorWidget extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -16,148 +18,60 @@ class ProgressIndicatorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+    return Row(
+      children: [
+        // First icon
+        Image.asset(
+          _getProgressIcon(getProgressState(1)),
+          width: 25,
+          height: 25,
+        ),
+
+        // Connector and second icon
+        if (totalSteps > 1) ...[
+          const SizedBox(width: 16),
+          Expanded(
+            child: Container(
+              height: 2,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Image.asset(
+            _getProgressIcon(getProgressState(2)),
+            width: 25,
+            height: 25,
           ),
         ],
-      ),
-      child: Column(
-        children: [
-          // Step numbers
-          Row(
-            children: List.generate(totalSteps, (index) {
-              final stepNumber = index + 1;
-              final progressState = getProgressState(stepNumber);
 
-              return Expanded(
-                child: Row(
-                  children: [
-                    // Step circle
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _getStepColor(progressState),
-                        border: Border.all(
-                          color: _getStepBorderColor(progressState),
-                          width: 2,
-                        ),
-                      ),
-                      child: Center(
-                        child: progressState == ProgressState.completed
-                            ? const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 16,
-                              )
-                            : Text(
-                                stepNumber.toString(),
-                                style: TextStyle(
-                                  color: _getStepTextColor(progressState),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                      ),
-                    ),
-
-                    // Connector line (except for last step)
-                    if (stepNumber < totalSteps)
-                      Expanded(
-                        child: Container(
-                          height: 2,
-                          color: _getConnectorColor(progressState),
-                        ),
-                      ),
-                  ],
-                ),
-              );
-            }),
+        // Connector and third icon
+        if (totalSteps > 2) ...[
+          const SizedBox(width: 16),
+          Expanded(
+            child: Container(
+              height: 2,
+              color: AppColors.primaryColor,
+            ),
           ),
-
-          const SizedBox(height: 12),
-
-          // Step labels
-          Row(
-            children: List.generate(totalSteps, (index) {
-              final stepNumber = index + 1;
-              final progressState = getProgressState(stepNumber);
-
-              return Expanded(
-                child: Text(
-                  _getStepLabel(stepNumber),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: _getStepTextColor(progressState),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              );
-            }),
+          const SizedBox(width: 16),
+          Image.asset(
+            _getProgressIcon(getProgressState(3)),
+            width: 25,
+            height: 25,
           ),
         ],
-      ),
+      ],
     );
   }
 
-  Color _getStepColor(ProgressState state) {
+  String _getProgressIcon(ProgressState state) {
     switch (state) {
       case ProgressState.completed:
-        return Colors.green;
+        return 'assets/icons/ProgressDone.png';
       case ProgressState.active:
-        return Colors.blue;
+        return 'assets/icons/ProgressActive.png';
       case ProgressState.inactive:
-        return Colors.grey.shade300;
-    }
-  }
-
-  Color _getStepBorderColor(ProgressState state) {
-    switch (state) {
-      case ProgressState.completed:
-        return Colors.green;
-      case ProgressState.active:
-        return Colors.blue;
-      case ProgressState.inactive:
-        return Colors.grey.shade400;
-    }
-  }
-
-  Color _getStepTextColor(ProgressState state) {
-    switch (state) {
-      case ProgressState.completed:
-        return Colors.white;
-      case ProgressState.active:
-        return Colors.white;
-      case ProgressState.inactive:
-        return Colors.grey.shade600;
-    }
-  }
-
-  Color _getConnectorColor(ProgressState state) {
-    return state == ProgressState.completed
-        ? Colors.green
-        : Colors.grey.shade300;
-  }
-
-  String _getStepLabel(int step) {
-    switch (step) {
-      case 1:
-        return 'Calculate';
-      case 2:
-        return 'Details';
-      case 3:
-        return 'Generate';
-      default:
-        return 'Step $step';
+        return 'assets/icons/ProgressDisabled.png';
     }
   }
 }

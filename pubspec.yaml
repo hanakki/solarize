@@ -35,13 +35,15 @@ dependencies:
 
   # UI Components
   dotted_border: ^2.1.0
-  flutter_svg: ^2.0.9
 
   # Date Formatting
   intl: ^0.18.1
 
   # UUID Generation
   uuid: ^4.2.1
+
+  # HTTP Requests
+  http: ^1.1.0
 
   # Icons
   cupertino_icons: ^1.0.2

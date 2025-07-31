@@ -17,7 +17,6 @@ import 'package:solarize/data/repositories/settings_repository.dart';
 import 'package:solarize/presentation/viewmodels/home_viewmodel.dart';
 import 'package:solarize/presentation/viewmodels/quote_generation_viewmodel.dart';
 import 'package:solarize/presentation/viewmodels/preset_viewmodel.dart';
-import 'package:solarize/presentation/viewmodels/calculator_viewmodel.dart';
 import 'package:solarize/presentation/viewmodels/settings_viewmodel.dart';
 
 void main() {
@@ -44,8 +43,6 @@ void main() {
             create: (context) =>
                 PresetViewModel(context.read<PresetRepository>()),
           ),
-          ChangeNotifierProvider<CalculatorViewModel>(
-              create: (_) => CalculatorViewModel()),
           ChangeNotifierProvider<SettingsViewModel>(
             create: (context) =>
                 SettingsViewModel(context.read<SettingsRepository>()),

@@ -36,12 +36,6 @@ class HomeViewModel extends ChangeNotifier {
           route: '/presets',
         ),
         const FeatureCardData(
-          title: AppStrings.advancedCalculatorTitle,
-          description: AppStrings.advancedCalculatorDescription,
-          iconPath: 'assets/images/advanced_calculator_icon.png',
-          route: '/advanced-calculator',
-        ),
-        const FeatureCardData(
           title: AppStrings.appSettingsTitle,
           description: AppStrings.appSettingsDescription,
           iconPath: 'assets/images/settings.png',

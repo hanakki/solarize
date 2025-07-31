@@ -41,8 +41,9 @@ class AppStrings {
   static const String sunHoursLabel = 'SUN HOURS PER DAY';
   static const String sunHoursDescription =
       'Avg. sunlight hours per day (e.g., 5-6 hours on clear days, less on rainy days)';
+  static const String systemSetupLabel = "SYSTEM SETUP";
   static const String offGridSetupLabel = 'Off-grid / Hybrid setup';
-  static const String backupDurationLabel = 'Backup Duration (Hours)';
+  static const String backupDurationLabel = 'BACKUP DURATION (HOURS)';
   static const String backupDurationDescription =
       'How long you want your battery to provide power during outages or at night';
 
@@ -56,15 +57,15 @@ class AppStrings {
   static const String estimatedPriceLabel = 'Estimated Price';
 
   // Buttons
-  static const String calculateButton = 'Calculate';
-  static const String proceedButton = 'Proceed';
-  static const String backButton = 'Back';
-  static const String saveButton = 'Save';
-  static const String addRowButton = 'Add Row';
-  static const String loadPresetButton = 'Load Preset';
-  static const String shareWithClientButton = 'Share With Client';
-  static const String exportAsPngButton = 'Export as PNG';
-  static const String backToHomeButton = 'Back to Home';
+  static const String calculateButton = 'CALCULATE';
+  static const String proceedButton = 'PROCEED';
+  static const String backButton = 'BACK';
+  static const String saveButton = 'SAVE';
+  static const String addRowButton = 'ADD ROW';
+  static const String loadPresetButton = 'LOAD PRESET';
+  static const String shareWithClientButton = 'SHARE WITH CLIENT';
+  static const String exportAsPngButton = 'EXPORT AS PNG';
+  static const String backToHomeButton = 'BACK TO HOME';
 
   // About Section
   static const String aboutAppTitle = 'About the App';

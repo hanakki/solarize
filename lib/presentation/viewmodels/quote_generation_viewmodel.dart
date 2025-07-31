@@ -7,6 +7,7 @@ import '../../data/models/project_row_model.dart';
 import '../../data/repositories/quote_repository.dart';
 import '../../core/utils/calculations.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/services/pvwatts_service.dart';
 
 /// ViewModel for the quote generation flow
 /// Manages the 3-step quote creation process and calculations
@@ -28,11 +29,15 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   // Step 1: Calculation inputs
   double _monthlyBillKwh = 0;
   double _billOffsetPercentage = 80;
-  double _sunHoursPerDay = 5.5;
+  double _sunHoursPerDay = 4.5;
   bool _isOffGrid = false;
   double _backupHours = 8;
   bool _usedPhpBilling = false;
   double _electricityRate = 12.0; // Default PHP rate per kWh
+
+  // Location for PVWatts API (Philippines default)
+  double _latitude = 10.3870; // Manila coordinates
+  double _longitude = 123.6502;
 
   // Calculation results
   CalculationResultModel? _calculationResult;
@@ -59,6 +64,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   double get backupHours => _backupHours;
   bool get usedPhpBilling => _usedPhpBilling;
   double get electricityRate => _electricityRate;
+  double get latitude => _latitude;
+  double get longitude => _longitude;
   CalculationResultModel? get calculationResult => _calculationResult;
   ProjectDetailsModel? get projectDetails => _projectDetails;
   QuoteModel? get currentQuote => _currentQuote;
@@ -148,15 +155,34 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Calculate system size and requirements
+  /// Update location coordinates
+  void updateLocation(double latitude, double longitude) {
+    _latitude = latitude;
+    _longitude = longitude;
+    _clearError();
+    notifyListeners();
+  }
+
+  /// Calculate system size and requirements using PVWatts API
   Future<void> calculateSystem() async {
     try {
       _isCalculating = true;
       _clearError();
       notifyListeners();
 
-      // Simulate calculation delay
-      await Future.delayed(const Duration(seconds: 2));
+      // ===== DEBUG SECTION START - COMMENT OUT FOR PRODUCTION =====
+      print('=== SOLAR CALCULATION DEBUG START ===');
+      print('Input Variables:');
+      print('  Monthly Bill (kWh): $_monthlyBillKwh');
+      print('  Bill Offset (%): $_billOffsetPercentage');
+      print('  Sun Hours/Day: $_sunHoursPerDay');
+      print('  Is Off-Grid: $_isOffGrid');
+      print('  Backup Hours: $_backupHours');
+      print('  Used PHP Billing: $_usedPhpBilling');
+      print('  Electricity Rate (₱/kWh): $_electricityRate');
+      print('  Latitude: $_latitude');
+      print('  Longitude: $_longitude');
+      print('');
 
       // Validate inputs
       if (!SolarCalculations.validateCalculationInputs(
@@ -175,14 +201,173 @@ class QuoteGenerationViewModel extends ChangeNotifier {
           monthlyBillPhp: _monthlyBillKwh,
           electricityRate: _electricityRate,
         );
+        print('PHP to kWh Conversion:');
+        print('  Monthly Bill (PHP): $_monthlyBillKwh');
+        print('  Electricity Rate: $_electricityRate ₱/kWh');
+        print('  Converted Monthly Bill (kWh): $actualMonthlyKwh');
+        print(
+            '  Formula: $_monthlyBillKwh ÷ $_electricityRate = $actualMonthlyKwh');
+
+        // Detailed conversion calculation
+        final convertedKwh = _monthlyBillKwh / _electricityRate;
+        final dailyKwh = convertedKwh / 30;
+        final hourlyKwh = dailyKwh / 24;
+
+        print('  Step-by-step conversion:');
+        print('    Monthly bill (PHP): $_monthlyBillKwh ₱');
+        print('    Electricity rate: $_electricityRate ₱/kWh');
+        print(
+            '    Monthly consumption: $_monthlyBillKwh ÷ $_electricityRate = ${convertedKwh.toStringAsFixed(2)} kWh');
+        print(
+            '    Daily consumption: ${convertedKwh.toStringAsFixed(2)} ÷ 30 = ${dailyKwh.toStringAsFixed(2)} kWh');
+        print(
+            '    Hourly consumption: ${dailyKwh.toStringAsFixed(2)} ÷ 24 = ${hourlyKwh.toStringAsFixed(2)} kWh');
+        print('    Final monthly kWh: $actualMonthlyKwh kWh');
+        print('');
+      } else {
+        print('Using kWh directly: $actualMonthlyKwh');
+        print('');
       }
 
-      // Calculate system size
-      final systemSize = SolarCalculations.calculateSystemSize(
+      // Calculate initial system size estimate
+      final estimatedSystemSize = SolarCalculations.calculateSystemSize(
         monthlyBillKwh: actualMonthlyKwh,
         billOffsetPercentage: _billOffsetPercentage,
         sunHoursPerDay: _sunHoursPerDay,
       );
+
+      print('Initial System Size Calculation:');
+      print('  Monthly Consumption: $actualMonthlyKwh kWh');
+      print('  Bill Offset: $_billOffsetPercentage%');
+      print('  Sun Hours/Day: $_sunHoursPerDay');
+      print(
+          '  Estimated System Size: ${estimatedSystemSize.toStringAsFixed(2)} kW');
+
+      // Detailed calculation breakdown
+      final monthlyOffsetKwh = actualMonthlyKwh * (_billOffsetPercentage / 100);
+      final dailyOffsetKwh = monthlyOffsetKwh / 30;
+      final dailyProductionNeeded = dailyOffsetKwh / _sunHoursPerDay;
+
+      print('  Step-by-step calculation:');
+      print(
+          '    Monthly offset needed: $actualMonthlyKwh × $_billOffsetPercentage% ÷ 100 = ${monthlyOffsetKwh.toStringAsFixed(2)} kWh');
+      print(
+          '    Daily offset needed: ${monthlyOffsetKwh.toStringAsFixed(2)} ÷ 30 = ${dailyOffsetKwh.toStringAsFixed(2)} kWh');
+      print(
+          '    System size needed: ${dailyOffsetKwh.toStringAsFixed(2)} ÷ $_sunHoursPerDay = ${dailyProductionNeeded.toStringAsFixed(2)} kW');
+      print(
+          '    Final system size: ${estimatedSystemSize.toStringAsFixed(2)} kW');
+      print('');
+
+      // Call PVWatts API for accurate production data
+      print('PVWatts API Call Parameters:');
+      print('  System Capacity: ${estimatedSystemSize.toStringAsFixed(2)} kW');
+      print('  Latitude: $_latitude');
+      print('  Longitude: $_longitude');
+      print('  Module Type: Standard (0)');
+      print('  Array Type: Fixed Roof Mounted (1)');
+      print('  Tilt: 15.0°');
+      print('  Azimuth: 180.0° (South)');
+      print('  System Losses: 14.0%');
+      print('  DC/AC Ratio: 1.2');
+      print('  Inverter Efficiency: 96.0%');
+      print('');
+
+      final pvwattsResponse = await PVWattsService.calculateProduction(
+        systemCapacity: estimatedSystemSize,
+        latitude: _latitude,
+        longitude: _longitude,
+        moduleType: ModuleType.standard, // Standard modules
+        arrayType: ArrayType.fixedRoofMounted, // Roof mounted
+        tilt: 15.0, // Optimal tilt for Philippines
+        azimuth: 180.0, // South facing
+        losses: 14.0, // Standard system losses
+        dcAcRatio: 1.2,
+        invEff: 96.0,
+      );
+
+      // Check for API errors
+      if (pvwattsResponse.hasErrors) {
+        throw Exception('PVWatts API error: ${pvwattsResponse.firstError}');
+      }
+
+      // Get production data from PVWatts
+      final pvwattsOutputs = pvwattsResponse.outputs;
+      final annualProduction = pvwattsOutputs.acAnnual;
+      final monthlyProduction = pvwattsOutputs.averageMonthlyProduction;
+
+      print('PVWatts API Response:');
+      print('  Annual Production: ${annualProduction.toStringAsFixed(2)} kWh');
+      print(
+          '  Monthly Production: ${monthlyProduction.toStringAsFixed(2)} kWh');
+      print(
+          '  Capacity Factor: ${(pvwattsOutputs.capacityFactor * 100).toStringAsFixed(2)}%');
+      print(
+          '  Solar Radiation: ${pvwattsOutputs.solradAnnual.toStringAsFixed(2)} kWh/m²/day');
+      print('');
+
+      // Adjust system size based on actual production vs required
+      final requiredAnnualProduction =
+          actualMonthlyKwh * 12 * (_billOffsetPercentage / 100);
+      final systemSize =
+          (requiredAnnualProduction / annualProduction) * estimatedSystemSize;
+
+      print('System Size Adjustment:');
+      print(
+          '  Required Annual Production: ${requiredAnnualProduction.toStringAsFixed(2)} kWh');
+      print(
+          '  Formula: $actualMonthlyKwh × 12 × $_billOffsetPercentage% ÷ 100 = ${requiredAnnualProduction.toStringAsFixed(2)} kWh');
+      print(
+          '  Actual Annual Production: ${annualProduction.toStringAsFixed(2)} kWh');
+      print(
+          '  System Size Adjustment Factor: ${(requiredAnnualProduction / annualProduction).toStringAsFixed(4)}');
+      print('  Adjusted System Size: ${systemSize.toStringAsFixed(2)} kW');
+      print(
+          '  Formula: ${estimatedSystemSize.toStringAsFixed(2)} × ${(requiredAnnualProduction / annualProduction).toStringAsFixed(4)} = ${systemSize.toStringAsFixed(2)} kW');
+
+      // Detailed adjustment calculation
+      final adjustmentFactor = requiredAnnualProduction / annualProduction;
+      final adjustedSize = estimatedSystemSize * adjustmentFactor;
+
+      print('  Step-by-step adjustment:');
+      print(
+          '    Required annual: $actualMonthlyKwh × 12 × $_billOffsetPercentage% ÷ 100 = ${requiredAnnualProduction.toStringAsFixed(2)} kWh');
+      print('    PVWatts annual: ${annualProduction.toStringAsFixed(2)} kWh');
+      print(
+          '    Adjustment factor: ${requiredAnnualProduction.toStringAsFixed(2)} ÷ ${annualProduction.toStringAsFixed(2)} = ${adjustmentFactor.toStringAsFixed(4)}');
+      print(
+          '    Adjusted size: ${estimatedSystemSize.toStringAsFixed(2)} × ${adjustmentFactor.toStringAsFixed(4)} = ${adjustedSize.toStringAsFixed(2)} kW');
+      print('');
+
+      // Recalculate with adjusted system size if needed
+      PVWattsResponse? finalPvwattsResponse;
+      if ((systemSize - estimatedSystemSize).abs() > 0.1) {
+        print(
+            'System size adjusted significantly, recalculating with PVWatts...');
+        finalPvwattsResponse = await PVWattsService.calculateProduction(
+          systemCapacity: systemSize,
+          latitude: _latitude,
+          longitude: _longitude,
+          moduleType: ModuleType.standard,
+          arrayType: ArrayType.fixedRoofMounted,
+          tilt: 15.0,
+          azimuth: 180.0,
+          losses: 14.0,
+          dcAcRatio: 1.2,
+          invEff: 96.0,
+        );
+        print('Final PVWatts Response:');
+        print(
+            '  Annual Production: ${finalPvwattsResponse.outputs.acAnnual.toStringAsFixed(2)} kWh');
+        print(
+            '  Monthly Production: ${finalPvwattsResponse.outputs.averageMonthlyProduction.toStringAsFixed(2)} kWh');
+        print('');
+      } else {
+        print(
+            'System size adjustment minimal, using original PVWatts response');
+        finalPvwattsResponse = pvwattsResponse;
+        print('');
+      }
 
       // Calculate battery size if off-grid
       double batterySize = 0;
@@ -193,6 +378,35 @@ class QuoteGenerationViewModel extends ChangeNotifier {
           dailyEnergyConsumption: dailyConsumption,
           backupHours: _backupHours,
         );
+
+        print('Battery Calculation (Off-Grid):');
+        print(
+            '  Daily Consumption: ${dailyConsumption.toStringAsFixed(2)} kWh');
+        print(
+            '  Formula: $actualMonthlyKwh ÷ 30 = ${dailyConsumption.toStringAsFixed(2)} kWh');
+        print('  Backup Hours: $_backupHours');
+        print('  Battery Size: ${batterySize.toStringAsFixed(2)} kWh');
+        print(
+            '  Formula: ${dailyConsumption.toStringAsFixed(2)} × $_backupHours = ${batterySize.toStringAsFixed(2)} kWh');
+
+        // Detailed battery calculation
+        final hourlyConsumption = dailyConsumption / 24;
+        final batteryCapacityNeeded = hourlyConsumption * _backupHours;
+
+        print('  Step-by-step battery calculation:');
+        print('    Monthly consumption: $actualMonthlyKwh kWh');
+        print(
+            '    Daily consumption: $actualMonthlyKwh ÷ 30 = ${dailyConsumption.toStringAsFixed(2)} kWh');
+        print(
+            '    Hourly consumption: ${dailyConsumption.toStringAsFixed(2)} ÷ 24 = ${hourlyConsumption.toStringAsFixed(2)} kWh');
+        print('    Backup hours needed: $_backupHours hours');
+        print(
+            '    Battery capacity: ${hourlyConsumption.toStringAsFixed(2)} × $_backupHours = ${batteryCapacityNeeded.toStringAsFixed(2)} kWh');
+        print('    Final battery size: ${batterySize.toStringAsFixed(2)} kWh');
+        print('');
+      } else {
+        print('Grid-tied system - no battery required');
+        print('');
       }
 
       // Calculate costs
@@ -202,19 +416,100 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         batterySizeKwh: batterySize,
       );
 
-      // Calculate savings and payback
-      final monthlySavings = SolarCalculations.calculateMonthlySavings(
-        systemSizeKw: systemSize,
-        sunHoursPerDay: _sunHoursPerDay,
-        electricityRate: _electricityRate,
-      );
+      print('Cost Calculation:');
+      print('  System Size: ${systemSize.toStringAsFixed(2)} kW');
+
+      // Detailed cost breakdown
+      final solarPanelCost = systemSize * 1000 * 45; // 45₱/W
+      final installationCost = 50000.0;
+      final batteryCost = _isOffGrid ? batterySize * 25000 : 0; // 25,000₱/kWh
+      final totalCalculatedCost =
+          solarPanelCost + installationCost + batteryCost;
+
+      print('  Step-by-step cost calculation:');
+      print(
+          '    Solar panels: ${systemSize.toStringAsFixed(2)} kW × 1000 W/kW × 45₱/W = ${solarPanelCost.toStringAsFixed(2)} ₱');
+      print('    Installation: 50,000.00 ₱');
+      if (_isOffGrid) {
+        print(
+            '    Battery: ${batterySize.toStringAsFixed(2)} kWh × 25,000₱/kWh = ${batteryCost.toStringAsFixed(2)} ₱');
+      } else {
+        print('    Battery: Not required (grid-tied)');
+      }
+      print(
+          '    Total: ${solarPanelCost.toStringAsFixed(2)} + 50,000.00 + ${batteryCost.toStringAsFixed(2)} = ${totalCalculatedCost.toStringAsFixed(2)} ₱');
+      print('    Final cost: ${estimatedCost.toStringAsFixed(2)} ₱');
+      print('');
+
+      // Calculate savings using PVWatts production data
+      final actualMonthlyProduction =
+          finalPvwattsResponse.outputs.averageMonthlyProduction;
+      final monthlySavings = actualMonthlyProduction * _electricityRate;
+
+      print('Savings Calculation:');
+      print(
+          '  Monthly Production: ${actualMonthlyProduction.toStringAsFixed(2)} kWh');
+      print('  Electricity Rate: $_electricityRate ₱/kWh');
+      print('  Monthly Savings: ${monthlySavings.toStringAsFixed(2)} ₱');
+      print(
+          '  Formula: ${actualMonthlyProduction.toStringAsFixed(2)} × $_electricityRate = ${monthlySavings.toStringAsFixed(2)} ₱');
+
+      // Detailed savings calculation
+      final annualSavings = monthlySavings * 12;
+      final dailySavings = monthlySavings / 30;
+
+      print('  Step-by-step savings calculation:');
+      print(
+          '    Monthly production: ${actualMonthlyProduction.toStringAsFixed(2)} kWh (from PVWatts)');
+      print('    Electricity rate: $_electricityRate ₱/kWh');
+      print(
+          '    Monthly savings: ${actualMonthlyProduction.toStringAsFixed(2)} × $_electricityRate = ${monthlySavings.toStringAsFixed(2)} ₱');
+      print(
+          '    Daily savings: ${monthlySavings.toStringAsFixed(2)} ÷ 30 = ${dailySavings.toStringAsFixed(2)} ₱');
+      print(
+          '    Annual savings: ${monthlySavings.toStringAsFixed(2)} × 12 = ${annualSavings.toStringAsFixed(2)} ₱');
+      print('');
 
       final paybackPeriod = SolarCalculations.calculatePaybackPeriod(
         totalSystemCost: estimatedCost,
         monthlySavings: monthlySavings,
       );
 
-      // Create calculation result
+      print('Payback Period Calculation:');
+      print('  Total System Cost: ${estimatedCost.toStringAsFixed(2)} ₱');
+      print('  Monthly Savings: ${monthlySavings.toStringAsFixed(2)} ₱');
+      print('  Payback Period: ${paybackPeriod.toStringAsFixed(1)} years');
+      print(
+          '  Formula: ${estimatedCost.toStringAsFixed(2)} ÷ ${monthlySavings.toStringAsFixed(2)} ÷ 12 = ${paybackPeriod.toStringAsFixed(1)} years');
+
+      // Detailed payback calculation
+      final annualSavingsForPayback = monthlySavings * 12;
+      final calculatedPaybackPeriod = estimatedCost / annualSavingsForPayback;
+
+      print('  Step-by-step payback calculation:');
+      print('    Total system cost: ${estimatedCost.toStringAsFixed(2)} ₱');
+      print('    Monthly savings: ${monthlySavings.toStringAsFixed(2)} ₱');
+      print(
+          '    Annual savings: ${monthlySavings.toStringAsFixed(2)} × 12 = ${annualSavingsForPayback.toStringAsFixed(2)} ₱');
+      print(
+          '    Payback period: ${estimatedCost.toStringAsFixed(2)} ÷ ${annualSavingsForPayback.toStringAsFixed(2)} = ${calculatedPaybackPeriod.toStringAsFixed(1)} years');
+      print('    Final payback: ${paybackPeriod.toStringAsFixed(1)} years');
+      print('');
+
+      print('Final Results:');
+      print('  System Size: ${systemSize.toStringAsFixed(2)} kW');
+      print('  Battery Size: ${batterySize.toStringAsFixed(2)} kWh');
+      print('  Total Cost: ${estimatedCost.toStringAsFixed(2)} ₱');
+      print('  Monthly Savings: ${monthlySavings.toStringAsFixed(2)} ₱');
+      print('  Payback Period: ${paybackPeriod.toStringAsFixed(1)} years');
+      print(
+          '  Annual Production: ${finalPvwattsResponse.outputs.acAnnual.toStringAsFixed(2)} kWh');
+      print(
+          '  Solar Radiation: ${finalPvwattsResponse.outputs.solradAnnual.toStringAsFixed(2)} kWh/m²/day');
+      print('=== SOLAR CALCULATION DEBUG END ===');
+      // ===== DEBUG SECTION END - COMMENT OUT FOR PRODUCTION =====
+
+      // Create calculation result with PVWatts data
       _calculationResult = CalculationResultModel(
         systemSize: systemSize,
         batterySize: batterySize,
@@ -224,7 +519,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         paybackPeriod: paybackPeriod,
         monthlyBillKwh: actualMonthlyKwh,
         billOffsetPercentage: _billOffsetPercentage,
-        sunHoursPerDay: _sunHoursPerDay,
+        sunHoursPerDay: finalPvwattsResponse
+            .outputs.solradAnnual, // Use actual solar radiation
       );
     } catch (e) {
       _setError('Calculation failed: ${e.toString()}');
@@ -398,7 +694,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     _currentStep = 1;
     _monthlyBillKwh = 0;
     _billOffsetPercentage = 80;
-    _sunHoursPerDay = 5.5;
+    _sunHoursPerDay = 4.5;
     _isOffGrid = false;
     _backupHours = 8;
     _usedPhpBilling = false;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/typography.dart';
 
 /// Widget for slider input with label, description, and value display
 class SliderInputWidget extends StatelessWidget {
@@ -25,90 +26,69 @@ class SliderInputWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Label
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Label
+        Text(
+          label,
+          style: AppTypography.interSemiBold12_16_15_gray,
+        ),
+
+        const SizedBox(height: 4),
+
+        // Description
+        Text(
+          description,
+          style: AppTypography.interRegular12_16_04_gray,
+        ),
+
+        const SizedBox(height: 8),
+
+        // Value display
+        Center(
+          child: Text(
+            '${value.toStringAsFixed(1)}$suffix',
+            style: AppTypography.interRegular16_24_05_black,
           ),
+        ),
 
-          const SizedBox(height: 4),
+        const SizedBox(height: 4),
 
-          // Description
-          Text(
-            description,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+        // Slider
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 2.0,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+            thumbColor: const Color(0xFF0D369C),
+            activeTrackColor: const Color(0xFF0077D3),
+            inactiveTrackColor: const Color(0xFFA4A3B3),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 0),
           ),
-
-          const SizedBox(height: 16),
-
-          // Value display
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade100,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '${value.toStringAsFixed(1)}$suffix',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Slider
-          Slider(
+          child: Slider(
             value: value,
             min: min,
             max: max,
-            divisions: divisions,
             onChanged: onChanged,
-            activeColor: Colors.blue,
-            inactiveColor: Colors.grey.shade300,
+            divisions: divisions,
           ),
+        ),
 
-          // Min and max labels
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${min.toStringAsFixed(1)}$suffix',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              Text(
-                '${max.toStringAsFixed(1)}$suffix',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        // Min and max labels
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '${min.toStringAsFixed(1)}$suffix',
+              style: AppTypography.interRegular12_16_04_gray,
+            ),
+            Text(
+              '${max.toStringAsFixed(1)}$suffix',
+              style: AppTypography.interRegular12_16_04_gray,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

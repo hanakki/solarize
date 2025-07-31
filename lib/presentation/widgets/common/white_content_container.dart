@@ -21,13 +21,13 @@ class WhiteContentContainer extends StatelessWidget {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(top: topMargin ?? 100), // Show background at top
-      decoration: const BoxDecoration(
-        color: AppColors.cardBackgroundColor,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: AppColors.cardBackgroundColor.withValues(alpha: 0.8),
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(AppConstants.borderRadiusMedium * 2),
           topRight: Radius.circular(AppConstants.borderRadiusMedium * 2),
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 10,
@@ -36,7 +36,8 @@ class WhiteContentContainer extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: padding ?? const EdgeInsets.all(AppConstants.defaultPadding),
+        padding:
+            padding ?? const EdgeInsets.all(AppConstants.defaultPaddingBig),
         child: child,
       ),
     );

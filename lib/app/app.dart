@@ -19,6 +19,8 @@ class SolarizeApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           iconTheme: IconThemeData(color: Colors.black),
           titleTextStyle: TextStyle(
             fontFamily: 'LeagueSpartan',

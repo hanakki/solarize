@@ -8,7 +8,7 @@ import '../../presentation/views/quote_generation/calculation_results_screen.dar
 import '../../presentation/views/quote_generation/add_row_screen.dart';
 import '../../presentation/views/presets/preset_list_screen.dart';
 import '../../presentation/views/presets/preset_detail_screen.dart';
-import '../../presentation/views/calculator/advanced_calculator_screen.dart';
+
 import '../../presentation/views/settings/settings_screen.dart';
 
 class AppRoutes {
@@ -22,7 +22,7 @@ class AppRoutes {
   static const String addRow = '/add-row';
   static const String presetList = '/presets';
   static const String presetDetail = '/preset-detail';
-  static const String advancedCalculator = '/advanced-calculator';
+
   static const String settings = '/settings';
 
   // Route generator
@@ -68,14 +68,6 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => Scaffold(
             body: Center(child: Text('Preset Detail Screen - Coming Soon')),
-          ),
-        );
-
-      case advancedCalculator:
-        return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body:
-                Center(child: Text('Advanced Calculator Screen - Coming Soon')),
           ),
         );
 

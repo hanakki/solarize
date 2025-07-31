@@ -53,6 +53,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
         return Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Step header
               StepHeaderWidget(
@@ -82,10 +83,15 @@ class _StepOneScreenState extends State<StepOneScreen> {
 
                       const SizedBox(height: 24),
 
+                      // Location input
+                      _buildLocationSection(viewModel),
+
+                      const SizedBox(height: 24),
+
                       // Off-grid setup
                       _buildOffGridSection(viewModel),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 45),
 
                       // Error message
                       if (viewModel.errorMessage != null)
@@ -193,6 +199,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
             Checkbox(
               value: viewModel.usedPhpBilling,
               onChanged: (value) => viewModel.togglePhpBilling(value ?? false),
+              activeColor: const Color(0xFF0077D3),
             ),
             const Text('Enter in kWh'),
           ],
@@ -229,14 +236,77 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
+  /// Build location input section
+  Widget _buildLocationSection(QuoteGenerationViewModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'LOCATION',
+          style: AppTypography.interSemiBold12_16_15_gray,
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Enter coordinates for accurate solar production estimates',
+          style: AppTypography.interRegular12_16_04_gray,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                label: 'LATITUDE',
+                controller: TextEditingController(
+                  text: viewModel.latitude.toStringAsFixed(4),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  final lat = double.tryParse(value) ?? 10.3870;
+                  viewModel.updateLocation(lat, viewModel.longitude);
+                },
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                label: 'LONGITUDE',
+                controller: TextEditingController(
+                  text: viewModel.longitude.toStringAsFixed(4),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  final lon = double.tryParse(value) ?? 123.6502;
+                  viewModel.updateLocation(viewModel.latitude, lon);
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   /// Build off-grid setup section
   Widget _buildOffGridSection(QuoteGenerationViewModel viewModel) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomCheckbox(
-          label: AppStrings.offGridSetupLabel,
-          value: viewModel.isOffGrid,
-          onChanged: (value) => viewModel.toggleOffGrid(value ?? false),
+        const Text(
+          AppStrings.systemSetupLabel,
+          style: AppTypography.interSemiBold12_16_15_gray,
+        ),
+        Transform.translate(
+          offset: const Offset(-14, 0),
+          child: Row(
+            children: [
+              Checkbox(
+                value: viewModel.isOffGrid,
+                onChanged: (value) => viewModel.toggleOffGrid(value ?? false),
+                activeColor: const Color(0xFF0077D3),
+              ),
+              const Text(AppStrings.offGridSetupLabel),
+            ],
+          ),
         ),
         if (viewModel.isOffGrid) ...[
           const SizedBox(height: 16),

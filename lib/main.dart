@@ -8,7 +8,6 @@ import 'data/repositories/settings_repository.dart';
 import 'presentation/viewmodels/home_viewmodel.dart';
 import 'presentation/viewmodels/quote_generation_viewmodel.dart';
 import 'presentation/viewmodels/preset_viewmodel.dart';
-import 'presentation/viewmodels/calculator_viewmodel.dart';
 import 'presentation/viewmodels/settings_viewmodel.dart';
 
 void main() async {
@@ -37,9 +36,6 @@ void main() async {
         ChangeNotifierProvider<PresetViewModel>(
           create: (context) =>
               PresetViewModel(context.read<PresetRepository>()),
-        ),
-        ChangeNotifierProvider<CalculatorViewModel>(
-          create: (_) => CalculatorViewModel(),
         ),
         ChangeNotifierProvider<SettingsViewModel>(
           create: (context) =>

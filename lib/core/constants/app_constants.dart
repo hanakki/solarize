@@ -19,6 +19,7 @@ class AppConstants {
   static const double borderRadiusSmall = 4.0;
   static const double borderRadiusMedium = 16.0;
   static const double defaultPadding = 16.0;
+  static const double defaultPaddingBig = 24.0;
 
   // Storage Keys
   static const String quotesStorageKey = 'saved_quotes';

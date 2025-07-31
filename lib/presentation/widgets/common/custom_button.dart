@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/constants/typography.dart';
 
 /// Custom button widget with different styles (primary, secondary, tertiary)
 /// Provides consistent button styling throughout the app
@@ -10,6 +11,7 @@ class CustomButton extends StatelessWidget {
   final CustomButtonStyle style;
   final bool isLoading;
   final Widget? icon;
+  final TextStyle? textStyle;
 
   const CustomButton({
     super.key,
@@ -18,6 +20,7 @@ class CustomButton extends StatelessWidget {
     this.style = CustomButtonStyle.primary,
     this.isLoading = false,
     this.icon,
+    this.textStyle,
   });
 
   @override
@@ -46,7 +49,7 @@ class CustomButton extends StatelessWidget {
                   ],
                   Text(
                     text,
-                    style: _getTextStyle(),
+                    style: textStyle ?? _getTextStyle(),
                   ),
                 ],
               ),
@@ -62,9 +65,9 @@ class CustomButton extends StatelessWidget {
           backgroundColor: AppColors.primaryButtonColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(AppConstants.borderRadiusMedium),
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusSmall),
           ),
+          textStyle: AppTypography.interSemiBold14_16_15_white,
           elevation: 2,
         );
       case CustomButtonStyle.secondary:
@@ -93,10 +96,16 @@ class CustomButton extends StatelessWidget {
 
   /// Get text style based on button type
   TextStyle _getTextStyle() {
-    return const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-    );
+    switch (style) {
+      case CustomButtonStyle.primary:
+        return AppTypography.interSemiBold14_16_15_white;
+      case CustomButtonStyle.secondary:
+      case CustomButtonStyle.tertiary:
+        return const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        );
+    }
   }
 }
 

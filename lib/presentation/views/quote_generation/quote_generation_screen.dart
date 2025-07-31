@@ -34,22 +34,28 @@ class QuoteGenerationScreen extends StatelessWidget {
                   },
                 ),
 
-                // Progress indicator
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ProgressIndicatorWidget(
-                    currentStep: viewModel.currentStep,
-                    totalSteps: 3,
-                    getProgressState: viewModel.getProgressState,
-                  ),
-                ),
-
                 // Step content
                 Expanded(
                   child: WhiteContentContainer(
-                    topMargin: 20,
-                    child: _buildStepContent(viewModel.currentStep),
+                    topMargin: 0,
+                    child: Column(
+                      children: [
+                        // Progress indicator
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: ProgressIndicatorWidget(
+                            currentStep: viewModel.currentStep,
+                            totalSteps: 3,
+                            getProgressState: viewModel.getProgressState,
+                          ),
+                        ),
+
+                        // Step content
+                        Expanded(
+                          child: _buildStepContent(viewModel.currentStep),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
