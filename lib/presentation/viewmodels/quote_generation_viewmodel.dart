@@ -550,6 +550,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         _calculationResult!.systemSize);
     rows.add(ProjectRowModel(
       id: _uuid.v4(),
+      title: 'Solar Panels (250W Monocrystalline)',
       quantity:
           (_calculationResult!.systemSize * 4).round(), // Assume 250W panels
       unit: 'pcs',
@@ -565,6 +566,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
           _calculationResult!.batterySize);
       rows.add(ProjectRowModel(
         id: _uuid.v4(),
+        title: 'Lithium Battery (2.4kWh)',
         quantity: (_calculationResult!.batterySize / 2.4)
             .ceil(), // Assume 2.4kWh per battery
         unit: 'pcs',

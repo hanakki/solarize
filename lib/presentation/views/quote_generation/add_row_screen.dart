@@ -27,6 +27,7 @@ class AddRowScreen extends StatefulWidget {
 
 class _AddRowScreenState extends State<AddRowScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
   final _quantityController = TextEditingController();
   final _unitController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -43,6 +44,7 @@ class _AddRowScreenState extends State<AddRowScreen> {
   void _initializeControllers() {
     if (widget.existingRow != null) {
       final row = widget.existingRow!;
+      _titleController.text = row.title;
       _quantityController.text = row.quantity.toString();
       _unitController.text = row.unit;
       _descriptionController.text = row.description;
@@ -52,6 +54,7 @@ class _AddRowScreenState extends State<AddRowScreen> {
 
   @override
   void dispose() {
+    _titleController.dispose();
     _quantityController.dispose();
     _unitController.dispose();
     _descriptionController.dispose();
@@ -100,6 +103,17 @@ class _AddRowScreenState extends State<AddRowScreen> {
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
+                              // Title
+                              CustomTextField(
+                                label: 'Title of Particular',
+                                controller: _titleController,
+                                hint: 'Enter particular title',
+                                validator: (value) =>
+                                    Validators.validateRequired(value, 'Title'),
+                              ),
+
+                              const SizedBox(height: 24),
+
                               // Quantity and Unit row
                               Row(
                                 children: [
@@ -250,6 +264,7 @@ class _AddRowScreenState extends State<AddRowScreen> {
     if (_formKey.currentState?.validate() ?? false) {
       final row = ProjectRowModel(
         id: widget.existingRow?.id ?? _uuid.v4(),
+        title: _titleController.text.trim(),
         quantity: int.parse(_quantityController.text),
         unit: _unitController.text.trim(),
         description: _descriptionController.text.trim(),

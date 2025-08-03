@@ -32,7 +32,7 @@ class ProjectRowWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  row.description,
+                  row.title,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

@@ -11,6 +11,7 @@ import '../../../data/models/project_details_model.dart';
 import '../../../data/models/project_row_model.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/constants/strings.dart';
+import '../presets/preset_list_screen.dart';
 
 /// Step 2: Enter Project Details
 /// Collects project information and itemized list
@@ -213,9 +214,11 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
 
   /// Build action buttons section
   Widget _buildActionButtons(QuoteGenerationViewModel viewModel) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
+        // Add Row button
+        SizedBox(
+          width: double.infinity,
           child: CustomButton(
             text: AppStrings.addRowButton,
             style: CustomButtonStyle.secondary,
@@ -223,16 +226,54 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
             icon: const Icon(Icons.add),
           ),
         ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: CustomButton(
-            text: AppStrings.loadPresetButton,
-            style: CustomButtonStyle.tertiary,
-            onPressed: _loadPreset,
-            icon: const Icon(Icons.download),
+
+        const SizedBox(height: 16),
+
+        // Load Preset section
+        _buildLoadPresetSection(),
+      ],
+    );
+  }
+
+  /// Build load preset section
+  Widget _buildLoadPresetSection() {
+    return Card(
+      child: ExpansionTile(
+        title: const Text(
+          'Load Preset',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
           ),
         ),
-      ],
+        trailing: const Icon(Icons.chevron_right),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                const Text(
+                  'Select a preset to load predefined items',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    text: 'Browse Presets',
+                    style: CustomButtonStyle.tertiary,
+                    onPressed: _loadPreset,
+                    icon: const Icon(Icons.folder_open),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -349,7 +390,12 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
 
   /// Load preset
   void _loadPreset() async {
-    final result = await Navigator.pushNamed(context, '/presets');
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const PresetListScreen(),
+      ),
+    );
 
     if (result is List<ProjectRowModel>) {
       setState(() {

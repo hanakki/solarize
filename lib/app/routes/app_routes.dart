@@ -58,24 +58,18 @@ class AppRoutes {
         );
 
       case presetList:
-        return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-                  body: Center(child: Text('Preset List Screen - Coming Soon')),
-                ));
+        return MaterialPageRoute(builder: (_) => const PresetListScreen());
 
       case presetDetail:
         final args = routeSettings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('Preset Detail Screen - Coming Soon')),
+          builder: (_) => PresetDetailScreen(
+            preset: args?['preset'],
           ),
         );
 
       case settings:
-        return MaterialPageRoute(
-            builder: (_) => const Scaffold(
-                  body: Center(child: Text('Settings Screen - Coming Soon')),
-                ));
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
 
       default:
         return MaterialPageRoute(

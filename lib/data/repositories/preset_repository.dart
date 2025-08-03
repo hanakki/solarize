@@ -95,6 +95,7 @@ class PresetRepository {
         defaultRows: [
           ProjectRowModel(
             id: '1',
+            title: 'Solar Panels (400W)',
             quantity: 15,
             unit: 'pcs',
             description: 'Solar Panels (400W)',
@@ -104,6 +105,7 @@ class PresetRepository {
           ),
           ProjectRowModel(
             id: '2',
+            title: '5kW Inverter',
             quantity: 1,
             unit: 'unit',
             description: '5kW Inverter',
@@ -113,6 +115,7 @@ class PresetRepository {
           ),
           ProjectRowModel(
             id: '3',
+            title: 'Installation & Mounting',
             quantity: 1,
             unit: 'lot',
             description: 'Installation & Mounting',
@@ -132,6 +135,7 @@ class PresetRepository {
         defaultRows: [
           ProjectRowModel(
             id: '1',
+            title: 'Solar Panels (400W)',
             quantity: 30,
             unit: 'pcs',
             description: 'Solar Panels (400W)',
@@ -141,6 +145,7 @@ class PresetRepository {
           ),
           ProjectRowModel(
             id: '2',
+            title: '10kW Inverter',
             quantity: 1,
             unit: 'unit',
             description: '10kW Inverter',
@@ -150,6 +155,7 @@ class PresetRepository {
           ),
           ProjectRowModel(
             id: '3',
+            title: 'Installation & Mounting',
             quantity: 1,
             unit: 'lot',
             description: 'Installation & Mounting',
