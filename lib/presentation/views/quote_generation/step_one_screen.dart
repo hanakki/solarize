@@ -30,6 +30,9 @@ class _StepOneScreenState extends State<StepOneScreen> {
   final _latitudeController = TextEditingController();
   final _longitudeController = TextEditingController();
 
+  // Track whether to show form or results
+  bool _showingResults = false;
+
   @override
   void initState() {
     super.initState();
@@ -67,110 +70,244 @@ class _StepOneScreenState extends State<StepOneScreen> {
       builder: (context, viewModel, child) {
         final stepInfo = viewModel.getStepInfo(1);
 
-        return Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Step header
-              StepHeaderWidget(
-                title: stepInfo.title,
-                description: stepInfo.description,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Step header
+            StepHeaderWidget(
+              title: stepInfo.title,
+              description: stepInfo.description,
+            ),
+
+            const SizedBox(height: 21),
+
+            // Content - either form or results
+            Expanded(
+              child: _showingResults && viewModel.calculationResult != null
+                  ? _buildResultsView(viewModel)
+                  : _buildFormView(viewModel),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Build the form view
+  Widget _buildFormView(QuoteGenerationViewModel viewModel) {
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Monthly bill input
+            _buildMonthlyBillSection(viewModel),
+
+            const SizedBox(height: 24),
+
+            // Bill offset percentage
+            _buildBillOffsetSection(viewModel),
+
+            const SizedBox(height: 24),
+
+            // Sun hours per day (only show when API is disabled)
+            if (!viewModel.useApiIntegration) ...[
+              _buildSunHoursSection(viewModel),
+              const SizedBox(height: 24),
+            ],
+
+            // API Integration toggle
+            _buildApiIntegrationSection(viewModel),
+
+            const SizedBox(height: 16),
+
+            // Location input (only show when API is enabled)
+            if (viewModel.useApiIntegration) ...[
+              _buildLocationSection(viewModel),
+              const SizedBox(height: 24),
+            ],
+
+            // Solar Panel Configuration
+            _buildSolarPanelSection(viewModel),
+
+            const SizedBox(height: 24),
+
+            // Off-grid setup
+            _buildOffGridSection(viewModel),
+
+            const SizedBox(height: 24),
+
+            // Battery Configuration (only show when off-grid is enabled)
+            if (viewModel.isOffGrid) ...[
+              _buildBatterySection(viewModel),
+              const SizedBox(height: 24),
+            ],
+
+            const SizedBox(height: 45),
+
+            // Error message
+            if (viewModel.errorMessage != null)
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red.shade600),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        viewModel.errorMessage!,
+                        style: TextStyle(color: Colors.red.shade600),
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 21),
+            // Calculate button
+            CustomButton(
+              text: AppStrings.calculateButton,
+              onPressed: _canCalculate(viewModel)
+                  ? () => _handleCalculate(viewModel)
+                  : null,
+              isLoading: viewModel.isCalculating,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-              // Form content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Monthly bill input
-                      _buildMonthlyBillSection(viewModel),
+  /// Build the results view
+  Widget _buildResultsView(QuoteGenerationViewModel viewModel) {
+    final result = viewModel.calculationResult!;
 
-                      const SizedBox(height: 24),
-
-                      // Bill offset percentage
-                      _buildBillOffsetSection(viewModel),
-
-                      const SizedBox(height: 24),
-
-                      // Sun hours per day (only show when API is disabled)
-                      if (!viewModel.useApiIntegration) ...[
-                        _buildSunHoursSection(viewModel),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // API Integration toggle
-                      _buildApiIntegrationSection(viewModel),
-
-                      const SizedBox(height: 16),
-
-                      // Location input (only show when API is enabled)
-                      if (viewModel.useApiIntegration) ...[
-                        _buildLocationSection(viewModel),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Solar Panel Configuration
-                      _buildSolarPanelSection(viewModel),
-
-                      const SizedBox(height: 24),
-
-                      // Off-grid setup
-                      _buildOffGridSection(viewModel),
-
-                      const SizedBox(height: 24),
-
-                      // Battery Configuration (only show when off-grid is enabled)
-                      if (viewModel.isOffGrid) ...[
-                        _buildBatterySection(viewModel),
-                        const SizedBox(height: 24),
-                      ],
-
-                      const SizedBox(height: 45),
-
-                      // Error message
-                      if (viewModel.errorMessage != null)
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.red.shade200),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.error_outline,
-                                  color: Colors.red.shade600),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  viewModel.errorMessage!,
-                                  style: TextStyle(color: Colors.red.shade600),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                      // Calculate button
-                      CustomButton(
-                        text: AppStrings.calculateButton,
-                        onPressed: _canCalculate(viewModel)
-                            ? () => _handleCalculate(viewModel)
-                            : null,
-                        isLoading: viewModel.isCalculating,
-                      ),
-                    ],
-                  ),
+    return Column(
+      children: [
+        // White Container with Results
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Results in key-value format
+                _buildResultRow('System Size',
+                    '${result.systemSize.toStringAsFixed(2)} kW'),
+                _buildDivider(),
+                _buildResultRow(
+                    'Setup', viewModel.isOffGrid ? 'Hybrid' : 'Grid-Tied'),
+                _buildDivider(),
+                _buildResultRow('System Cost',
+                    '₱${result.estimatedCost.toStringAsFixed(0)}'),
+                _buildDivider(),
+                if (viewModel.isOffGrid) ...[
+                  _buildResultRow('Battery Storage',
+                      '${result.batterySize.toStringAsFixed(2)} kWh'),
+                  _buildDivider(),
+                  _buildResultRow('Battery Cost',
+                      '₱${result.batteryCost.toStringAsFixed(0)}'),
+                  _buildDivider(),
+                ],
+                _buildResultRow(
+                    'Number of Panels', '${result.numberOfPanels} pcs'),
+                _buildDivider(),
+                if (viewModel.isOffGrid) ...[
+                  _buildResultRow(
+                      'Number of Batteries', '${result.numberOfBatteries} pcs'),
+                  _buildDivider(),
+                ],
+                _buildResultRow('Annual Production',
+                    '${result.annualProduction.toStringAsFixed(0)} kWh'),
+                _buildDivider(),
+                _buildResultRow('Monthly Production',
+                    '${result.monthlyProduction.toStringAsFixed(0)} kWh'),
+                _buildDivider(),
+                _buildResultRow('Solar Panel Cost',
+                    '₱${result.solarPanelCost.toStringAsFixed(0)}'),
+              ],
+            ),
+          ),
+        ),
+
+        // Buttons
+        Container(
+          padding: const EdgeInsets.only(top: 45),
+          child: Column(
+            children: [
+              // Proceed Button (Primary)
+              CustomButton(
+                text: AppStrings.proceedButton,
+                onPressed: () {
+                  viewModel.nextStep();
+                },
+              ),
+              const SizedBox(height: 16),
+              // Back Button (Secondary)
+              CustomButton(
+                text: AppStrings.backButton,
+                onPressed: () {
+                  setState(() {
+                    _showingResults = false;
+                  });
+                },
+                style: CustomButtonStyle.secondary,
               ),
             ],
           ),
-        );
-      },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      color: Colors.grey[300],
+      height: 1,
+      thickness: 1,
     );
   }
 
@@ -521,10 +658,10 @@ class _StepOneScreenState extends State<StepOneScreen> {
 
       if (viewModel.calculationResult != null &&
           viewModel.errorMessage == null) {
-        // Navigate to calculation results
-        if (mounted) {
-          Navigator.pushNamed(context, '/calculation-results');
-        }
+        // Show results instead of navigating
+        setState(() {
+          _showingResults = true;
+        });
       }
     }
   }

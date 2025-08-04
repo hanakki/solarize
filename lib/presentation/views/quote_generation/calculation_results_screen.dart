@@ -3,9 +3,7 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/quote_generation_viewmodel.dart';
 import '../../widgets/common/background_container.dart';
 import '../../widgets/common/custom_app_bar.dart';
-import '../../widgets/common/white_content_container.dart';
 import '../../widgets/common/custom_button.dart';
-import 'widgets/calculation_result_card.dart';
 import '../../../core/constants/strings.dart';
 
 /// Screen showing calculation results after Step 1
@@ -30,177 +28,136 @@ class CalculationResultsScreen extends StatelessWidget {
             return Column(
               children: [
                 const CustomAppBar(title: 'Calculation Results'),
+
+                // Step Header and Progress Indicator
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Step 1: Calculate System Size',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: 1.0,
+                        backgroundColor: Colors.grey[300],
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.green[600]!,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Calculation Complete',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.green[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // White Container with Results
                 Expanded(
-                  child: WhiteContentContainer(
-                    child: Column(
-                      children: [
-                        // Header
-                        const Text(
-                          'System Calculation Results',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          'Based on your inputs, here\'s what we recommend:',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Results cards
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                // System size card
-                                CalculationResultCard(
-                                  title: 'Recommended System Size',
-                                  value:
-                                      '${result.systemSize.toStringAsFixed(2)} kW',
-                                  subtitle: 'Solar panel capacity needed',
-                                  icon: Icons.solar_power,
-                                  color: Colors.orange,
-                                ),
-
-                                const SizedBox(height: 16),
-
-                                // Battery size card (if off-grid)
-                                if (viewModel.isOffGrid)
-                                  CalculationResultCard(
-                                    title: 'Battery Storage Required',
-                                    value:
-                                        '${result.batterySize.toStringAsFixed(2)} kWh',
-                                    subtitle:
-                                        'For ${viewModel.backupHours.toStringAsFixed(0)} hours backup',
-                                    icon: Icons.battery_full,
-                                    color: Colors.green,
-                                  ),
-
-                                if (viewModel.isOffGrid)
-                                  const SizedBox(height: 16),
-
-                                // Estimated cost card
-                                CalculationResultCard(
-                                  title: 'Estimated System Cost',
-                                  value:
-                                      '₱${result.estimatedCost.toStringAsFixed(0)}',
-                                  subtitle: 'Including installation',
-                                  icon: Icons.attach_money,
-                                  color: Colors.blue,
-                                ),
-
-                                const SizedBox(height: 16),
-
-                                // Monthly savings card
-                                CalculationResultCard(
-                                  title: 'Monthly Savings',
-                                  value:
-                                      '₱${(result.annualProduction / 12 * viewModel.electricityRate).toStringAsFixed(0)}',
-                                  subtitle:
-                                      'Estimated electricity bill reduction',
-                                  icon: Icons.savings,
-                                  color: Colors.green,
-                                ),
-
-                                const SizedBox(height: 16),
-
-                                // Payback period card
-                                CalculationResultCard(
-                                  title: 'Payback Period',
-                                  value:
-                                      '${(result.estimatedCost / (result.annualProduction / 12 * viewModel.electricityRate) / 12).toStringAsFixed(1)} years',
-                                  subtitle: 'Time to recover investment',
-                                  icon: Icons.timeline,
-                                  color: Colors.purple,
-                                ),
-
-                                const SizedBox(height: 32),
-
-                                // ===== DEBUG SECTION START - COMMENT OUT FOR PRODUCTION =====
-                                _buildDebugSection(viewModel),
-                                // ===== DEBUG SECTION END - COMMENT OUT FOR PRODUCTION =====
-
-                                const SizedBox(height: 32),
-
-                                // System type info
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: viewModel.isOffGrid
-                                        ? Colors.orange.shade50
-                                        : Colors.blue.shade50,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: viewModel.isOffGrid
-                                          ? Colors.orange.shade200
-                                          : Colors.blue.shade200,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        viewModel.isOffGrid
-                                            ? Icons.power_off
-                                            : Icons.electrical_services,
-                                        color: viewModel.isOffGrid
-                                            ? Colors.orange
-                                            : Colors.blue,
-                                        size: 32,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              result.systemType,
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            Text(
-                                              viewModel.isOffGrid
-                                                  ? 'Includes battery backup for power outages'
-                                                  : 'Connected to the electrical grid',
-                                              style: TextStyle(
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Continue button
-                        CustomButton(
-                          text: AppStrings.proceedButton,
-                          onPressed: () {
-                            viewModel.nextStep();
-                            Navigator.pop(context);
-                          },
+                  child: Container(
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Results in key-value format
+                        _buildResultRow('System Size',
+                            '${result.systemSize.toStringAsFixed(2)} kW'),
+                        _buildDivider(),
+                        _buildResultRow('Setup',
+                            viewModel.isOffGrid ? 'Hybrid' : 'Grid-Tied'),
+                        _buildDivider(),
+                        _buildResultRow('System Cost',
+                            '₱${result.estimatedCost.toStringAsFixed(0)}'),
+                        _buildDivider(),
+                        if (viewModel.isOffGrid) ...[
+                          _buildResultRow('Battery Storage',
+                              '${result.batterySize.toStringAsFixed(2)} kWh'),
+                          _buildDivider(),
+                          _buildResultRow('Battery Cost',
+                              '₱${result.batteryCost.toStringAsFixed(0)}'),
+                          _buildDivider(),
+                        ],
+                        _buildResultRow(
+                            'Number of Panels', '${result.numberOfPanels} pcs'),
+                        _buildDivider(),
+                        if (viewModel.isOffGrid) ...[
+                          _buildResultRow('Number of Batteries',
+                              '${result.numberOfBatteries} pcs'),
+                          _buildDivider(),
+                        ],
+                        _buildResultRow('Annual Production',
+                            '${result.annualProduction.toStringAsFixed(0)} kWh'),
+                        _buildDivider(),
+                        _buildResultRow('Monthly Production',
+                            '${result.monthlyProduction.toStringAsFixed(0)} kWh'),
+                        _buildDivider(),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Buttons
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Proceed Button (Primary)
+                      CustomButton(
+                        text: AppStrings.proceedButton,
+                        onPressed: () {
+                          viewModel.nextStep();
+                          Navigator.pop(context);
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      // Back Button (Secondary)
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            side: BorderSide(color: Colors.grey[400]!),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Back',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -208,6 +165,41 @@ class CalculationResultsScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildResultRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      color: Colors.grey[300],
+      height: 1,
+      thickness: 1,
     );
   }
 

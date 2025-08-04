@@ -124,6 +124,14 @@ class AppTypography {
     color: Color(0xFFFAFAFA),
   );
 
+  static const TextStyle interSemiBoldBlue14_16_15 = TextStyle(
+    fontFamily: 'InterSemiBold',
+    fontSize: 14,
+    height: 16 / 14,
+    letterSpacing: 1.5,
+    color: Color(0xFF1976D2),
+  );
+
   static const TextStyle interSemiBoldGray12_16_15 = TextStyle(
     fontFamily: 'InterSemiBold',
     fontSize: 12,

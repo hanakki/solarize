@@ -196,7 +196,7 @@ class SolarCalculations {
           'Daily consumption and backup hours must be greater than 0');
     }
 
-    final batterySize = (dailyEnergyConsumption * backupHours) /
+    final batterySize = ((dailyEnergyConsumption / 24) * backupHours) /
         (AppConstants.depthOfDischarge * AppConstants.batteryEfficiency);
 
     return double.parse(batterySize.toStringAsFixed(2));

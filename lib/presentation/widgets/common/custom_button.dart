@@ -67,19 +67,25 @@ class CustomButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.borderRadiusSmall),
           ),
-          textStyle: AppTypography.interSemiBoldWhite14_16_15,
+          // textStyle: AppTypography.interSemiBoldWhite14_16_15,
           elevation: 2,
         );
       case CustomButtonStyle.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor: AppColors.secondaryButtonColor,
-          foregroundColor: AppColors.primaryTextColor,
-          shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(AppConstants.borderRadiusMedium),
+          backgroundColor: Colors.transparent, // transparent fill
+          foregroundColor: AppColors.primaryDarkColor, // blue text
+          side: const BorderSide(
+            color: AppColors.primaryDarkColor,
+            width: 2.5, // stroke width
           ),
-          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+                AppConstants.borderRadiusSmall), // smaller radius
+          ),
+          // textStyle: AppTypography.interSemiBoldBlue14_16_15,
+          elevation: 0, // no shadow for transparent buttons
         );
+
       case CustomButtonStyle.tertiary:
         return ElevatedButton.styleFrom(
           backgroundColor: AppColors.tertiaryButtonColor,
@@ -100,6 +106,7 @@ class CustomButton extends StatelessWidget {
       case CustomButtonStyle.primary:
         return AppTypography.interSemiBoldWhite14_16_15;
       case CustomButtonStyle.secondary:
+        return AppTypography.interSemiBoldBlue14_16_15;
       case CustomButtonStyle.tertiary:
         return const TextStyle(
           fontSize: 16,
