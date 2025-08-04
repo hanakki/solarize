@@ -42,19 +42,30 @@ class AppStrings {
   static const String sunHoursDescription =
       'Avg. sunlight hours per day (e.g., 5-6 hours on clear days, less on rainy days)';
   static const String systemSetupLabel = "SYSTEM SETUP";
-  static const String offGridSetupLabel = 'Off-grid / Hybrid setup';
+  static const String offGridSetupLabel = 'OFF-GRID / HYBRID SETUP';
   static const String backupDurationLabel = 'BACKUP DURATION (HOURS)';
   static const String backupDurationDescription =
       'How long you want your battery to provide power during outages or at night';
 
+  // API Integration
+  static const String apiIntegrationLabel = 'API INTEGRATION';
+  static const String apiIntegrationDescription =
+      'Enable PVWatts API for more accurate solar production estimates based on your location';
+  static const String apiIntegrationCheckboxLabel =
+      'Use PVWatts API for accurate calculations';
+  static const String apiEnabledDescription =
+      'API enabled: Calculations will use real solar data from your location';
+  static const String apiDisabledDescription =
+      'API disabled: Calculations will use estimated values based on sun hours';
+
   // Project Details
-  static const String projectNameLabel = 'Project Name';
-  static const String clientNameLabel = 'Client Name';
-  static const String projectLocationLabel = 'Project Location';
-  static const String quantityLabel = 'Quantity';
-  static const String unitLabel = 'Unit';
-  static const String descriptionLabel = 'Description';
-  static const String estimatedPriceLabel = 'Estimated Price';
+  static const String projectNameLabel = 'PROJECT NAME';
+  static const String clientNameLabel = 'CLIENT NAME';
+  static const String projectLocationLabel = 'PROJECT LOCATION';
+  static const String quantityLabel = 'QUANTITY';
+  static const String unitLabel = 'UNIT';
+  static const String descriptionLabel = 'DESCRIPTION';
+  static const String estimatedPriceLabel = 'ESTIMATED PRICE';
 
   // Buttons
   static const String calculateButton = 'CALCULATE';

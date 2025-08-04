@@ -36,6 +36,20 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
   void initState() {
     super.initState();
     _initializeData();
+
+    // Add listeners to trigger validation on text changes
+    _titleController.addListener(_onFieldChanged);
+    _quantityController.addListener(_onFieldChanged);
+    _unitController.addListener(_onFieldChanged);
+    _descriptionController.addListener(_onFieldChanged);
+    _priceController.addListener(_onFieldChanged);
+  }
+
+  void _onFieldChanged() {
+    // Trigger form validation when fields change
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _initializeData() {
@@ -52,6 +66,12 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
 
   @override
   void dispose() {
+    _titleController.removeListener(_onFieldChanged);
+    _quantityController.removeListener(_onFieldChanged);
+    _unitController.removeListener(_onFieldChanged);
+    _descriptionController.removeListener(_onFieldChanged);
+    _priceController.removeListener(_onFieldChanged);
+
     _titleController.dispose();
     _quantityController.dispose();
     _unitController.dispose();
@@ -100,7 +120,8 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                   CustomTextField(
                     label: 'Title of Particular',
                     controller: _titleController,
-                    validator: Validators.validateProjectName,
+                    validator: (value) =>
+                        Validators.validateRequired(value, 'Title'),
                   ),
 
                   const SizedBox(height: 16),
@@ -110,16 +131,7 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                     label: 'Quantity',
                     controller: _quantityController,
                     keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Quantity is required';
-                      }
-                      final quantity = int.tryParse(value);
-                      if (quantity == null || quantity <= 0) {
-                        return 'Quantity must be a positive number';
-                      }
-                      return null;
-                    },
+                    validator: Validators.validateQuantity,
                   ),
 
                   const SizedBox(height: 16),
@@ -128,12 +140,8 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                   CustomTextField(
                     label: 'Unit',
                     controller: _unitController,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Unit is required';
-                      }
-                      return null;
-                    },
+                    validator: (value) =>
+                        Validators.validateRequired(value, 'Unit'),
                   ),
 
                   const SizedBox(height: 16),
@@ -143,12 +151,8 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                     label: 'Description',
                     controller: _descriptionController,
                     maxLines: 3,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Description is required';
-                      }
-                      return null;
-                    },
+                    validator: (value) =>
+                        Validators.validateRequired(value, 'Description'),
                   ),
 
                   const SizedBox(height: 16),
@@ -158,16 +162,7 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                     label: 'Estimated Price',
                     controller: _priceController,
                     keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Estimated price is required';
-                      }
-                      final price = double.tryParse(value);
-                      if (price == null || price < 0) {
-                        return 'Price must be a valid number';
-                      }
-                      return null;
-                    },
+                    validator: Validators.validatePrice,
                   ),
 
                   const SizedBox(height: 32),
@@ -178,6 +173,9 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                     child: CustomButton(
                       text: 'Save',
                       onPressed: _canSave() ? _saveRow : null,
+                      style: _canSave()
+                          ? CustomButtonStyle.primary
+                          : CustomButtonStyle.secondary,
                     ),
                   ),
                 ],
@@ -190,11 +188,24 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
   }
 
   bool _canSave() {
-    return _titleController.text.trim().isNotEmpty &&
-        _quantityController.text.trim().isNotEmpty &&
-        _unitController.text.trim().isNotEmpty &&
-        _descriptionController.text.trim().isNotEmpty &&
-        _priceController.text.trim().isNotEmpty;
+    final titleValid =
+        Validators.validateRequired(_titleController.text.trim(), 'Title') ==
+            null;
+    final quantityValid =
+        Validators.validateQuantity(_quantityController.text) == null;
+    final unitValid =
+        Validators.validateRequired(_unitController.text.trim(), 'Unit') ==
+            null;
+    final descriptionValid = Validators.validateRequired(
+            _descriptionController.text.trim(), 'Description') ==
+        null;
+    final priceValid = Validators.validatePrice(_priceController.text) == null;
+
+    return titleValid &&
+        quantityValid &&
+        unitValid &&
+        descriptionValid &&
+        priceValid;
   }
 
   void _saveRow() {

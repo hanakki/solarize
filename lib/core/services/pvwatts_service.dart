@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 /// Service for interacting with the NREL PVWatts V8 API
 class PVWattsService {
   static const String _baseUrl = 'https://developer.nrel.gov/api/pvwatts/v8';
-  static const String _apiKey = 'DEMO_KEY'; // Replace with your actual API key
+  static const String _apiKey =
+      'mz7EP8r1LLmzzN1HZFPiM5FRBtF46MrH3hi5voVb'; // mz7EP8r1LLmzzN1HZFPiM5FRBtF46MrH3hi5voVb
 
   /// PVWatts API response model
   static Future<PVWattsResponse> calculateProduction({

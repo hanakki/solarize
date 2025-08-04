@@ -39,6 +39,20 @@ class _AddRowScreenState extends State<AddRowScreen> {
   void initState() {
     super.initState();
     _initializeControllers();
+
+    // Add listeners to trigger validation on text changes
+    _titleController.addListener(_onFieldChanged);
+    _quantityController.addListener(_onFieldChanged);
+    _unitController.addListener(_onFieldChanged);
+    _descriptionController.addListener(_onFieldChanged);
+    _priceController.addListener(_onFieldChanged);
+  }
+
+  void _onFieldChanged() {
+    // Trigger form validation when fields change
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _initializeControllers() {
@@ -54,6 +68,12 @@ class _AddRowScreenState extends State<AddRowScreen> {
 
   @override
   void dispose() {
+    _titleController.removeListener(_onFieldChanged);
+    _quantityController.removeListener(_onFieldChanged);
+    _unitController.removeListener(_onFieldChanged);
+    _descriptionController.removeListener(_onFieldChanged);
+    _priceController.removeListener(_onFieldChanged);
+
     _titleController.dispose();
     _quantityController.dispose();
     _unitController.dispose();
@@ -196,8 +216,12 @@ class _AddRowScreenState extends State<AddRowScreen> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: CustomButton(
-                              text: widget.isEditing ? 'Update' : 'Add Item',
-                              onPressed: _saveRow,
+                              text:
+                                  widget.isEditing ? 'Update Item' : 'Add Item',
+                              onPressed: _isFormValid() ? _saveRow : null,
+                              style: _isFormValid()
+                                  ? CustomButtonStyle.primary
+                                  : CustomButtonStyle.secondary,
                             ),
                           ),
                         ],
@@ -259,9 +283,36 @@ class _AddRowScreenState extends State<AddRowScreen> {
     );
   }
 
+  /// Check if form is valid
+  bool _isFormValid() {
+    final titleValid =
+        Validators.validateRequired(_titleController.text.trim(), 'Title') ==
+            null;
+    final quantityValid =
+        Validators.validateQuantity(_quantityController.text) == null;
+    final unitValid =
+        Validators.validateRequired(_unitController.text.trim(), 'Unit') ==
+            null;
+    final descriptionValid = Validators.validateRequired(
+            _descriptionController.text.trim(), 'Description') ==
+        null;
+    final priceValid = Validators.validatePrice(_priceController.text) == null;
+
+    final isValid = titleValid &&
+        quantityValid &&
+        unitValid &&
+        descriptionValid &&
+        priceValid;
+
+    return isValid;
+  }
+
   /// Save the row and return to previous screen
   void _saveRow() {
-    if (_formKey.currentState?.validate() ?? false) {
+    // Validate form and get validation result
+    final isValid = _formKey.currentState?.validate() ?? false;
+
+    if (isValid) {
       final row = ProjectRowModel(
         id: widget.existingRow?.id ?? _uuid.v4(),
         title: _titleController.text.trim(),
@@ -274,6 +325,14 @@ class _AddRowScreenState extends State<AddRowScreen> {
       );
 
       Navigator.pop(context, row);
+    } else {
+      // Show a snackbar to indicate validation failure
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill in all required fields correctly'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

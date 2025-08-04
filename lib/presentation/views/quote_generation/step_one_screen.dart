@@ -90,6 +90,11 @@ class _StepOneScreenState extends State<StepOneScreen> {
                       // Off-grid setup
                       _buildOffGridSection(viewModel),
 
+                      const SizedBox(height: 24),
+
+                      // API Integration toggle
+                      _buildApiIntegrationSection(viewModel),
+
                       const SizedBox(height: 45),
 
                       // Error message
@@ -320,6 +325,53 @@ class _StepOneScreenState extends State<StepOneScreen> {
             onChanged: viewModel.updateBackupHours,
           ),
         ],
+      ],
+    );
+  }
+
+  /// Build API integration toggle section
+  Widget _buildApiIntegrationSection(QuoteGenerationViewModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppStrings.apiIntegrationLabel,
+          style: AppTypography.interSemiBoldGray12_16_15,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          AppStrings.apiIntegrationDescription,
+          style: AppTypography.interRegularGray12_16_04,
+        ),
+        const SizedBox(height: 16),
+        Transform.translate(
+          offset: const Offset(-14, 0),
+          child: Row(
+            children: [
+              Checkbox(
+                value: viewModel.useApiIntegration,
+                onChanged: (value) =>
+                    viewModel.toggleApiIntegration(value ?? true),
+                activeColor: const Color(0xFF0077D3),
+              ),
+              Text(AppStrings.apiIntegrationCheckboxLabel),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.only(left: 38),
+          child: Text(
+            viewModel.useApiIntegration
+                ? AppStrings.apiEnabledDescription
+                : AppStrings.apiDisabledDescription,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ),
       ],
     );
   }
