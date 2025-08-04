@@ -31,17 +31,17 @@ class AboutSectionWidget extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    return Row(
+    return const Row(
       children: [
         Icon(
           Icons.info_outline,
           color: AppColors.primaryColor,
           size: 24,
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Text(
           'About',
-          style: AppTypography.interSemiBold18_24_0_black,
+          style: AppTypography.interSemiBoldBlack18_24_0,
         ),
       ],
     );
@@ -51,21 +51,21 @@ class AboutSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'About Solarize',
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
         const SizedBox(height: 12),
-        Text(
+        const Text(
           'Solarize is a comprehensive solar quotation app designed for solar consultants and installers. '
           'It helps you create professional solar quotations with accurate calculations, '
           'detailed system specifications, and beautiful PDF exports.',
-          style: AppTypography.interRegular16_24_0_black,
+          style: AppTypography.interRegularBlack16_24_0,
         ),
         const SizedBox(height: 16),
-        Text(
+        const Text(
           'Key Features:',
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
         const SizedBox(height: 8),
         _buildFeatureItem('• Accurate solar system sizing using PVWatts API'),
@@ -79,27 +79,27 @@ class AboutSectionWidget extends StatelessWidget {
   }
 
   Widget _buildAboutUs() {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'About Us',
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Text(
           'We are dedicated to advancing solar energy adoption in the Philippines and beyond. '
           'Our mission is to provide solar consultants with the tools they need to create '
           'accurate, professional, and compelling solar quotations that help clients make '
           'informed decisions about their renewable energy investments.',
-          style: AppTypography.interRegular16_24_0_black,
+          style: AppTypography.interRegularBlack16_24_0,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text(
           'Our commitment to sustainability and innovation drives us to continuously improve '
           'our platform, ensuring that solar consultants have access to the most accurate '
           'calculations and professional presentation tools available.',
-          style: AppTypography.interRegular16_24_0_black,
+          style: AppTypography.interRegularBlack16_24_0,
         ),
       ],
     );
@@ -115,9 +115,9 @@ class AboutSectionWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'App Information',
-            style: AppTypography.interSemiBold16_24_0_black,
+            style: AppTypography.interSemiBoldBlack16_24_0,
           ),
           const SizedBox(height: 12),
           _buildInfoRow('Version', '1.0.0'),
@@ -134,7 +134,7 @@ class AboutSectionWidget extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Text(
         text,
-        style: AppTypography.interRegular14_20_0_gray,
+        style: AppTypography.interRegularGray14_20_0,
       ),
     );
   }
@@ -147,11 +147,11 @@ class AboutSectionWidget extends StatelessWidget {
         children: [
           Text(
             label,
-            style: AppTypography.interRegular14_20_0_gray,
+            style: AppTypography.interRegularGray14_20_0,
           ),
           Text(
             value,
-            style: AppTypography.interSemiBold16_24_0_black,
+            style: AppTypography.interSemiBoldBlack16_24_0,
           ),
         ],
       ),

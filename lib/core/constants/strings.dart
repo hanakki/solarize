@@ -64,7 +64,7 @@ class AppStrings {
   static const String addRowButton = 'ADD ROW';
   static const String loadPresetButton = 'LOAD PRESET';
   static const String shareWithClientButton = 'SHARE WITH CLIENT';
-  static const String exportAsPngButton = 'EXPORT AS PNG';
+  static const String exportAsPngButton = 'SAVE PDF';
   static const String backToHomeButton = 'BACK TO HOME';
 
   // About Section

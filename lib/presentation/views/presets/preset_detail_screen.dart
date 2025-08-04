@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 import '../../viewmodels/preset_viewmodel.dart';
 import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/background_container.dart';
@@ -32,7 +31,6 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final Uuid _uuid = const Uuid();
 
   List<ProjectRowModel> _rows = [];
   bool _isEditing = false;

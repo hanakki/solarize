@@ -46,14 +46,14 @@ class PdfPreviewWidget extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    return Row(
+    return const Row(
       children: [
         Icon(
           Icons.picture_as_pdf,
           color: AppColors.primaryColor,
           size: 24,
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Text(
           'PDF Quotation',
           style: TextStyle(
@@ -113,14 +113,14 @@ class PdfPreviewWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.error_outline,
                 color: AppColors.errorColor,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Text(
                 'Error Generating PDF',
                 style: TextStyle(
@@ -133,16 +133,19 @@ class PdfPreviewWidget extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             errorMessage!,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.errorColor,
               fontSize: 14,
             ),
           ),
-          const SizedBox(height: 12),
-          CustomButton(
-            text: 'Try Again',
-            style: CustomButtonStyle.secondary,
-            onPressed: onGeneratePdf,
+          const SizedBox(height: 8),
+          const Text(
+            'PDF will be regenerated automatically when you return to this step.',
+            style: TextStyle(
+              color: AppColors.secondaryTextColor,
+              fontSize: 12,
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ],
       ),
@@ -160,7 +163,7 @@ class PdfPreviewWidget extends StatelessWidget {
           style: BorderStyle.solid,
         ),
       ),
-      child: Center(
+      child: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -169,29 +172,23 @@ class PdfPreviewWidget extends StatelessWidget {
               size: 48,
               color: AppColors.secondaryTextColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
-              'No PDF Generated Yet',
+              'PDF Will Auto-Generate',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppColors.secondaryTextColor,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
-              'Generate a PDF to preview your quotation',
+              'Your PDF will be generated automatically when you enter this step',
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.secondaryTextColor,
               ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: 'Generate PDF',
-              style: CustomButtonStyle.primary,
-              onPressed: onGeneratePdf,
             ),
           ],
         ),
@@ -227,16 +224,7 @@ class PdfPreviewWidget extends StatelessWidget {
                 text: 'Share PDF',
                 style: CustomButtonStyle.primary,
                 onPressed: onSharePdf,
-                icon: Icon(Icons.share),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: CustomButton(
-                text: 'Regenerate',
-                style: CustomButtonStyle.secondary,
-                onPressed: onGeneratePdf,
-                icon: Icon(Icons.refresh),
+                icon: const Icon(Icons.share),
               ),
             ),
           ],
@@ -258,7 +246,7 @@ class PdfPreviewWidget extends StatelessWidget {
           build: (context) => pw.Center(
             child: pw.Text(
               'PDF Preview\n(Generated PDF will be displayed here)',
-              style: pw.TextStyle(fontSize: 16),
+              style: const pw.TextStyle(fontSize: 16),
               textAlign: pw.TextAlign.center,
             ),
           ),

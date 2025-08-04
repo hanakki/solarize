@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import '../../data/models/company_profile_model.dart';
 import '../../data/repositories/settings_repository.dart';
+import '../../core/services/image_service.dart';
 
 /// ViewModel for app settings and company profile management
 /// Handles company information, logo upload, and app preferences
@@ -55,6 +56,19 @@ class SettingsViewModel extends ChangeNotifier {
 
       _companyProfile =
           await _settingsRepository.getCompanyProfileWithDefaults();
+
+      // Validate logo file exists if logo path is set
+      if (_companyProfile?.hasLogo == true) {
+        final logoExists =
+            await ImageService.logoExists(_companyProfile!.logoPath);
+        if (!logoExists) {
+          // Logo file no longer exists, remove the path
+          final updatedProfile = _companyProfile!.copyWith(logoPath: null);
+          await _settingsRepository.saveCompanyProfile(updatedProfile);
+          _companyProfile = updatedProfile;
+        }
+      }
+
       _updateControllers();
     } catch (e) {
       _setError('Failed to load company profile: ${e.toString()}');
@@ -71,10 +85,17 @@ class SettingsViewModel extends ChangeNotifier {
       _clearMessages();
       notifyListeners();
 
+      // Validate form
+      final validationError = validateForm();
+      if (validationError != null) {
+        _setError(validationError);
+        return false;
+      }
+
       // Create updated profile from form controllers
       final updatedProfile = CompanyProfileModel(
         companyName: companyNameController.text.trim(),
-        logoPath: _companyProfile?.logoPath,
+        logoPath: _companyProfile?.logoPath, // Preserve existing logo path
         address: addressController.text.trim().isEmpty
             ? null
             : addressController.text.trim(),
@@ -100,8 +121,11 @@ class SettingsViewModel extends ChangeNotifier {
 
       await _settingsRepository.saveCompanyProfile(updatedProfile);
       _companyProfile = updatedProfile;
-      _setSuccess('Company profile saved successfully');
 
+      // Verify the save was successful by reloading
+      await loadCompanyProfile();
+
+      _setSuccess('Company profile saved successfully');
       return true;
     } catch (e) {
       _setError('Failed to save company profile: ${e.toString()}');
@@ -119,19 +143,34 @@ class SettingsViewModel extends ChangeNotifier {
       _clearMessages();
       notifyListeners();
 
-      // In a real app, you would upload to a server or copy to app directory
-      // For now, we'll just store the file path
-      final logoPath = logoFile.path;
+      // Validate file exists and is readable
+      if (!await ImageService.logoExists(logoFile.path)) {
+        throw Exception('Selected file does not exist');
+      }
+
+      // Validate file size (max 5MB)
+      final fileSize = await logoFile.length();
+      if (fileSize > 5 * 1024 * 1024) {
+        throw Exception('File size must be less than 5MB');
+      }
+
+      // Store the logo path
+      final logoPath = await ImageService.copyLogoToAppDirectory(logoFile.path);
 
       // Update company profile with logo path
       if (_companyProfile != null) {
         final updatedProfile = _companyProfile!.copyWith(logoPath: logoPath);
         await _settingsRepository.saveCompanyProfile(updatedProfile);
         _companyProfile = updatedProfile;
-      }
 
-      _setSuccess('Logo uploaded successfully');
-      return true;
+        // Verify the save was successful by reloading
+        await loadCompanyProfile();
+
+        _setSuccess('Logo uploaded successfully');
+        return true;
+      } else {
+        throw Exception('Company profile not loaded');
+      }
     } catch (e) {
       _setError('Failed to upload logo: ${e.toString()}');
       return false;
@@ -150,6 +189,10 @@ class SettingsViewModel extends ChangeNotifier {
         final updatedProfile = _companyProfile!.copyWith(logoPath: null);
         await _settingsRepository.saveCompanyProfile(updatedProfile);
         _companyProfile = updatedProfile;
+
+        // Verify the save was successful by reloading
+        await loadCompanyProfile();
+
         _setSuccess('Logo removed successfully');
       }
     } catch (e) {

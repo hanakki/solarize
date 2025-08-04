@@ -6,6 +6,7 @@ import 'widgets/step_header_widget.dart';
 import 'widgets/quote_summary_widget.dart';
 import 'widgets/pdf_preview_widget.dart';
 import '../../../core/constants/strings.dart';
+import '../../../core/services/pdf_service.dart';
 
 /// Step 3: Review Quotation & Send to Client
 /// Shows final quote summary and export options
@@ -48,7 +49,6 @@ class StepThreeScreen extends StatelessWidget {
                       pdfFile: viewModel.generatedPdfFile,
                       isLoading: viewModel.isGeneratingPdf,
                       errorMessage: viewModel.errorMessage,
-                      onGeneratePdf: () => _generatePdf(context, viewModel),
                       onSharePdf: () => _sharePdf(context, viewModel),
                     ),
 
@@ -86,13 +86,13 @@ class StepThreeScreen extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        // Export as PNG button
+        // Save PDF button (changed from Export as PNG)
         CustomButton(
-          text: AppStrings.exportAsPngButton,
+          text: AppStrings.exportAsPngButton, // This now says "SAVE PDF"
           style: CustomButtonStyle.secondary,
-          onPressed: () => _exportAsPng(context, viewModel),
-          icon: const Icon(Icons.image),
-          isLoading: viewModel.isGeneratingImage,
+          onPressed: () => _savePdf(context, viewModel),
+          icon: const Icon(Icons.save),
+          isLoading: viewModel.isGeneratingPdf,
         ),
       ],
     );
@@ -122,49 +122,51 @@ class StepThreeScreen extends StatelessWidget {
   }
 
   /// Generate PDF
-  Future<void> _generatePdf(
-      BuildContext context, QuoteGenerationViewModel viewModel) async {
-    try {
-      // Create quote first if not exists
-      if (viewModel.currentQuote == null) {
-        await viewModel.createQuote();
-      }
+  // Future<void> _generatePdf(
+  //     BuildContext context, QuoteGenerationViewModel viewModel) async {
+  //   try {
+  //     // Create quote first if not exists
+  //     if (viewModel.currentQuote == null) {
+  //       await viewModel.createQuote();
+  //     }
 
-      if (viewModel.currentQuote != null) {
-        await viewModel.generatePdf();
+  //     if (viewModel.currentQuote != null) {
+  //       await viewModel.generatePdf();
 
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('PDF generated successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to generate PDF: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
+  //       if (context.mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //             content: Text('PDF generated successfully!'),
+  //             backgroundColor: Colors.green,
+  //           ),
+  //         );
+  //       }
+  //     }
+  //   } catch (e) {
+  //     if (context.mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Failed to generate PDF: $e'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   /// Share PDF with client
   Future<void> _sharePdf(
       BuildContext context, QuoteGenerationViewModel viewModel) async {
     try {
-      await viewModel.sharePdf();
+      final success = await viewModel.sharePdf();
 
-      if (context.mounted) {
+      if (context.mounted && success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('PDF shared successfully!'),
-            backgroundColor: Colors.green,
+            content: Text(
+                'Share dialog opened. Select your preferred sharing method.'),
+            backgroundColor: Colors.blue,
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -190,13 +192,15 @@ class StepThreeScreen extends StatelessWidget {
       }
 
       if (viewModel.currentQuote != null) {
-        await viewModel.generatePdf();
+        final success = await viewModel.sharePdf();
 
-        if (context.mounted) {
+        if (context.mounted && success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Quote shared successfully!'),
-              backgroundColor: Colors.green,
+              content: Text(
+                  'Share dialog opened. Select your preferred sharing method.'),
+              backgroundColor: Colors.blue,
+              duration: Duration(seconds: 3),
             ),
           );
         }
@@ -213,8 +217,8 @@ class StepThreeScreen extends StatelessWidget {
     }
   }
 
-  /// Export quote as PNG image
-  Future<void> _exportAsPng(
+  /// Save PDF to device
+  Future<void> _savePdf(
       BuildContext context, QuoteGenerationViewModel viewModel) async {
     try {
       // Create quote first if not exists
@@ -223,13 +227,24 @@ class StepThreeScreen extends StatelessWidget {
       }
 
       if (viewModel.currentQuote != null) {
-        await viewModel.generateImage();
+        await viewModel.generatePdf();
 
-        if (context.mounted) {
+        if (context.mounted && viewModel.generatedPdfFile != null) {
+          final userFriendlyPath =
+              PdfService.getUserFriendlyPath(viewModel.generatedPdfFile!.path);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Quote exported as image successfully!'),
+            SnackBar(
+              content:
+                  Text('PDF saved successfully!\nLocation: $userFriendlyPath'),
               backgroundColor: Colors.green,
+              duration: const Duration(seconds: 4),
+              action: SnackBarAction(
+                label: 'OK',
+                textColor: Colors.white,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+              ),
             ),
           );
         }
@@ -238,7 +253,7 @@ class StepThreeScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to export image: $e'),
+            content: Text('Failed to save PDF: $e'),
             backgroundColor: Colors.red,
           ),
         );

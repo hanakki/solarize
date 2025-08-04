@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/quote_generation_viewmodel.dart';
 import '../../widgets/common/custom_text_field.dart';
-import '../../widgets/common/custom_checkbox.dart';
 import '../../widgets/common/custom_button.dart';
 import 'widgets/step_header_widget.dart';
 import 'widgets/slider_input_widget.dart';
@@ -243,12 +242,12 @@ class _StepOneScreenState extends State<StepOneScreen> {
       children: [
         const Text(
           'LOCATION',
-          style: AppTypography.interSemiBold12_16_15_gray,
+          style: AppTypography.interSemiBoldGray12_16_15,
         ),
         const SizedBox(height: 8),
         const Text(
           'Enter coordinates for accurate solar production estimates',
-          style: AppTypography.interRegular12_16_04_gray,
+          style: AppTypography.interRegularGray12_16_04,
         ),
         const SizedBox(height: 16),
         Row(
@@ -293,7 +292,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
       children: [
         const Text(
           AppStrings.systemSetupLabel,
-          style: AppTypography.interSemiBold12_16_15_gray,
+          style: AppTypography.interSemiBoldGray12_16_15,
         ),
         Transform.translate(
           offset: const Offset(-14, 0),

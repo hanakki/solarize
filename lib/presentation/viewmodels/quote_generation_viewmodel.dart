@@ -8,7 +8,6 @@ import '../../data/models/project_row_model.dart';
 import '../../data/repositories/quote_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../core/utils/calculations.dart';
-import '../../core/constants/app_constants.dart';
 import '../../core/services/pvwatts_service.dart';
 import '../../core/services/pdf_service.dart';
 import '../../core/services/share_service.dart';
@@ -60,6 +59,9 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   // Error handling
   String? _errorMessage;
 
+  // State variables for tracking changes
+  bool _dataChanged = false;
+
   // Getters
   int get currentStep => _currentStep;
   bool get isCalculating => _isCalculating;
@@ -81,6 +83,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   File? get generatedPdfFile => _generatedPdfFile;
   File? get generatedImageFile => _generatedImageFile;
   String? get errorMessage => _errorMessage;
+  bool get dataChanged => _dataChanged;
 
   /// Get step information
   StepInfo getStepInfo(int step) {
@@ -115,11 +118,22 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     return ProgressState.inactive;
   }
 
+  /// Mark data as changed (will trigger PDF regeneration)
+  void _markDataChanged() {
+    _dataChanged = true;
+  }
+
+  /// Clear data changed flag
+  void _clearDataChanged() {
+    _dataChanged = false;
+  }
+
   // Step 1 Methods
 
   /// Update monthly bill in kWh
   void updateMonthlyBillKwh(double value) {
     _monthlyBillKwh = value;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -127,6 +141,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update bill offset percentage
   void updateBillOffsetPercentage(double value) {
     _billOffsetPercentage = value;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -134,6 +149,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update sun hours per day
   void updateSunHoursPerDay(double value) {
     _sunHoursPerDay = value;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -141,6 +157,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Toggle off-grid setup
   void toggleOffGrid(bool value) {
     _isOffGrid = value;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -148,6 +165,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update backup hours
   void updateBackupHours(double value) {
     _backupHours = value;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -155,6 +173,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Toggle PHP billing mode
   void togglePhpBilling(bool value) {
     _usedPhpBilling = value;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -162,6 +181,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update electricity rate
   void updateElectricityRate(double value) {
     _electricityRate = value;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -170,6 +190,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   void updateLocation(double latitude, double longitude) {
     _latitude = latitude;
     _longitude = longitude;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -546,6 +567,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update project details
   void updateProjectDetails(ProjectDetailsModel details) {
     _projectDetails = details;
+    _markDataChanged();
     _clearError();
     notifyListeners();
   }
@@ -595,10 +617,16 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   // Navigation Methods
 
   /// Go to next step
-  void nextStep() {
+  void nextStep() async {
     if (_currentStep < 3) {
       _currentStep++;
       _clearError();
+
+      // Auto-generate PDF when entering step 3
+      if (_currentStep == 3) {
+        await _autoGeneratePdf();
+      }
+
       notifyListeners();
     }
   }
@@ -613,11 +641,41 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   }
 
   /// Go to specific step
-  void goToStep(int step) {
+  void goToStep(int step) async {
     if (step >= 1 && step <= 3) {
       _currentStep = step;
       _clearError();
+
+      // Auto-generate PDF when entering step 3
+      if (_currentStep == 3) {
+        await _autoGeneratePdf();
+      }
+
       notifyListeners();
+    }
+  }
+
+  /// Auto-generate PDF when entering step 3
+  Future<void> _autoGeneratePdf() async {
+    try {
+      // Create quote first if not exists
+      if (_currentQuote == null) {
+        await createQuote();
+      }
+
+      if (_currentQuote != null) {
+        // Check if data has changed since last PDF generation
+        if (_dataChanged || _generatedPdfFile == null) {
+          print('Data changed or no PDF exists, regenerating PDF...');
+          await generatePdf();
+          _clearDataChanged(); // Clear the changed flag after successful generation
+        } else {
+          print('No data changes detected, using existing PDF');
+        }
+      }
+    } catch (e) {
+      // Don't show error for auto-generation, just log it
+      print('Auto PDF generation failed: $e');
     }
   }
 
@@ -695,20 +753,23 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   }
 
   /// Share PDF with client
-  Future<void> sharePdf() async {
+  Future<bool> sharePdf() async {
     try {
       if (_generatedPdfFile == null) {
         await generatePdf();
       }
 
       if (_generatedPdfFile != null) {
-        await ShareService.sharePdf(
+        final success = await ShareService.sharePdf(
           _generatedPdfFile!,
           'Solar Quotation - ${_currentQuote?.projectName ?? 'Project'}',
         );
+        return success;
       }
+      return false;
     } catch (e) {
       _setError('Failed to share PDF: ${e.toString()}');
+      return false;
     }
   }
 

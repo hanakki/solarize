@@ -37,7 +37,7 @@ class SettingsRepository {
 
   /// Get default company profile
   CompanyProfileModel _getDefaultCompanyProfile() {
-    return CompanyProfileModel(
+    return const CompanyProfileModel(
       companyName: 'Your Solar Company',
       logoPath: null,
       address: '123 Solar Street, Green City, Philippines',

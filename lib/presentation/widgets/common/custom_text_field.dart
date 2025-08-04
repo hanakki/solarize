@@ -54,7 +54,7 @@ class CustomTextField extends StatelessWidget {
         // Label
         Text(
           label,
-          style: AppTypography.interSemiBold12_16_15_gray,
+          style: AppTypography.interSemiBoldGray12_16_15,
         ),
 
         const SizedBox(height: 8),

@@ -43,17 +43,17 @@ class CompanyProfileWidget extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    return Row(
+    return const Row(
       children: [
         Icon(
           Icons.business,
           color: AppColors.primaryColor,
           size: 24,
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Text(
           'Company Profile',
-          style: AppTypography.interSemiBold18_24_0_black,
+          style: AppTypography.interSemiBoldBlack18_24_0,
         ),
       ],
     );
@@ -63,9 +63,9 @@ class CompanyProfileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Company Logo',
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
         const SizedBox(height: 12),
         FileUploadWidget(
@@ -82,9 +82,9 @@ class CompanyProfileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Company Information',
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
         const SizedBox(height: 16),
         _buildTextField(
@@ -108,9 +108,9 @@ class CompanyProfileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Contact Information',
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
         const SizedBox(height: 16),
         _buildTextField(
@@ -148,9 +148,9 @@ class CompanyProfileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'PDF Footer Information',
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
         const SizedBox(height: 16),
         _buildTextField(
@@ -184,10 +184,10 @@ class CompanyProfileWidget extends StatelessWidget {
           children: [
             Text(
               label,
-              style: AppTypography.interSemiBold16_24_0_black,
+              style: AppTypography.interSemiBoldBlack16_24_0,
             ),
             if (isRequired)
-              Text(
+              const Text(
                 ' *',
                 style: TextStyle(
                   fontFamily: 'InterSemiBold',
@@ -206,18 +206,19 @@ class CompanyProfileWidget extends StatelessWidget {
           keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: AppTypography.interRegular14_20_0_gray,
+            hintStyle: AppTypography.interRegularGray14_20_0,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.borderColor),
+              borderSide: const BorderSide(color: AppColors.borderColor),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.borderColor),
+              borderSide: const BorderSide(color: AppColors.borderColor),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+              borderSide:
+                  const BorderSide(color: AppColors.primaryColor, width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -251,9 +252,9 @@ class CompanyProfileWidget extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               )
-            : Text(
+            : const Text(
                 'Save Company Profile',
-                style: AppTypography.interSemiBold14_16_15_white,
+                style: AppTypography.interSemiBoldWhite14_16_15,
               ),
       ),
     );

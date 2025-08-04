@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
         // "Today" label
         Text(
           viewModel.todayLabel,
-          style: AppTypography.leagueSpartanBold57_64_0_black,
+          style: AppTypography.leagueSpartanBoldBlack57_64_0,
         ),
 
         const SizedBox(height: 8),

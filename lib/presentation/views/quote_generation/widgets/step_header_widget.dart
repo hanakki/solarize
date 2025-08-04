@@ -19,11 +19,11 @@ class StepHeaderWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: AppTypography.interSemiBold16_24_0_black,
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
         Text(
           description,
-          style: AppTypography.interRegular12_16_04_gray,
+          style: AppTypography.interRegularGray12_16_04,
         ),
       ],
     );

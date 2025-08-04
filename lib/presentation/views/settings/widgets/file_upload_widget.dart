@@ -77,7 +77,7 @@ class FileUploadWidget extends StatelessWidget {
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -107,7 +107,7 @@ class FileUploadWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.all(16),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -115,16 +115,16 @@ class FileUploadWidget extends StatelessWidget {
               size: 32,
               color: AppColors.secondaryTextColor,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               'Upload Company Logo',
-              style: AppTypography.interSemiBold16_24_0_black,
+              style: AppTypography.interSemiBoldBlack16_24_0,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               'Tap to select image',
-              style: AppTypography.interRegular14_20_0_gray,
+              style: AppTypography.interRegularGray14_20_0,
               textAlign: TextAlign.center,
             ),
           ],
@@ -144,7 +144,7 @@ class FileUploadWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -158,7 +158,7 @@ class FileUploadWidget extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: AppTypography.interSemiBold12_16_15_gray,
+              style: AppTypography.interSemiBoldGray12_16_15,
             ),
           ],
         ),

@@ -5,13 +5,24 @@ import 'package:share_plus/share_plus.dart';
 /// Handles sharing PDFs, images, and text via native sharing dialog
 class ShareService {
   /// Share a PDF file
-  static Future<void> sharePdf(File pdfFile, String subject) async {
+  /// Returns true if the sharing dialog was opened successfully
+  static Future<bool> sharePdf(File pdfFile, String subject) async {
     try {
+      // Validate file exists
+      if (!await pdfFile.exists()) {
+        throw Exception('PDF file does not exist');
+      }
+
       await Share.shareXFiles(
         [XFile(pdfFile.path)],
         subject: subject,
         text: 'Please find attached your solar quotation.',
       );
+
+      // The share dialog was opened successfully
+      // Note: We can't determine if the user actually shared or just dismissed
+      // So we return true to indicate the dialog opened without errors
+      return true;
     } catch (e) {
       throw Exception('Failed to share PDF: $e');
     }
@@ -48,8 +59,7 @@ class ShareService {
     required bool isOffGrid,
     double? batterySize,
   }) async {
-    final summary =
-        '''
+    final summary = '''
 Solar Quotation Summary
 
 Project: $projectName

@@ -9,6 +9,7 @@ import 'widgets/step_header_widget.dart';
 import 'widgets/project_row_widget.dart';
 import '../../../data/models/project_details_model.dart';
 import '../../../data/models/project_row_model.dart';
+import '../../../data/models/preset_model.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/constants/strings.dart';
 import '../presets/preset_list_screen.dart';
@@ -34,6 +35,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
   void initState() {
     super.initState();
     _initializeData();
+    _loadPresets();
   }
 
   void _initializeData() {
@@ -50,6 +52,14 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
       // Add default rows based on calculation results
       _projectRows = viewModel.getDefaultRows();
     }
+  }
+
+  void _loadPresets() {
+    // Load presets using PresetViewModel
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final presetViewModel = context.read<PresetViewModel>();
+      presetViewModel.loadPresets();
+    });
   }
 
   @override
@@ -237,43 +247,80 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
 
   /// Build load preset section
   Widget _buildLoadPresetSection() {
-    return Card(
-      child: ExpansionTile(
-        title: const Text(
-          'Load Preset',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                const Text(
-                  'Select a preset to load predefined items',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
+    return Consumer<PresetViewModel>(
+      builder: (context, presetViewModel, child) {
+        return AccordionWidget(
+          title: 'Load Preset',
+          subtitle: 'Select a preset to load predefined items',
+          trailing: const Icon(Icons.chevron_right),
+          content: Column(
+            children: [
+              // Show loading state
+              if (presetViewModel.isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomButton(
-                    text: 'Browse Presets',
-                    style: CustomButtonStyle.tertiary,
-                    onPressed: _loadPreset,
-                    icon: const Icon(Icons.folder_open),
+                )
+              else if (presetViewModel.presets.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text(
+                    'No presets available.\nCreate a preset first.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
                   ),
+                )
+              else
+                // Show preset list
+                Column(
+                  children: [
+                    // Quick preset selection
+                    ...presetViewModel.presets.take(3).map(
+                          (preset) => ListTile(
+                            leading: const Icon(Icons.folder),
+                            title: Text(preset.name),
+                            subtitle: preset.description?.isNotEmpty == true
+                                ? Text(preset.description!)
+                                : null,
+                            trailing:
+                                Text('${preset.defaultRows.length} items'),
+                            onTap: () => _loadPresetFromViewModel(preset),
+                          ),
+                        ),
+                    const SizedBox(height: 16),
+                    // Browse all presets button
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomButton(
+                        text: 'Browse All Presets',
+                        style: CustomButtonStyle.tertiary,
+                        onPressed: _browseAllPresets,
+                        icon: const Icon(Icons.folder_open),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Save as preset button
+                    if (_projectRows.isNotEmpty)
+                      SizedBox(
+                        width: double.infinity,
+                        child: CustomButton(
+                          text: 'Save as Preset',
+                          style: CustomButtonStyle.secondary,
+                          onPressed: _saveAsPreset,
+                          icon: const Icon(Icons.save),
+                        ),
+                      ),
+                  ],
                 ),
-              ],
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -388,8 +435,23 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Load preset
-  void _loadPreset() async {
+  /// Load preset from PresetViewModel
+  void _loadPresetFromViewModel(PresetModel preset) {
+    setState(() {
+      _projectRows.addAll(preset.defaultRows);
+    });
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Loaded preset: ${preset.name}'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  /// Browse all presets
+  void _browseAllPresets() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -402,5 +464,76 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
         _projectRows.addAll(result);
       });
     }
+  }
+
+  /// Save current project rows as a preset
+  void _saveAsPreset() async {
+    final presetViewModel = context.read<PresetViewModel>();
+
+    // Show dialog to get preset name
+    final presetName = await _showPresetNameDialog();
+    if (presetName == null || presetName.trim().isEmpty) return;
+
+    // Create preset using PresetViewModel
+    final success = await presetViewModel.createPreset(
+      name: presetName.trim(),
+      description: 'Project: ${_projectNameController.text.trim()}',
+      rows: _projectRows,
+    );
+
+    if (mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Preset "$presetName" saved successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(presetViewModel.errorMessage ?? 'Failed to save preset'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Show dialog to get preset name
+  Future<String?> _showPresetNameDialog() async {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Save as Preset'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Enter a name for this preset:'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'Preset Name',
+                border: OutlineInputBorder(),
+              ),
+              autofocus: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -176,7 +176,7 @@ class _PresetListScreenState extends State<PresetListScreen> {
       ),
     );
 
-    if (result == true) {
+    if (result == true && mounted) {
       // Refresh the list if a preset was created
       context.read<PresetViewModel>().loadPresets();
     }
@@ -195,7 +195,7 @@ class _PresetListScreenState extends State<PresetListScreen> {
       ),
     );
 
-    if (result == true) {
+    if (result == true && mounted) {
       // Refresh the list if a preset was updated
       context.read<PresetViewModel>().loadPresets();
     }
@@ -217,8 +217,8 @@ class _PresetListScreenState extends State<PresetListScreen> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              final success =
-                  await context.read<PresetViewModel>().deletePreset(preset.id);
+              final viewModel = context.read<PresetViewModel>();
+              final success = await viewModel.deletePreset(preset.id);
               if (success && mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

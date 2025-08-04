@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTypography {
   // League Spartan Styles
-  static const TextStyle leagueSpartanBold57_64_0_black = TextStyle(
+  static const TextStyle leagueSpartanBoldBlack57_64_0 = TextStyle(
     fontFamily: 'LeagueSpartanBold',
     fontSize: 57,
     height: 64 / 57,
@@ -11,7 +11,7 @@ class AppTypography {
   );
 
   // Inter Regular Styles
-  static const TextStyle interRegular24_32_0_black = TextStyle(
+  static const TextStyle interRegularBlack24_32_0 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 24,
     height: 32 / 24,
@@ -19,7 +19,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interRegular22_20_0_black = TextStyle(
+  static const TextStyle interRegularBlack22_20_0 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 22,
     height: 20 / 22,
@@ -27,7 +27,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interRegular20_24_0_black = TextStyle(
+  static const TextStyle interRegularBlack20_24_0 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 20,
     height: 24 / 20,
@@ -35,7 +35,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interRegular16_24_0_black = TextStyle(
+  static const TextStyle interRegularBlack16_24_0 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 16,
     height: 24 / 16,
@@ -43,7 +43,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interRegular16_24_05_black = TextStyle(
+  static const TextStyle interRegularBlack16_24_05 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 16,
     height: 24 / 16,
@@ -51,7 +51,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interRegular16_24_05_gray = TextStyle(
+  static const TextStyle interRegularGray16_24_05 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 16,
     height: 24 / 16,
@@ -59,7 +59,7 @@ class AppTypography {
     color: Color(0xFF45454B),
   );
 
-  static const TextStyle interRegular14_20_0_gray = TextStyle(
+  static const TextStyle interRegularGray14_20_0 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 14,
     height: 20 / 14,
@@ -67,7 +67,7 @@ class AppTypography {
     color: Color(0xFF777687),
   );
 
-  static const TextStyle interRegular12_16_04_black = TextStyle(
+  static const TextStyle interRegularBlack12_16_04 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 12,
     height: 16 / 12,
@@ -75,7 +75,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interRegular12_16_04_gray = TextStyle(
+  static const TextStyle interRegularGray12_16_04 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 12,
     height: 16 / 12,
@@ -84,7 +84,7 @@ class AppTypography {
   );
 
   // Inter Semi Bold Styles
-  static const TextStyle interSemiBold22_28_0_black = TextStyle(
+  static const TextStyle interSemiBoldBlack22_28_0 = TextStyle(
     fontFamily: 'InterSemiBold',
     fontSize: 22,
     height: 28 / 22,
@@ -92,7 +92,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interSemiBold18_24_0_black = TextStyle(
+  static const TextStyle interSemiBoldBlack18_24_0 = TextStyle(
     fontFamily: 'InterSemiBold',
     fontSize: 18,
     height: 24 / 18,
@@ -100,7 +100,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interSemiBold16_25_05_black = TextStyle(
+  static const TextStyle interSemiBoldBlack16_25_05 = TextStyle(
     fontFamily: 'InterSemiBold',
     fontSize: 16,
     height: 25 / 16,
@@ -108,7 +108,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interSemiBold16_24_0_black = TextStyle(
+  static const TextStyle interSemiBoldBlack16_24_0 = TextStyle(
     fontFamily: 'InterSemiBold',
     fontSize: 16,
     height: 24 / 16,
@@ -116,7 +116,7 @@ class AppTypography {
     color: Color(0xFF28282C),
   );
 
-  static const TextStyle interSemiBold14_16_15_white = TextStyle(
+  static const TextStyle interSemiBoldWhite14_16_15 = TextStyle(
     fontFamily: 'InterSemiBold',
     fontSize: 14,
     height: 16 / 14,
@@ -124,7 +124,7 @@ class AppTypography {
     color: Color(0xFFFAFAFA),
   );
 
-  static const TextStyle interSemiBold12_16_15_gray = TextStyle(
+  static const TextStyle interSemiBoldGray12_16_15 = TextStyle(
     fontFamily: 'InterSemiBold',
     fontSize: 12,
     height: 16 / 12,
@@ -133,7 +133,7 @@ class AppTypography {
   );
 
   // Inter Italic Styles
-  static const TextStyle interItalic16_25_05_black = TextStyle(
+  static const TextStyle interItalicBlack16_25_05 = TextStyle(
     fontFamily: 'InterItalic',
     fontSize: 16,
     height: 25 / 16,

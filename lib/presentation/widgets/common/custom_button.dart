@@ -67,7 +67,7 @@ class CustomButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.borderRadiusSmall),
           ),
-          textStyle: AppTypography.interSemiBold14_16_15_white,
+          textStyle: AppTypography.interSemiBoldWhite14_16_15,
           elevation: 2,
         );
       case CustomButtonStyle.secondary:
@@ -98,7 +98,7 @@ class CustomButton extends StatelessWidget {
   TextStyle _getTextStyle() {
     switch (style) {
       case CustomButtonStyle.primary:
-        return AppTypography.interSemiBold14_16_15_white;
+        return AppTypography.interSemiBoldWhite14_16_15;
       case CustomButtonStyle.secondary:
       case CustomButtonStyle.tertiary:
         return const TextStyle(

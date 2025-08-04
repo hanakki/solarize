@@ -32,7 +32,7 @@ class SliderInputWidget extends StatelessWidget {
         // Label
         Text(
           label,
-          style: AppTypography.interSemiBold12_16_15_gray,
+          style: AppTypography.interSemiBoldGray12_16_15,
         ),
 
         const SizedBox(height: 4),
@@ -40,7 +40,7 @@ class SliderInputWidget extends StatelessWidget {
         // Description
         Text(
           description,
-          style: AppTypography.interRegular12_16_04_gray,
+          style: AppTypography.interRegularGray12_16_04,
         ),
 
         const SizedBox(height: 8),
@@ -49,7 +49,7 @@ class SliderInputWidget extends StatelessWidget {
         Center(
           child: Text(
             '${value.toStringAsFixed(1)}$suffix',
-            style: AppTypography.interRegular16_24_05_black,
+            style: AppTypography.interRegularBlack16_24_05,
           ),
         ),
 
@@ -80,11 +80,11 @@ class SliderInputWidget extends StatelessWidget {
           children: [
             Text(
               '${min.toStringAsFixed(1)}$suffix',
-              style: AppTypography.interRegular12_16_04_gray,
+              style: AppTypography.interRegularGray12_16_04,
             ),
             Text(
               '${max.toStringAsFixed(1)}$suffix',
-              style: AppTypography.interRegular12_16_04_gray,
+              style: AppTypography.interRegularGray12_16_04,
             ),
           ],
         ),

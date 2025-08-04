@@ -64,7 +64,7 @@ class FeatureCardWidget extends StatelessWidget {
                     // Title
                     Text(
                       title,
-                      style: AppTypography.interSemiBold22_28_0_black,
+                      style: AppTypography.interSemiBoldBlack22_28_0,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -74,7 +74,7 @@ class FeatureCardWidget extends StatelessWidget {
                     // Description
                     Text(
                       description,
-                      style: AppTypography.interRegular16_24_0_black,
+                      style: AppTypography.interRegularBlack16_24_0,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -99,7 +99,7 @@ class FeatureCardWidget extends StatelessWidget {
         return Container(
           width: double.infinity,
           height: double.infinity,
-          color: AppColors.primaryLightColor.withOpacity(0.1),
+          color: AppColors.primaryLightColor.withValues(alpha: 0.1),
           child: const Center(
             child: Icon(
               Icons.image_not_supported,

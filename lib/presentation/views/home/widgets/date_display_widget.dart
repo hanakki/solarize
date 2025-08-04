@@ -15,7 +15,7 @@ class DateDisplayWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       formattedDate,
-      style: AppTypography.interRegular22_20_0_black,
+      style: AppTypography.interRegularBlack22_20_0,
     );
   }
 }
