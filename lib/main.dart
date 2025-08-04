@@ -30,8 +30,10 @@ void main() async {
         // ViewModels
         ChangeNotifierProvider<HomeViewModel>(create: (_) => HomeViewModel()),
         ChangeNotifierProvider<QuoteGenerationViewModel>(
-          create: (context) =>
-              QuoteGenerationViewModel(context.read<QuoteRepository>()),
+          create: (context) => QuoteGenerationViewModel(
+            context.read<QuoteRepository>(),
+            context.read<SettingsRepository>(),
+          ),
         ),
         ChangeNotifierProvider<PresetViewModel>(
           create: (context) =>

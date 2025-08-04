@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:io';
 import '../../data/models/quote_model.dart';
 import '../../data/models/calculation_result_model.dart';
 import '../../data/models/project_details_model.dart';
 import '../../data/models/project_row_model.dart';
 import '../../data/repositories/quote_repository.dart';
+import '../../data/repositories/settings_repository.dart';
 import '../../core/utils/calculations.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/services/pvwatts_service.dart';
+import '../../core/services/pdf_service.dart';
+import '../../core/services/share_service.dart';
 
 /// ViewModel for the quote generation flow
 /// Manages the 3-step quote creation process and calculations
 class QuoteGenerationViewModel extends ChangeNotifier {
   final QuoteRepository _quoteRepository;
+  final SettingsRepository _settingsRepository;
   final Uuid _uuid = const Uuid();
 
-  QuoteGenerationViewModel(this._quoteRepository);
+  QuoteGenerationViewModel(this._quoteRepository, this._settingsRepository);
 
   // Current step (1, 2, or 3)
   int _currentStep = 1;
@@ -48,6 +53,10 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   // Current quote being created
   QuoteModel? _currentQuote;
 
+  // Generated files
+  File? _generatedPdfFile;
+  File? _generatedImageFile;
+
   // Error handling
   String? _errorMessage;
 
@@ -69,6 +78,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   CalculationResultModel? get calculationResult => _calculationResult;
   ProjectDetailsModel? get projectDetails => _projectDetails;
   QuoteModel? get currentQuote => _currentQuote;
+  File? get generatedPdfFile => _generatedPdfFile;
+  File? get generatedImageFile => _generatedImageFile;
   String? get errorMessage => _errorMessage;
 
   /// Get step information
@@ -657,12 +668,24 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   Future<void> generatePdf() async {
     try {
       _isGeneratingPdf = true;
+      _clearError();
       notifyListeners();
 
-      // Simulate PDF generation
-      await Future.delayed(const Duration(seconds: 3));
+      if (_currentQuote == null) {
+        throw Exception('No quote available for PDF generation');
+      }
 
-      // TODO: Implement actual PDF generation
+      // Get company profile for PDF header
+      final companyProfile =
+          await _settingsRepository.getCompanyProfileWithDefaults();
+
+      // Generate PDF using PdfService
+      _generatedPdfFile = await PdfService.generateQuotePdf(
+        _currentQuote!,
+        companyProfile,
+      );
+
+      notifyListeners();
     } catch (e) {
       _setError('Failed to generate PDF: ${e.toString()}');
     } finally {
@@ -671,16 +694,40 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
+  /// Share PDF with client
+  Future<void> sharePdf() async {
+    try {
+      if (_generatedPdfFile == null) {
+        await generatePdf();
+      }
+
+      if (_generatedPdfFile != null) {
+        await ShareService.sharePdf(
+          _generatedPdfFile!,
+          'Solar Quotation - ${_currentQuote?.projectName ?? 'Project'}',
+        );
+      }
+    } catch (e) {
+      _setError('Failed to share PDF: ${e.toString()}');
+    }
+  }
+
   /// Generate PNG image
   Future<void> generateImage() async {
     try {
       _isGeneratingImage = true;
+      _clearError();
       notifyListeners();
 
-      // Simulate image generation
-      await Future.delayed(const Duration(seconds: 2));
+      if (_currentQuote == null) {
+        throw Exception('No quote available for image generation');
+      }
 
       // TODO: Implement actual image generation
+      // For now, we'll just simulate it
+      await Future.delayed(const Duration(seconds: 2));
+
+      notifyListeners();
     } catch (e) {
       _setError('Failed to generate image: ${e.toString()}');
     } finally {
@@ -704,6 +751,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     _calculationResult = null;
     _projectDetails = null;
     _currentQuote = null;
+    _generatedPdfFile = null;
+    _generatedImageFile = null;
     _clearError();
     notifyListeners();
   }

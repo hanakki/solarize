@@ -4,6 +4,7 @@ import '../../viewmodels/quote_generation_viewmodel.dart';
 import '../../widgets/common/custom_button.dart';
 import 'widgets/step_header_widget.dart';
 import 'widgets/quote_summary_widget.dart';
+import 'widgets/pdf_preview_widget.dart';
 import '../../../core/constants/strings.dart';
 
 /// Step 3: Review Quotation & Send to Client
@@ -39,6 +40,17 @@ class StepThreeScreen extends StatelessWidget {
                         calculationResult: viewModel.calculationResult!,
                         projectDetails: viewModel.projectDetails!,
                       ),
+
+                    const SizedBox(height: 32),
+
+                    // PDF Preview widget
+                    PdfPreviewWidget(
+                      pdfFile: viewModel.generatedPdfFile,
+                      isLoading: viewModel.isGeneratingPdf,
+                      errorMessage: viewModel.errorMessage,
+                      onGeneratePdf: () => _generatePdf(context, viewModel),
+                      onSharePdf: () => _sharePdf(context, viewModel),
+                    ),
 
                     const SizedBox(height: 32),
 
@@ -109,7 +121,66 @@ class StepThreeScreen extends StatelessWidget {
     );
   }
 
-  /// Share quote with client (PDF)
+  /// Generate PDF
+  Future<void> _generatePdf(
+      BuildContext context, QuoteGenerationViewModel viewModel) async {
+    try {
+      // Create quote first if not exists
+      if (viewModel.currentQuote == null) {
+        await viewModel.createQuote();
+      }
+
+      if (viewModel.currentQuote != null) {
+        await viewModel.generatePdf();
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('PDF generated successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Share PDF with client
+  Future<void> _sharePdf(
+      BuildContext context, QuoteGenerationViewModel viewModel) async {
+    try {
+      await viewModel.sharePdf();
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('PDF shared successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Share quote with client (PDF) - Legacy method
   Future<void> _shareWithClient(
       BuildContext context, QuoteGenerationViewModel viewModel) async {
     try {
