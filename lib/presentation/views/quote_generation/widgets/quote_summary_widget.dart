@@ -49,9 +49,14 @@ class QuoteSummaryWidget extends StatelessWidget {
               _buildSummaryRow('System Size',
                   '${calculationResult.systemSize.toStringAsFixed(2)} kW'),
               _buildSummaryRow('System Type', calculationResult.systemType),
-              if (calculationResult.isOffGrid)
+              _buildSummaryRow('Number of Panels',
+                  '${calculationResult.numberOfPanels} pcs'),
+              if (calculationResult.batterySize > 0)
                 _buildSummaryRow('Battery Size',
                     '${calculationResult.batterySize.toStringAsFixed(2)} kWh'),
+              if (calculationResult.numberOfBatteries > 0)
+                _buildSummaryRow('Number of Batteries',
+                    '${calculationResult.numberOfBatteries} pcs'),
             ],
           ),
 
@@ -61,12 +66,13 @@ class QuoteSummaryWidget extends StatelessWidget {
           _buildSummarySection(
             'Financial Details',
             [
-              _buildSummaryRow('Estimated Cost',
+              _buildSummaryRow('Solar Panel Cost',
+                  '₱${calculationResult.solarPanelCost.toStringAsFixed(0)}'),
+              if (calculationResult.batteryCost > 0)
+                _buildSummaryRow('Battery Cost',
+                    '₱${calculationResult.batteryCost.toStringAsFixed(0)}'),
+              _buildSummaryRow('Total System Cost',
                   '₱${calculationResult.estimatedCost.toStringAsFixed(0)}'),
-              _buildSummaryRow('Monthly Savings',
-                  '₱${calculationResult.monthlySavings.toStringAsFixed(0)}'),
-              _buildSummaryRow('Payback Period',
-                  '${calculationResult.paybackPeriod.toStringAsFixed(1)} years'),
             ],
           ),
 

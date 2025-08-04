@@ -8,7 +8,6 @@ import '../../data/models/project_row_model.dart';
 import '../../data/repositories/quote_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../core/utils/calculations.dart';
-import '../../core/services/pvwatts_service.dart';
 import '../../core/services/pdf_service.dart';
 import '../../core/services/share_service.dart';
 
@@ -32,6 +31,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
 
   // Step 1: Calculation inputs
   double _monthlyBillKwh = 0;
+  double _monthlyBillValue = 0; // The actual value entered (PHP or kWh)
   double _billOffsetPercentage = 80;
   double _sunHoursPerDay = 4.5;
   bool _isOffGrid = false;
@@ -40,8 +40,16 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   double _electricityRate = 12.0; // Default PHP rate per kWh
   bool _useApiIntegration = true; // Enable API integration by default
 
-  // Location for PVWatts API (Philippines default)
-  double _latitude = 10.3870; // Cebu coordinates
+  // Solar Panel Configuration
+  double _solarPanelSizeKw = 1.0; // Default 1kW panel
+  double _solarPanelPricePhp = 40000.0; // Default ₱40,000 per panel
+
+  // Battery Configuration (for off-grid/hybrid)
+  double _batterySizeKwh = 5.0; // Default 5kWh battery
+  double _batteryPricePhp = 125000.0; // Default ₱125,000 per battery
+
+  // Location for PVWatts API (Toledo City, Philippines default)
+  double _latitude = 10.387; // Toledo City coordinates
   double _longitude = 123.6502;
 
   // Calculation results
@@ -70,6 +78,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   bool get isGeneratingPdf => _isGeneratingPdf;
   bool get isGeneratingImage => _isGeneratingImage;
   double get monthlyBillKwh => _monthlyBillKwh;
+  double get monthlyBillValue => _monthlyBillValue;
   double get billOffsetPercentage => _billOffsetPercentage;
   double get sunHoursPerDay => _sunHoursPerDay;
   bool get isOffGrid => _isOffGrid;
@@ -79,6 +88,15 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   bool get useApiIntegration => _useApiIntegration;
   double get latitude => _latitude;
   double get longitude => _longitude;
+
+  // Solar Panel Configuration Getters
+  double get solarPanelSizeKw => _solarPanelSizeKw;
+  double get solarPanelPricePhp => _solarPanelPricePhp;
+
+  // Battery Configuration Getters
+  double get batterySizeKwh => _batterySizeKwh;
+  double get batteryPricePhp => _batteryPricePhp;
+
   CalculationResultModel? get calculationResult => _calculationResult;
   ProjectDetailsModel? get projectDetails => _projectDetails;
   QuoteModel? get currentQuote => _currentQuote;
@@ -135,6 +153,16 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update monthly bill in kWh
   void updateMonthlyBillKwh(double value) {
     _monthlyBillKwh = value;
+    _monthlyBillValue = value;
+    _markDataChanged();
+    _clearError();
+    notifyListeners();
+  }
+
+  /// Update monthly bill in PHP (stores the PHP value)
+  void updateMonthlyBillPhp(double value) {
+    _monthlyBillValue = value;
+    // Don't convert here, let the calculation functions handle it
     _markDataChanged();
     _clearError();
     notifyListeners();
@@ -196,6 +224,38 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update solar panel size
+  void updateSolarPanelSize(double value) {
+    _solarPanelSizeKw = value;
+    _markDataChanged();
+    _clearError();
+    notifyListeners();
+  }
+
+  /// Update solar panel price
+  void updateSolarPanelPrice(double value) {
+    _solarPanelPricePhp = value;
+    _markDataChanged();
+    _clearError();
+    notifyListeners();
+  }
+
+  /// Update battery size
+  void updateBatterySize(double value) {
+    _batterySizeKwh = value;
+    _markDataChanged();
+    _clearError();
+    notifyListeners();
+  }
+
+  /// Update battery price
+  void updateBatteryPrice(double value) {
+    _batteryPricePhp = value;
+    _markDataChanged();
+    _clearError();
+    notifyListeners();
+  }
+
   /// Update location coordinates
   void updateLocation(double latitude, double longitude) {
     _latitude = latitude;
@@ -205,459 +265,184 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Calculate system size and requirements using PVWatts API
+  /// Calculate system size and generate results
   Future<void> calculateSystem() async {
+    // Check if we have the minimum required inputs
+    if (_monthlyBillKwh <= 0 || _billOffsetPercentage <= 0) {
+      _setError('Please provide valid monthly bill and bill offset percentage');
+      return;
+    }
+
     try {
       _isCalculating = true;
       _clearError();
       notifyListeners();
 
-      // ===== DEBUG SECTION START - COMMENT OUT FOR PRODUCTION =====
-      print('=== SOLAR CALCULATION DEBUG START ===');
-      print('Input Variables:');
-      print('  Monthly Bill (kWh): $_monthlyBillKwh');
-      print('  Bill Offset (%): $_billOffsetPercentage');
-      print('  Sun Hours/Day: $_sunHoursPerDay');
-      print('  Is Off-Grid: $_isOffGrid');
-      print('  Backup Hours: $_backupHours');
-      print('  Used PHP Billing: $_usedPhpBilling');
-      print('  Electricity Rate (₱/kWh): $_electricityRate');
-      print('  Latitude: $_latitude');
-      print('  Longitude: $_longitude');
-      print('');
+      print('=== CALCULATION START ===');
+      print('Monthly Bill (kWh): $_monthlyBillKwh');
+      print('Electricity Rate: $_electricityRate');
+      print('Bill Offset: $_billOffsetPercentage%');
+      print('Sun Hours: $_sunHoursPerDay');
+      print('Backup Hours: $_backupHours');
+      print('API Integration: $_useApiIntegration');
+      print('Solar Panel Size: $_solarPanelSizeKw kW');
+      print('Solar Panel Price: ₱$_solarPanelPricePhp');
+      print('Battery Size: $_batterySizeKwh kWh');
+      print('Battery Price: ₱$_batteryPricePhp');
+      print('Latitude: $_latitude');
+      print('Longitude: $_longitude');
 
-      // Validate inputs
-      if (!SolarCalculations.validateCalculationInputs(
-        monthlyBill: _monthlyBillKwh,
-        billOffset: _billOffsetPercentage,
-        sunHours: _sunHoursPerDay,
-        backupHours: _isOffGrid ? _backupHours : null,
-      )) {
-        throw Exception('Invalid calculation inputs');
-      }
-
-      // Convert PHP to kWh if needed
-      double actualMonthlyKwh = _monthlyBillKwh;
-      if (_usedPhpBilling) {
-        actualMonthlyKwh = SolarCalculations.convertPhpToKwh(
-          monthlyBillPhp: _monthlyBillKwh,
-          electricityRate: _electricityRate,
-        );
-        print('PHP to kWh Conversion:');
-        print('  Monthly Bill (PHP): $_monthlyBillKwh');
-        print('  Electricity Rate: $_electricityRate ₱/kWh');
-        print('  Converted Monthly Bill (kWh): $actualMonthlyKwh');
-        print(
-          '  Formula: $_monthlyBillKwh ÷ $_electricityRate = $actualMonthlyKwh',
-        );
-
-        // Detailed conversion calculation
-        final convertedKwh = _monthlyBillKwh / _electricityRate;
-        final dailyKwh = convertedKwh / 30;
-        final hourlyKwh = dailyKwh / 24;
-
-        print('  Step-by-step conversion:');
-        print('    Monthly bill (PHP): $_monthlyBillKwh ₱');
-        print('    Electricity rate: $_electricityRate ₱/kWh');
-        print(
-          '    Monthly consumption: $_monthlyBillKwh ÷ $_electricityRate = ${convertedKwh.toStringAsFixed(2)} kWh',
-        );
-        print(
-          '    Daily consumption: ${convertedKwh.toStringAsFixed(2)} ÷ 30 = ${dailyKwh.toStringAsFixed(2)} kWh',
-        );
-        print(
-          '    Hourly consumption: ${dailyKwh.toStringAsFixed(2)} ÷ 24 = ${hourlyKwh.toStringAsFixed(2)} kWh',
-        );
-        print('    Final monthly kWh: $actualMonthlyKwh kWh');
-        print('');
-      } else {
-        print('Using kWh directly: $actualMonthlyKwh');
-        print('');
-      }
-
-      // Calculate initial system size estimate
-      final estimatedSystemSize = SolarCalculations.calculateSystemSize(
-        monthlyBillKwh: actualMonthlyKwh,
-        billOffsetPercentage: _billOffsetPercentage,
-        sunHoursPerDay: _sunHoursPerDay,
-      );
-
-      print('Initial System Size Calculation:');
-      print('  Monthly Consumption: $actualMonthlyKwh kWh');
-      print('  Bill Offset: $_billOffsetPercentage%');
-      print('  Sun Hours/Day: $_sunHoursPerDay');
-      print(
-        '  Estimated System Size: ${estimatedSystemSize.toStringAsFixed(2)} kW',
-      );
-
-      // Detailed calculation breakdown
-      final monthlyOffsetKwh = actualMonthlyKwh * (_billOffsetPercentage / 100);
-      final dailyOffsetKwh = monthlyOffsetKwh / 30;
-      final dailyProductionNeeded = dailyOffsetKwh / _sunHoursPerDay;
-
-      print('  Step-by-step calculation:');
-      print(
-        '    Monthly offset needed: $actualMonthlyKwh × $_billOffsetPercentage% ÷ 100 = ${monthlyOffsetKwh.toStringAsFixed(2)} kWh',
-      );
-      print(
-        '    Daily offset needed: ${monthlyOffsetKwh.toStringAsFixed(2)} ÷ 30 = ${dailyOffsetKwh.toStringAsFixed(2)} kWh',
-      );
-      print(
-        '    System size needed: ${dailyOffsetKwh.toStringAsFixed(2)} ÷ $_sunHoursPerDay = ${dailyProductionNeeded.toStringAsFixed(2)} kW',
-      );
-      print(
-        '    Final system size: ${estimatedSystemSize.toStringAsFixed(2)} kW',
-      );
-      print('');
-
-      // Use API integration if enabled
-      double annualProduction;
-      double monthlyProduction;
-      double systemSize;
-      double requiredAnnualProduction;
-      PVWattsResponse? pvwattsResponse;
-      PVWattsResponse? finalPvwattsResponse;
-
-      // Calculate required annual production (needed for both API and non-API modes)
-      requiredAnnualProduction =
-          actualMonthlyKwh * 12 * (_billOffsetPercentage / 100);
+      double systemSizeKw;
+      double? pvwattsAnnualOutput;
+      double? pvwattsDailyOutput;
 
       if (_useApiIntegration) {
-        // Call PVWatts API for accurate production data
-        print('PVWatts API Call Parameters:');
-        print(
-          '  System Capacity: ${estimatedSystemSize.toStringAsFixed(2)} kW',
-        );
-        print('  Latitude: $_latitude');
-        print('  Longitude: $_longitude');
-        print('  Module Type: Standard (0)');
-        print('  Array Type: Fixed Roof Mounted (1)');
-        print('  Tilt: 15.0°');
-        print('  Azimuth: 180.0° (South)');
-        print('  System Losses: 14.0%');
-        print('  DC/AC Ratio: 1.2');
-        print('  Inverter Efficiency: 96.0%');
-        print('');
+        print('=== USING PVWATTS API ===');
 
-        pvwattsResponse = await PVWattsService.calculateProduction(
-          systemCapacity: estimatedSystemSize,
+        // Calculate target daily consumption with conversion
+        final targetDailyConsumption =
+            SolarCalculations.calculateTargetDailyConsumptionWithConversion(
+          monthlyBillValue: _monthlyBillValue,
+          billOffsetPercentage: _billOffsetPercentage,
+          isPhpBilling: _usedPhpBilling,
+          electricityRate: _electricityRate,
+        );
+        print('Target Daily Consumption: $targetDailyConsumption kWh');
+
+        // Get PVWatts data
+        final pvwattsResponse = await SolarCalculations.getPvwattsAnnualOutput(
           latitude: _latitude,
           longitude: _longitude,
-          moduleType: ModuleType.standard, // Standard modules
-          arrayType: ArrayType.fixedRoofMounted, // Roof mounted
-          tilt: 15.0, // Optimal tilt for Philippines
-          azimuth: 180.0, // South facing
-          losses: 14.0, // Standard system losses
-          dcAcRatio: 1.2,
-          invEff: 96.0,
         );
+        pvwattsAnnualOutput = pvwattsResponse;
+        pvwattsDailyOutput = pvwattsResponse / 365;
+        print('PVWatts Annual Output: $pvwattsAnnualOutput kWh');
+        print('PVWatts Daily Output: $pvwattsDailyOutput kWh');
 
-        // Check for API errors
-        if (pvwattsResponse.hasErrors) {
-          throw Exception('PVWatts API error: ${pvwattsResponse.firstError}');
-        }
-
-        // Get production data from PVWatts
-        final pvwattsOutputs = pvwattsResponse.outputs;
-        annualProduction = pvwattsOutputs.acAnnual;
-        monthlyProduction = pvwattsOutputs.averageMonthlyProduction;
-
-        print('PVWatts API Response:');
-        print(
-          '  Annual Production: ${annualProduction.toStringAsFixed(2)} kWh',
-        );
-        print(
-          '  Monthly Production: ${monthlyProduction.toStringAsFixed(2)} kWh',
-        );
-        print(
-          '  Capacity Factor: ${(pvwattsOutputs.capacityFactor * 100).toStringAsFixed(2)}%',
-        );
-        print(
-          '  Solar Radiation: ${pvwattsOutputs.solradAnnual.toStringAsFixed(2)} kWh/m²/day',
-        );
-        print('');
-
-        // Adjust system size based on actual production vs required
-        final requiredAnnualProduction =
-            actualMonthlyKwh * 12 * (_billOffsetPercentage / 100);
-        systemSize =
-            (requiredAnnualProduction / annualProduction) * estimatedSystemSize;
+        // Calculate system size using PVWatts
+        systemSizeKw = targetDailyConsumption / pvwattsDailyOutput;
+        print('System Size (PVWatts): $systemSizeKw kW');
       } else {
-        // Use estimated calculations without API
-        print('API Integration Disabled - Using Estimated Calculations');
-        print('  Using sun hours per day: $_sunHoursPerDay hours');
+        print('=== USING ESTIMATED CALCULATIONS ===');
 
-        // Calculate estimated production based on sun hours
-        final dailyProduction =
-            estimatedSystemSize * _sunHoursPerDay * 0.75; // 75% efficiency
-        annualProduction = dailyProduction * 365;
+        // Use new calculation method with conversion
+        systemSizeKw = SolarCalculations.calculateSystemSizeWithConversion(
+          monthlyBillValue: _monthlyBillValue,
+          billOffsetPercentage: _billOffsetPercentage,
+          sunHoursPerDay: _sunHoursPerDay,
+          isPhpBilling: _usedPhpBilling,
+          electricityRate: _electricityRate,
+        );
+        print('System Size (Estimated): $systemSizeKw kW');
+      }
+
+      // Calculate annual and monthly production
+      double annualProduction;
+      double monthlyProduction;
+
+      if (_useApiIntegration && pvwattsAnnualOutput != null) {
+        annualProduction = pvwattsAnnualOutput;
+        monthlyProduction = pvwattsAnnualOutput / 12;
+        print('Annual Production (PVWatts): $annualProduction kWh');
+        print('Monthly Production (PVWatts): $monthlyProduction kWh');
+      } else {
+        annualProduction = systemSizeKw * _sunHoursPerDay * 365 * 0.75;
         monthlyProduction = annualProduction / 12;
-        systemSize = estimatedSystemSize; // No adjustment needed for estimates
-
-        print('Estimated Production:');
-        print('  Daily Production: ${dailyProduction.toStringAsFixed(2)} kWh');
-        print(
-          '  Annual Production: ${annualProduction.toStringAsFixed(2)} kWh',
-        );
-        print(
-          '  Monthly Production: ${monthlyProduction.toStringAsFixed(2)} kWh',
-        );
-        print('  System Size: ${systemSize.toStringAsFixed(2)} kW');
-        print('');
+        print('Annual Production (Estimated): $annualProduction kWh');
+        print('Monthly Production (Estimated): $monthlyProduction kWh');
       }
 
-      print('System Size Adjustment:');
-      print(
-        '  Required Annual Production: ${requiredAnnualProduction.toStringAsFixed(2)} kWh',
+      // Calculate solar panel cost and number of panels
+      final solarPanelCost = SolarCalculations.calculateSolarPanelCost(
+        systemSizeKw: systemSizeKw,
+        panelSizeKw: _solarPanelSizeKw,
+        panelPricePhp: _solarPanelPricePhp,
       );
-      print(
-        '  Formula: $actualMonthlyKwh × 12 × $_billOffsetPercentage% ÷ 100 = ${requiredAnnualProduction.toStringAsFixed(2)} kWh',
+      final numberOfPanels = SolarCalculations.calculateNumberOfPanels(
+        systemSizeKw: systemSizeKw,
+        panelSizeKw: _solarPanelSizeKw,
       );
-      print(
-        '  Actual Annual Production: ${annualProduction.toStringAsFixed(2)} kWh',
-      );
-      print(
-        '  System Size Adjustment Factor: ${(requiredAnnualProduction / annualProduction).toStringAsFixed(4)}',
-      );
-      print('  Adjusted System Size: ${systemSize.toStringAsFixed(2)} kW');
-      print(
-        '  Formula: ${estimatedSystemSize.toStringAsFixed(2)} × ${(requiredAnnualProduction / annualProduction).toStringAsFixed(4)} = ${systemSize.toStringAsFixed(2)} kW',
-      );
+      print('Solar Panel Cost: ₱$solarPanelCost');
+      print('Number of Panels: $numberOfPanels');
 
-      // Detailed adjustment calculation
-      final adjustmentFactor = requiredAnnualProduction / annualProduction;
-      final adjustedSize = estimatedSystemSize * adjustmentFactor;
+      // Calculate battery cost and number of batteries (if off-grid/hybrid)
+      double batteryCost = 0;
+      int numberOfBatteries = 0;
+      double batterySizeKwh = 0;
 
-      print('  Step-by-step adjustment:');
-      print(
-        '    Required annual: $actualMonthlyKwh × 12 × $_billOffsetPercentage% ÷ 100 = ${requiredAnnualProduction.toStringAsFixed(2)} kWh',
-      );
-      print('    PVWatts annual: ${annualProduction.toStringAsFixed(2)} kWh');
-      print(
-        '    Adjustment factor: ${requiredAnnualProduction.toStringAsFixed(2)} ÷ ${annualProduction.toStringAsFixed(2)} = ${adjustmentFactor.toStringAsFixed(4)}',
-      );
-      print(
-        '    Adjusted size: ${estimatedSystemSize.toStringAsFixed(2)} × ${adjustmentFactor.toStringAsFixed(4)} = ${adjustedSize.toStringAsFixed(2)} kW',
-      );
-      print('');
-
-      // Recalculate with adjusted system size if needed
-      if (_useApiIntegration &&
-          (systemSize - estimatedSystemSize).abs() > 0.1) {
-        print(
-          'System size adjusted significantly, recalculating with PVWatts...',
-        );
-        finalPvwattsResponse = await PVWattsService.calculateProduction(
-          systemCapacity: systemSize,
-          latitude: _latitude,
-          longitude: _longitude,
-          moduleType: ModuleType.standard,
-          arrayType: ArrayType.fixedRoofMounted,
-          tilt: 15.0,
-          azimuth: 180.0,
-          losses: 14.0,
-          dcAcRatio: 1.2,
-          invEff: 96.0,
-        );
-        print('Final PVWatts Response:');
-        print(
-          '  Annual Production: ${finalPvwattsResponse?.outputs.acAnnual.toStringAsFixed(2)} kWh',
-        );
-        print(
-          '  Monthly Production: ${finalPvwattsResponse?.outputs.averageMonthlyProduction.toStringAsFixed(2)} kWh',
-        );
-        print('');
-      } else {
-        print(
-          'System size adjustment minimal, using original PVWatts response',
-        );
-        finalPvwattsResponse = pvwattsResponse;
-        print('');
-      }
-
-      // Calculate battery size if off-grid
-      double batterySize = 0;
       if (_isOffGrid) {
-        final dailyConsumption = SolarCalculations.calculateDailyConsumption(
-          actualMonthlyKwh,
-        );
-        batterySize = SolarCalculations.calculateBatterySize(
+        print('=== BATTERY CALCULATIONS ===');
+
+        // Calculate battery size
+        final dailyConsumption = _usedPhpBilling
+            ? SolarCalculations.calculateDailyConsumption(
+                SolarCalculations.convertPhpToKwh(
+                monthlyBillPhp: _monthlyBillValue,
+                electricityRate: _electricityRate,
+              ))
+            : SolarCalculations.calculateDailyConsumption(_monthlyBillValue);
+        batterySizeKwh = SolarCalculations.calculateBatterySize(
           dailyEnergyConsumption: dailyConsumption,
           backupHours: _backupHours,
         );
+        print('Battery Size: $batterySizeKwh kWh');
 
-        print('Battery Calculation (Off-Grid):');
-        print(
-          '  Daily Consumption: ${dailyConsumption.toStringAsFixed(2)} kWh',
+        // Calculate battery cost
+        batteryCost = SolarCalculations.calculateBatteryCost(
+          batterySizeKwh: batterySizeKwh,
+          batterySizeKw: _batterySizeKwh,
+          batteryPricePhp: _batteryPricePhp,
         );
-        print(
-          '  Formula: $actualMonthlyKwh ÷ 30 = ${dailyConsumption.toStringAsFixed(2)} kWh',
+        numberOfBatteries = SolarCalculations.calculateNumberOfBatteries(
+          batterySizeKwh: batterySizeKwh,
+          batterySizeKw: _batterySizeKwh,
         );
-        print('  Backup Hours: $_backupHours');
-        print('  Battery Size: ${batterySize.toStringAsFixed(2)} kWh');
-        print(
-          '  Formula: ${dailyConsumption.toStringAsFixed(2)} × $_backupHours = ${batterySize.toStringAsFixed(2)} kWh',
-        );
-
-        // Detailed battery calculation
-        final hourlyConsumption = dailyConsumption / 24;
-        final batteryCapacityNeeded = hourlyConsumption * _backupHours;
-
-        print('  Step-by-step battery calculation:');
-        print('    Monthly consumption: $actualMonthlyKwh kWh');
-        print(
-          '    Daily consumption: $actualMonthlyKwh ÷ 30 = ${dailyConsumption.toStringAsFixed(2)} kWh',
-        );
-        print(
-          '    Hourly consumption: ${dailyConsumption.toStringAsFixed(2)} ÷ 24 = ${hourlyConsumption.toStringAsFixed(2)} kWh',
-        );
-        print('    Backup hours needed: $_backupHours hours');
-        print(
-          '    Battery capacity: ${hourlyConsumption.toStringAsFixed(2)} × $_backupHours = ${batteryCapacityNeeded.toStringAsFixed(2)} kWh',
-        );
-        print('    Final battery size: ${batterySize.toStringAsFixed(2)} kWh');
-        print('');
-      } else {
-        print('Grid-tied system - no battery required');
-        print('');
+        print('Battery Cost: ₱$batteryCost');
+        print('Number of Batteries: $numberOfBatteries');
       }
 
-      // Calculate costs
-      final estimatedCost = SolarCalculations.calculateTotalSystemCost(
-        systemSizeKw: systemSize,
+      // Calculate total system cost
+      final totalSystemCost = SolarCalculations.calculateTotalSystemCost(
+        solarPanelCost: solarPanelCost,
         includesBattery: _isOffGrid,
-        batterySizeKwh: batterySize,
+        batteryCost: batteryCost,
       );
+      print('Total System Cost: ₱$totalSystemCost');
 
-      print('Cost Calculation:');
-      print('  System Size: ${systemSize.toStringAsFixed(2)} kW');
+      // Calculate monthly savings
+      final monthlySavings = SolarCalculations.calculateMonthlySavings(
+        systemSizeKw: systemSizeKw,
+        sunHoursPerDay:
+            _useApiIntegration ? 4.5 : _sunHoursPerDay, // Use average for API
+        electricityRate: _electricityRate,
+      );
+      print('Monthly Savings: ₱$monthlySavings');
 
-      // Detailed cost breakdown
-      final solarPanelCost = systemSize * 1000 * 45; // 45₱/W
-      final installationCost = 50000.0;
-      final batteryCost = _isOffGrid ? batterySize * 25000 : 0; // 25,000₱/kWh
-      final totalCalculatedCost =
-          solarPanelCost + installationCost + batteryCost;
+      // Calculate payback period
+      final paybackPeriod = totalSystemCost / monthlySavings;
+      print('Payback Period: ${paybackPeriod.toStringAsFixed(1)} months');
 
-      print('  Step-by-step cost calculation:');
-      print(
-        '    Solar panels: ${systemSize.toStringAsFixed(2)} kW × 1000 W/kW × 45₱/W = ${solarPanelCost.toStringAsFixed(2)} ₱',
-      );
-      print('    Installation: 50,000.00 ₱');
-      if (_isOffGrid) {
-        print(
-          '    Battery: ${batterySize.toStringAsFixed(2)} kWh × 25,000₱/kWh = ${batteryCost.toStringAsFixed(2)} ₱',
-        );
-      } else {
-        print('    Battery: Not required (grid-tied)');
-      }
-      print(
-        '    Total: ${solarPanelCost.toStringAsFixed(2)} + 50,000.00 + ${batteryCost.toStringAsFixed(2)} = ${totalCalculatedCost.toStringAsFixed(2)} ₱',
-      );
-      print('    Final cost: ${estimatedCost.toStringAsFixed(2)} ₱');
-      print('');
-
-      // Calculate savings using production data
-      double actualMonthlyProduction;
-      if (_useApiIntegration && finalPvwattsResponse != null) {
-        actualMonthlyProduction =
-            finalPvwattsResponse.outputs.averageMonthlyProduction;
-      } else {
-        actualMonthlyProduction =
-            monthlyProduction; // Use the calculated monthly production
-      }
-      final monthlySavings = actualMonthlyProduction * _electricityRate;
-
-      print('Savings Calculation:');
-      print(
-        '  Monthly Production: ${actualMonthlyProduction.toStringAsFixed(2)} kWh',
-      );
-      print('  Electricity Rate: $_electricityRate ₱/kWh');
-      print('  Monthly Savings: ${monthlySavings.toStringAsFixed(2)} ₱');
-      print(
-        '  Formula: ${actualMonthlyProduction.toStringAsFixed(2)} × $_electricityRate = ${monthlySavings.toStringAsFixed(2)} ₱',
-      );
-
-      // Detailed savings calculation
-      final annualSavings = monthlySavings * 12;
-      final dailySavings = monthlySavings / 30;
-
-      print('  Step-by-step savings calculation:');
-      print(
-        '    Monthly production: ${actualMonthlyProduction.toStringAsFixed(2)} kWh (from PVWatts)',
-      );
-      print('    Electricity rate: $_electricityRate ₱/kWh');
-      print(
-        '    Monthly savings: ${actualMonthlyProduction.toStringAsFixed(2)} × $_electricityRate = ${monthlySavings.toStringAsFixed(2)} ₱',
-      );
-      print(
-        '    Daily savings: ${monthlySavings.toStringAsFixed(2)} ÷ 30 = ${dailySavings.toStringAsFixed(2)} ₱',
-      );
-      print(
-        '    Annual savings: ${monthlySavings.toStringAsFixed(2)} × 12 = ${annualSavings.toStringAsFixed(2)} ₱',
-      );
-      print('');
-
-      final paybackPeriod = SolarCalculations.calculatePaybackPeriod(
-        totalSystemCost: estimatedCost,
-        monthlySavings: monthlySavings,
-      );
-
-      print('Payback Period Calculation:');
-      print('  Total System Cost: ${estimatedCost.toStringAsFixed(2)} ₱');
-      print('  Monthly Savings: ${monthlySavings.toStringAsFixed(2)} ₱');
-      print('  Payback Period: ${paybackPeriod.toStringAsFixed(1)} years');
-      print(
-        '  Formula: ${estimatedCost.toStringAsFixed(2)} ÷ ${monthlySavings.toStringAsFixed(2)} ÷ 12 = ${paybackPeriod.toStringAsFixed(1)} years',
-      );
-
-      // Detailed payback calculation
-      final annualSavingsForPayback = monthlySavings * 12;
-      final calculatedPaybackPeriod = estimatedCost / annualSavingsForPayback;
-
-      print('  Step-by-step payback calculation:');
-      print('    Total system cost: ${estimatedCost.toStringAsFixed(2)} ₱');
-      print('    Monthly savings: ${monthlySavings.toStringAsFixed(2)} ₱');
-      print(
-        '    Annual savings: ${monthlySavings.toStringAsFixed(2)} × 12 = ${annualSavingsForPayback.toStringAsFixed(2)} ₱',
-      );
-      print(
-        '    Payback period: ${estimatedCost.toStringAsFixed(2)} ÷ ${annualSavingsForPayback.toStringAsFixed(2)} = ${calculatedPaybackPeriod.toStringAsFixed(1)} years',
-      );
-      print('    Final payback: ${paybackPeriod.toStringAsFixed(1)} years');
-      print('');
-
-      print('Final Results:');
-      print('  System Size: ${systemSize.toStringAsFixed(2)} kW');
-      print('  Battery Size: ${batterySize.toStringAsFixed(2)} kWh');
-      print('  Total Cost: ${estimatedCost.toStringAsFixed(2)} ₱');
-      print('  Monthly Savings: ${monthlySavings.toStringAsFixed(2)} ₱');
-      print('  Payback Period: ${paybackPeriod.toStringAsFixed(1)} years');
-      print('  Annual Production: ${annualProduction.toStringAsFixed(2)} kWh');
-      print(
-        '  Solar Radiation: ${_useApiIntegration && finalPvwattsResponse != null ? finalPvwattsResponse.outputs.solradAnnual.toStringAsFixed(2) : "N/A (estimated)"} kWh/m²/day',
-      );
-      print('=== SOLAR CALCULATION DEBUG END ===');
-      // ===== DEBUG SECTION END - COMMENT OUT FOR PRODUCTION =====
-
-      // Create calculation result with production data
+      // Create calculation result
       _calculationResult = CalculationResultModel(
-        systemSize: systemSize,
-        batterySize: batterySize,
-        isOffGrid: _isOffGrid,
-        estimatedCost: estimatedCost,
-        monthlySavings: monthlySavings,
-        paybackPeriod: paybackPeriod,
-        monthlyBillKwh: actualMonthlyKwh,
-        billOffsetPercentage: _billOffsetPercentage,
-        sunHoursPerDay: _useApiIntegration && finalPvwattsResponse != null
-            ? finalPvwattsResponse
-                  .outputs
-                  .solradAnnual // Use actual solar radiation from API
-            : _sunHoursPerDay, // Use user input when API is disabled
+        systemSize: systemSizeKw,
+        annualProduction: annualProduction,
+        monthlyProduction: monthlyProduction,
+        batterySize: batterySizeKwh,
+        estimatedCost: totalSystemCost,
+        sunHoursPerDay: _useApiIntegration ? null : _sunHoursPerDay,
+        pvwattsAnnualOutput: pvwattsAnnualOutput,
+        numberOfPanels: numberOfPanels,
+        numberOfBatteries: numberOfBatteries,
+        solarPanelCost: solarPanelCost,
+        batteryCost: batteryCost,
       );
+
+      print('=== CALCULATION COMPLETE ===');
+      print('Result: $_calculationResult');
     } catch (e) {
+      print('Calculation error: $e');
       _setError('Calculation failed: ${e.toString()}');
+      _calculationResult = null;
     } finally {
       _isCalculating = false;
       notifyListeners();
@@ -705,38 +490,39 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     final rows = <ProjectRowModel>[];
 
     // Add solar panels row
-    final solarPanelCost = SolarCalculations.calculateSolarPanelCost(
-      _calculationResult!.systemSize,
-    );
+    // final solarPanelCost = SolarCalculations.calculateSolarPanelCost(
+    //   systemSizeKw: _calculationResult!.systemSize,
+    //   panelSizeKw: _solarPanelSizeKw,
+    //   panelPricePhp: _solarPanelPricePhp,
+    // );
     rows.add(
       ProjectRowModel(
         id: _uuid.v4(),
-        title: 'Solar Panels (250W Monocrystalline)',
-        quantity: (_calculationResult!.systemSize * 4)
-            .round(), // Assume 250W panels
+        title: 'Solar Panels (${_solarPanelSizeKw}kW)',
+        quantity: _calculationResult!.numberOfPanels,
         unit: 'pcs',
-        description: 'Solar Panels (250W Monocrystalline)',
-        estimatedPrice: solarPanelCost / (_calculationResult!.systemSize * 4),
+        description: 'Solar Panels (${_solarPanelSizeKw}kW)',
+        estimatedPrice: _solarPanelPricePhp,
         isAutoGenerated: true,
         category: 'solar_panels',
       ),
     );
 
     // Add battery row if off-grid
-    if (_calculationResult!.isOffGrid && _calculationResult!.batterySize > 0) {
-      final batteryCost = SolarCalculations.calculateBatteryCost(
-        _calculationResult!.batterySize,
-      );
+    if (_isOffGrid && _calculationResult!.batterySize > 0) {
+      // final batteryCost = SolarCalculations.calculateBatteryCost(
+      //   batterySizeKwh: _calculationResult!.batterySize,
+      //   batterySizeKw: _batterySizeKwh,
+      //   batteryPricePhp: _batteryPricePhp,
+      // );
       rows.add(
         ProjectRowModel(
           id: _uuid.v4(),
-          title: 'Lithium Battery (2.4kWh)',
-          quantity: (_calculationResult!.batterySize / 2.4)
-              .ceil(), // Assume 2.4kWh per battery
+          title: 'Lithium Battery (${_batterySizeKwh}kWh)',
+          quantity: _calculationResult!.numberOfBatteries,
           unit: 'pcs',
-          description: 'Lithium Battery (2.4kWh)',
-          estimatedPrice:
-              batteryCost / (_calculationResult!.batterySize / 2.4).ceil(),
+          description: 'Lithium Battery (${_batterySizeKwh}kWh)',
+          estimatedPrice: _batteryPricePhp,
           isAutoGenerated: true,
           category: 'battery',
         ),
@@ -830,15 +616,15 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         clientName: _projectDetails!.clientName,
         projectLocation: _projectDetails!.location,
         systemSize: _calculationResult!.systemSize,
-        isOffGrid: _calculationResult!.isOffGrid,
+        isOffGrid: _isOffGrid,
         batterySize: _calculationResult!.batterySize,
         rows: _projectDetails!.rows,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         totalPrice: _projectDetails!.totalCost,
-        monthlyBillKwh: _calculationResult!.monthlyBillKwh,
-        billOffsetPercentage: _calculationResult!.billOffsetPercentage,
-        sunHoursPerDay: _calculationResult!.sunHoursPerDay,
+        monthlyBillKwh: _monthlyBillKwh,
+        billOffsetPercentage: _billOffsetPercentage,
+        sunHoursPerDay: _calculationResult!.sunHoursPerDay ?? _sunHoursPerDay,
         backupHours: _isOffGrid ? _backupHours : null,
         usedPhpBilling: _usedPhpBilling,
         electricityRate: _usedPhpBilling ? _electricityRate : null,
@@ -866,8 +652,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       }
 
       // Get company profile for PDF header
-      final companyProfile = await _settingsRepository
-          .getCompanyProfileWithDefaults();
+      final companyProfile =
+          await _settingsRepository.getCompanyProfileWithDefaults();
 
       // Generate PDF using PdfService
       _generatedPdfFile = await PdfService.generateQuotePdf(
@@ -935,6 +721,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   void resetQuoteGeneration() {
     _currentStep = 1;
     _monthlyBillKwh = 0;
+    _monthlyBillValue = 0;
     _billOffsetPercentage = 80;
     _sunHoursPerDay = 4.5;
     _isOffGrid = false;

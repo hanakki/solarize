@@ -23,6 +23,12 @@ class _StepOneScreenState extends State<StepOneScreen> {
   final _formKey = GlobalKey<FormState>();
   final _monthlyBillController = TextEditingController();
   final _electricityRateController = TextEditingController();
+  final _solarPanelSizeController = TextEditingController();
+  final _solarPanelPriceController = TextEditingController();
+  final _batterySizeController = TextEditingController();
+  final _batteryPriceController = TextEditingController();
+  final _latitudeController = TextEditingController();
+  final _longitudeController = TextEditingController();
 
   @override
   void initState() {
@@ -34,12 +40,24 @@ class _StepOneScreenState extends State<StepOneScreen> {
     final viewModel = context.read<QuoteGenerationViewModel>();
     _monthlyBillController.text = viewModel.monthlyBillKwh.toString();
     _electricityRateController.text = viewModel.electricityRate.toString();
+    _solarPanelSizeController.text = viewModel.solarPanelSizeKw.toString();
+    _solarPanelPriceController.text = viewModel.solarPanelPricePhp.toString();
+    _batterySizeController.text = viewModel.batterySizeKwh.toString();
+    _batteryPriceController.text = viewModel.batteryPricePhp.toString();
+    _latitudeController.text = viewModel.latitude.toString();
+    _longitudeController.text = viewModel.longitude.toString();
   }
 
   @override
   void dispose() {
     _monthlyBillController.dispose();
     _electricityRateController.dispose();
+    _solarPanelSizeController.dispose();
+    _solarPanelPriceController.dispose();
+    _batterySizeController.dispose();
+    _batteryPriceController.dispose();
+    _latitudeController.dispose();
+    _longitudeController.dispose();
     super.dispose();
   }
 
@@ -77,13 +95,25 @@ class _StepOneScreenState extends State<StepOneScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Sun hours per day
-                      _buildSunHoursSection(viewModel),
+                      // Sun hours per day (only show when API is disabled)
+                      if (!viewModel.useApiIntegration) ...[
+                        _buildSunHoursSection(viewModel),
+                        const SizedBox(height: 24),
+                      ],
 
-                      const SizedBox(height: 24),
+                      // API Integration toggle
+                      _buildApiIntegrationSection(viewModel),
 
-                      // Location input
-                      _buildLocationSection(viewModel),
+                      const SizedBox(height: 16),
+
+                      // Location input (only show when API is enabled)
+                      if (viewModel.useApiIntegration) ...[
+                        _buildLocationSection(viewModel),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Solar Panel Configuration
+                      _buildSolarPanelSection(viewModel),
 
                       const SizedBox(height: 24),
 
@@ -92,8 +122,11 @@ class _StepOneScreenState extends State<StepOneScreen> {
 
                       const SizedBox(height: 24),
 
-                      // API Integration toggle
-                      _buildApiIntegrationSection(viewModel),
+                      // Battery Configuration (only show when off-grid is enabled)
+                      if (viewModel.isOffGrid) ...[
+                        _buildBatterySection(viewModel),
+                        const SizedBox(height: 24),
+                      ],
 
                       const SizedBox(height: 45),
 
@@ -146,26 +179,8 @@ class _StepOneScreenState extends State<StepOneScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // PHP input (default)
+        // kWh input
         if (!viewModel.usedPhpBilling) ...[
-          CustomTextField(
-            label: AppStrings.monthlyElectricBillPhpLabel,
-            controller: _monthlyBillController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-            ],
-            validator: (value) =>
-                Validators.validatePositiveNumber(value, 'Monthly bill'),
-            onChanged: (value) {
-              final numValue = double.tryParse(value) ?? 0;
-              viewModel.updateMonthlyBillKwh(numValue);
-            },
-          ),
-        ],
-
-        // kWh input (when checked)
-        if (viewModel.usedPhpBilling) ...[
           CustomTextField(
             label: AppStrings.monthlyElectricBillLabel,
             controller: _monthlyBillController,
@@ -178,6 +193,24 @@ class _StepOneScreenState extends State<StepOneScreen> {
             onChanged: (value) {
               final numValue = double.tryParse(value) ?? 0;
               viewModel.updateMonthlyBillKwh(numValue);
+            },
+          ),
+        ],
+
+        // kWh input (when checked)
+        if (viewModel.usedPhpBilling) ...[
+          CustomTextField(
+            label: AppStrings.monthlyElectricBillPhpLabel,
+            controller: _monthlyBillController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+            ],
+            validator: (value) =>
+                Validators.validatePositiveNumber(value, 'Monthly bill (kWh)'),
+            onChanged: (value) {
+              final numValue = double.tryParse(value) ?? 0;
+              viewModel.updateMonthlyBillPhp(numValue);
             },
           ),
           const SizedBox(height: 24),
@@ -205,7 +238,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
               onChanged: (value) => viewModel.togglePhpBilling(value ?? false),
               activeColor: const Color(0xFF0077D3),
             ),
-            const Text('Enter in kWh'),
+            const Text(AppStrings.electricBillPhpToggle),
           ],
         ),
       ],
@@ -226,17 +259,42 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build sun hours section
+  /// Build sun hours per day section
   Widget _buildSunHoursSection(QuoteGenerationViewModel viewModel) {
     return SliderInputWidget(
       label: AppStrings.sunHoursLabel,
       description: AppStrings.sunHoursDescription,
       value: viewModel.sunHoursPerDay,
       min: 1,
-      max: 12,
-      divisions: 22,
+      max: 8,
+      divisions: 14,
       suffix: ' hours',
       onChanged: viewModel.updateSunHoursPerDay,
+    );
+  }
+
+  /// Build API integration section
+  Widget _buildApiIntegrationSection(QuoteGenerationViewModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(AppStrings.apiIntegrationLabel,
+            style: AppTypography.interSemiBoldGray12_16_15),
+        Transform.translate(
+          offset: const Offset(-14, 0),
+          child: Row(
+            children: [
+              Checkbox(
+                value: viewModel.useApiIntegration,
+                onChanged: (value) =>
+                    viewModel.toggleApiIntegration(value ?? false),
+                activeColor: const Color(0xFF0077D3),
+              ),
+              const Text(AppStrings.apiIntegrationToggle),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -245,42 +303,98 @@ class _StepOneScreenState extends State<StepOneScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'LOCATION',
-          style: AppTypography.interSemiBoldGray12_16_15,
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Enter coordinates for accurate solar production estimates',
-          style: AppTypography.interRegularGray12_16_04,
-        ),
-        const SizedBox(height: 16),
+        // const Text(
+        //   AppStrings.locationConfigurationTitle,
+        //   style: AppTypography.interSemiBoldGray12_16_15,
+        // ),
+        // const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               child: CustomTextField(
-                label: 'LATITUDE',
-                controller: TextEditingController(
-                  text: viewModel.latitude.toStringAsFixed(4),
-                ),
+                label: AppStrings.latitudeLabel,
+                controller: _latitudeController,
+                hint: AppStrings.latitudeHint,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                validator: (value) =>
+                    Validators.validatePositiveNumber(value, 'Latitude'),
                 onChanged: (value) {
-                  final lat = double.tryParse(value) ?? 10.3870;
-                  viewModel.updateLocation(lat, viewModel.longitude);
+                  final numValue = double.tryParse(value) ?? 0;
+                  viewModel.updateLocation(numValue, viewModel.longitude);
                 },
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: CustomTextField(
-                label: 'LONGITUDE',
-                controller: TextEditingController(
-                  text: viewModel.longitude.toStringAsFixed(4),
-                ),
+                label: AppStrings.longitudeLabel,
+                controller: _longitudeController,
+                hint: AppStrings.longitudeHint,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                validator: (value) =>
+                    Validators.validatePositiveNumber(value, 'Longitude'),
                 onChanged: (value) {
-                  final lon = double.tryParse(value) ?? 123.6502;
-                  viewModel.updateLocation(viewModel.latitude, lon);
+                  final numValue = double.tryParse(value) ?? 0;
+                  viewModel.updateLocation(viewModel.latitude, numValue);
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Build solar panel configuration section
+  Widget _buildSolarPanelSection(QuoteGenerationViewModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // const Text(
+        //   AppStrings.solarPanelConfigurationTitle,
+        //   style: AppTypography.interSemiBoldGray12_16_15,
+        // ),
+        // const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                label: AppStrings.solarPanelSizeLabel,
+                controller: _solarPanelSizeController,
+                hint: AppStrings.solarPanelSizeHint,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                validator: (value) =>
+                    Validators.validatePositiveNumber(value, 'Panel size'),
+                onChanged: (value) {
+                  final numValue = double.tryParse(value) ?? 0;
+                  viewModel.updateSolarPanelSize(numValue);
+                },
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                label: AppStrings.solarPanelPriceLabel,
+                controller: _solarPanelPriceController,
+                hint: AppStrings.solarPanelPriceHint,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                validator: (value) =>
+                    Validators.validatePositiveNumber(value, 'Panel price'),
+                onChanged: (value) {
+                  final numValue = double.tryParse(value) ?? 0;
+                  viewModel.updateSolarPanelPrice(numValue);
                 },
               ),
             ),
@@ -329,48 +443,54 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build API integration toggle section
-  Widget _buildApiIntegrationSection(QuoteGenerationViewModel viewModel) {
+  /// Build battery configuration section
+  Widget _buildBatterySection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppStrings.apiIntegrationLabel,
-          style: AppTypography.interSemiBoldGray12_16_15,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          AppStrings.apiIntegrationDescription,
-          style: AppTypography.interRegularGray12_16_04,
-        ),
-        const SizedBox(height: 16),
-        Transform.translate(
-          offset: const Offset(-14, 0),
-          child: Row(
-            children: [
-              Checkbox(
-                value: viewModel.useApiIntegration,
-                onChanged: (value) =>
-                    viewModel.toggleApiIntegration(value ?? true),
-                activeColor: const Color(0xFF0077D3),
+        // const Text(
+        //   AppStrings.batteryConfigurationTitle,
+        //   style: AppTypography.interSemiBoldGray12_16_15,
+        // ),
+        // const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                label: AppStrings.batterySizeLabel,
+                controller: _batterySizeController,
+                hint: AppStrings.batterySizeHint,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                validator: (value) =>
+                    Validators.validatePositiveNumber(value, 'Battery size'),
+                onChanged: (value) {
+                  final numValue = double.tryParse(value) ?? 0;
+                  viewModel.updateBatterySize(numValue);
+                },
               ),
-              Text(AppStrings.apiIntegrationCheckboxLabel),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.only(left: 38),
-          child: Text(
-            viewModel.useApiIntegration
-                ? AppStrings.apiEnabledDescription
-                : AppStrings.apiDisabledDescription,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontStyle: FontStyle.italic,
             ),
-          ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                label: AppStrings.batteryPriceLabel,
+                controller: _batteryPriceController,
+                hint: AppStrings.batteryPriceHint,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                validator: (value) =>
+                    Validators.validatePositiveNumber(value, 'Battery price'),
+                onChanged: (value) {
+                  final numValue = double.tryParse(value) ?? 0;
+                  viewModel.updateBatteryPrice(numValue);
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -378,9 +498,20 @@ class _StepOneScreenState extends State<StepOneScreen> {
 
   /// Check if calculation can be performed
   bool _canCalculate(QuoteGenerationViewModel viewModel) {
-    return viewModel.monthlyBillKwh > 0 &&
-        viewModel.sunHoursPerDay > 0 &&
-        (!viewModel.usedPhpBilling || viewModel.electricityRate > 0);
+    if (viewModel.monthlyBillKwh <= 0) return false;
+    if (viewModel.billOffsetPercentage <= 0) return false;
+    if (!viewModel.useApiIntegration && viewModel.sunHoursPerDay <= 0)
+      return false;
+    if (viewModel.useApiIntegration &&
+        (viewModel.latitude <= 0 || viewModel.longitude <= 0)) return false;
+    if (viewModel.solarPanelSizeKw <= 0) return false;
+    if (viewModel.solarPanelPricePhp <= 0) return false;
+    if (viewModel.isOffGrid) {
+      if (viewModel.backupHours <= 0) return false;
+      if (viewModel.batterySizeKwh <= 0) return false;
+      if (viewModel.batteryPricePhp <= 0) return false;
+    }
+    return true;
   }
 
   /// Handle calculate button press

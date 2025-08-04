@@ -35,6 +35,8 @@ class AppStrings {
       'MONTHLY ELECTRIC BILL (PHP)';
   static const String electricityProviderRateLabel =
       'ELECTRICTY PROVIDER RATE (₱/KWH)';
+  static const String electricBillPhpToggle =
+      'Enter monthly electric bill in PHP (₱)';
   static const String billOffsetPercentageLabel = 'BILL OFFSET PERCENTAGE';
   static const String billOffsetDescription =
       'The portion of your electric bill you want to cover with solar energy';
@@ -42,21 +44,56 @@ class AppStrings {
   static const String sunHoursDescription =
       'Avg. sunlight hours per day (e.g., 5-6 hours on clear days, less on rainy days)';
   static const String systemSetupLabel = "SYSTEM SETUP";
-  static const String offGridSetupLabel = 'OFF-GRID / HYBRID SETUP';
+  static const String offGridSetupLabel = 'Off-grid / Hybrid Setup';
   static const String backupDurationLabel = 'BACKUP DURATION (HOURS)';
   static const String backupDurationDescription =
       'How long you want your battery to provide power during outages or at night';
 
   // API Integration
-  static const String apiIntegrationLabel = 'API INTEGRATION';
+  static const String apiIntegrationLabel = 'ENABLE API SUPPORT';
+  static const String apiIntegrationToggle =
+      'Use PVWatts for more accurate calculations';
   static const String apiIntegrationDescription =
-      'Enable PVWatts API for more accurate solar production estimates based on your location';
-  static const String apiIntegrationCheckboxLabel =
-      'Use PVWatts API for accurate calculations';
+      'Enable API integration for location-based solar calculations';
+  static const String apiIntegrationCheckboxLabel = 'Enable PVWatts API';
   static const String apiEnabledDescription =
-      'API enabled: Calculations will use real solar data from your location';
+      'Using real solar data for precise calculations';
   static const String apiDisabledDescription =
-      'API disabled: Calculations will use estimated values based on sun hours';
+      'Using estimated calculations (less accurate)';
+
+  // Solar Panel Configuration
+  static const String solarPanelSizeLabel = 'PANEL SIZE (KW)';
+  static const String solarPanelSizeHint = 'e.g., 1.0';
+  static const String solarPanelPriceLabel = 'PANEL PRICE (₱)';
+  static const String solarPanelPriceHint = 'e.g., 40000';
+  static const String solarPanelConfigurationTitle =
+      'SOLAR PANEL CONFIGURATION';
+  static const String solarPanelConfigurationDescription =
+      'Configure your solar panel specifications';
+
+  // Battery Configuration
+  static const String batterySizeLabel = 'BATTERY SIZE (KWH)';
+  static const String batterySizeHint = 'e.g., 5.0';
+  static const String batteryPriceLabel = 'BATTERY PRICE (₱)';
+  static const String batteryPriceHint = 'e.g., 125000';
+  static const String batteryConfigurationTitle = 'Battery Configuration';
+  static const String batteryConfigurationDescription =
+      'Configure your battery specifications for off-grid/hybrid systems';
+
+  // Location Configuration
+  static const String latitudeLabel = 'LATITUDE';
+  static const String latitudeHint = 'e.g., 10.387';
+  static const String longitudeLabel = 'LONGITUDE';
+  static const String longitudeHint = 'e.g., 123.6502';
+  static const String locationConfigurationTitle = 'LOCATION CONFIGURATION';
+  static const String locationConfigurationDescription =
+      'Enter your location coordinates for accurate solar calculations';
+
+  // Calculation Results
+  static const String numberOfPanelsLabel = 'Number of Solar Panels';
+  static const String numberOfBatteriesLabel = 'Number of Batteries';
+  static const String panelsNeededLabel = 'Solar Panels Needed';
+  static const String batteriesNeededLabel = 'Batteries Needed';
 
   // Project Details
   static const String projectNameLabel = 'PROJECT NAME';
