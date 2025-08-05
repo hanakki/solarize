@@ -175,13 +175,18 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
             final row = _projectRows[index];
             return _buildItemAccordion(row, index);
           }),
-        Text(
-          'Total: ₱${_calculateTotal().toStringAsFixed(2)}',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.green,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              'Total: ₱${_calculateTotal().toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.green,
+              ),
+            ),
+          ],
         ),
       ],
     );

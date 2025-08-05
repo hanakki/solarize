@@ -48,6 +48,7 @@ class AppStrings {
   static const String backupDurationLabel = 'BACKUP DURATION (HOURS)';
   static const String backupDurationDescription =
       'How long you want your battery to provide power during outages or at night';
+  static const String presetTitleLabel = "PRESET TITLE";
 
   // API Integration
   static const String apiIntegrationLabel = 'ENABLE API SUPPORT';

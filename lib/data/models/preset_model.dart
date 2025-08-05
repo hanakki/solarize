@@ -25,7 +25,6 @@ class PresetModel {
   PresetModel copyWith({
     String? id,
     String? name,
-    String? description,
     List<ProjectRowModel>? defaultRows,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -34,7 +33,6 @@ class PresetModel {
     return PresetModel(
       id: id ?? this.id,
       name: name ?? this.name,
-      description: description ?? this.description,
       defaultRows: defaultRows ?? this.defaultRows,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

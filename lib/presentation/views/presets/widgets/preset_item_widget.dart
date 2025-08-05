@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../data/models/preset_model.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/typography.dart';
 
 /// Widget for displaying a preset item in the list
 class PresetItemWidget extends StatelessWidget {
@@ -19,74 +20,27 @@ class PresetItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Text(
-          preset.name,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.primaryTextColor,
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Color(0xFFE0E0E0),
+            width: 1,
           ),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (preset.description?.isNotEmpty == true) ...[
-              const SizedBox(height: 4),
-              Text(
-                preset.description!,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.secondaryTextColor,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Icon(
-                  Icons.inventory_2,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '${preset.itemCount} items',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Icon(
-                  Icons.attach_money,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '₱${preset.totalEstimatedPrice.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              preset.name,
+              style: AppTypography.interSemiBoldBlack18_24_0,
             ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Edit button
-            if (onEdit != null)
-              IconButton(
+          ),
+          if (onEdit != null)
+            Transform.translate(
+              offset: const Offset(16, 0),
+              child: IconButton(
                 onPressed: onEdit,
                 icon: const Icon(
                   Icons.edit,
@@ -95,9 +49,11 @@ class PresetItemWidget extends StatelessWidget {
                 ),
                 tooltip: 'Edit preset',
               ),
-            // Delete button
-            if (onDelete != null)
-              IconButton(
+            ),
+          if (onDelete != null)
+            Transform.translate(
+              offset: const Offset(8, 0),
+              child: IconButton(
                 onPressed: onDelete,
                 icon: const Icon(
                   Icons.delete,
@@ -106,14 +62,8 @@ class PresetItemWidget extends StatelessWidget {
                 ),
                 tooltip: 'Delete preset',
               ),
-            // Chevron icon
-            const Icon(
-              Icons.chevron_right,
-              color: AppColors.secondaryTextColor,
             ),
-          ],
-        ),
-        onTap: onTap,
+        ],
       ),
     );
   }

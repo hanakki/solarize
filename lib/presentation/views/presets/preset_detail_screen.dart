@@ -6,12 +6,12 @@ import '../../widgets/common/background_container.dart';
 import '../../widgets/common/white_content_container.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
-import '../../widgets/common/accordion_widget.dart';
 import '../../widgets/common/loading_overlay.dart';
 import '../../../data/models/preset_model.dart';
 import '../../../data/models/project_row_model.dart';
 import '../../../core/constants/strings.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/constants/typography.dart';
 import 'add_preset_row_screen.dart';
 
 /// Screen for creating or editing presets
@@ -34,6 +34,9 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
 
   List<ProjectRowModel> _rows = [];
   bool _isEditing = false;
+
+  // Track expanded state for each accordion
+  final Map<int, bool> _expandedStates = {};
 
   @override
   void initState() {
@@ -67,13 +70,10 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
               children: [
                 Column(
                   children: [
-                    // Custom app bar
                     CustomAppBar(
                       title: _isEditing ? 'Edit Preset' : 'Create Preset',
                       onBackPressed: () => Navigator.pop(context),
                     ),
-
-                    // Content
                     Expanded(
                       child: WhiteContentContainer(
                         topMargin: 0,
@@ -82,8 +82,6 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
                     ),
                   ],
                 ),
-
-                // Loading overlay
                 if (viewModel.isSaving) const LoadingOverlay(),
               ],
             );
@@ -100,37 +98,20 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title field
                   CustomTextField(
-                    label: 'Preset Title',
+                    label: AppStrings.presetTitleLabel,
                     controller: _titleController,
                     validator: Validators.validateProjectName,
                     hint: 'Enter preset title',
                   ),
-
-                  const SizedBox(height: 16),
-
-                  // Description field
-                  CustomTextField(
-                    label: 'Description (Optional)',
-                    controller: _descriptionController,
-                    maxLines: 3,
-                    hint: 'Enter description',
-                  ),
-
                   const SizedBox(height: 24),
-
-                  // Particulars section
                   _buildParticularsSection(),
-
-                  const SizedBox(height: 24),
-
-                  // Action buttons
-                  _buildActionButtons(viewModel),
+                  _buildAddRowButton(),
+                  const SizedBox(height: 32),
+                  _buildSaveButton(viewModel),
                 ],
               ),
             ),
@@ -144,16 +125,25 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Particulars',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+        if (_rows.isEmpty)
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'No items added yet.\nTap "Add Row" to get started.',
+                textAlign: TextAlign.center,
+                style: AppTypography.interRegularGray16_24_00,
               ),
             ),
+          )
+        else
+          ...List.generate(_rows.length, (index) {
+            final row = _rows[index];
+            return _buildItemAccordion(row, index);
+          }),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
             Text(
               'Total: ₱${_calculateTotal().toStringAsFixed(2)}',
               style: const TextStyle(
@@ -164,101 +154,142 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
             ),
           ],
         ),
-
-        const SizedBox(height: 16),
-
-        // Particulars list
-        if (_rows.isEmpty)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(32),
-              child: Text(
-                'No particulars added yet.\nTap "Add Row" to get started.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          )
-        else
-          ...List.generate(_rows.length, (index) {
-            final row = _rows[index];
-            return AccordionWidget(
-              title: 'Row ${index + 1}',
-              subtitle: row.description,
-              content: _buildRowContent(row),
-              onLongPress: () => _showRowOptions(index),
-            );
-          }),
       ],
     );
   }
 
-  Widget _buildRowContent(ProjectRowModel row) {
+  Widget _buildItemAccordion(ProjectRowModel row, int index) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildRowDetail('Particular Name', row.title),
-        _buildRowDetail('Quantity', row.quantity.toString()),
-        _buildRowDetail('Unit', row.unit),
-        _buildRowDetail('Description', row.description),
-        _buildRowDetail(
-            'Estimated Price', '₱${row.estimatedPrice.toStringAsFixed(2)}'),
-        _buildRowDetail('Total Price', '₱${row.totalPrice.toStringAsFixed(2)}'),
+        Transform.translate(
+          offset: const Offset(0, 8),
+          child: Text(
+            'ROW ${index + 1}',
+            style: AppTypography.interSemiBoldGray12_16_15,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _buildCustomAccordion(
+          title: row.title,
+          subtitle: '₱${row.totalPrice.toStringAsFixed(2)}',
+          content: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Column(
+              children: [
+                _buildDetailRow('Quantity', '${row.quantity}'),
+                _buildDetailRow('Unit', row.unit),
+                _buildDetailRow('Description', 'Model: ${row.title}'),
+                _buildDetailRow('Estimated Price',
+                    '₱${row.estimatedPrice.toStringAsFixed(2)}'),
+              ],
+            ),
+          ),
+          onLongPress: () => _showRowOptions(index),
+          index: index,
+        ),
       ],
     );
   }
 
-  Widget _buildRowDetail(String label, String value) {
+  /// Build custom accordion widget
+  Widget _buildCustomAccordion({
+    required String title,
+    required String subtitle,
+    required Widget content,
+    required VoidCallback onLongPress,
+    required int index,
+  }) {
+    final isExpanded = _expandedStates[index] ?? false;
+
+    return Column(
+      children: [
+        InkWell(
+          onTap: () {
+            setState(() {
+              _expandedStates[index] = !isExpanded;
+            });
+          },
+          onLongPress: onLongPress,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTypography.interSemiBoldBlack18_24_0,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  isExpanded ? Icons.expand_less : Icons.expand_more,
+                  color: Colors.grey[600],
+                ),
+              ],
+            ),
+          ),
+        ),
+        _buildDivider(),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: isExpanded ? null : 0,
+          child: isExpanded
+              ? Container(
+                  width: double.infinity,
+                  child: content,
+                )
+              : null,
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
-            ),
+          Text(
+            label,
+            style: AppTypography.interSemiBoldBlack16_24_0,
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+          Text(
+            value,
+            style: AppTypography.interRegularGray16_24_00,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButtons(PresetViewModel viewModel) {
-    return Row(
-      children: [
-        Expanded(
-          child: CustomButton(
-            text: 'Add Row',
-            style: CustomButtonStyle.tertiary,
-            onPressed: _addRow,
-            icon: const Icon(Icons.add),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: CustomButton(
-            text: 'Save',
-            onPressed: _canSave() ? () => _savePreset(viewModel) : null,
-          ),
-        ),
-      ],
+  Widget _buildDivider() {
+    return const Divider(
+      color: Color(0xFFA4A3B3),
+      height: 1,
+      thickness: 1,
+    );
+  }
+
+  Widget _buildAddRowButton() {
+    return CustomButton(
+      text: AppStrings.addRowButton,
+      style: CustomButtonStyle.tertiary,
+      onPressed: _addRow,
+      icon: const Icon(Icons.add),
+    );
+  }
+
+  Widget _buildSaveButton(PresetViewModel viewModel) {
+    return CustomButton(
+      text: AppStrings.saveButton,
+      onPressed: _canSave() ? () => _savePreset(viewModel) : null,
     );
   }
 

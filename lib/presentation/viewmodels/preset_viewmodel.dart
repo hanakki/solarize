@@ -134,7 +134,6 @@ class PresetViewModel extends ChangeNotifier {
       // Update preset
       final updatedPreset = existingPreset.copyWith(
         name: name,
-        description: description,
         defaultRows: rows,
         updatedAt: DateTime.now(),
       );

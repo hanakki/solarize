@@ -62,12 +62,15 @@ class _PresetListScreenState extends State<PresetListScreen> {
       ),
 
       // Floating action button for adding new preset
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addNewPreset(),
-        backgroundColor: Theme.of(context).primaryColor,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 48),
+        child: FloatingActionButton(
+          onPressed: () => _addNewPreset(),
+          backgroundColor: Theme.of(context).primaryColor,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
       ),
     );
@@ -154,7 +157,7 @@ class _PresetListScreenState extends State<PresetListScreen> {
 
   Widget _buildPresetList(PresetViewModel viewModel) {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.zero,
       itemCount: viewModel.presets.length,
       itemBuilder: (context, index) {
         final preset = viewModel.presets[index];
