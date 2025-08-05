@@ -4,7 +4,6 @@ import '../../viewmodels/quote_generation_viewmodel.dart';
 import '../../viewmodels/preset_viewmodel.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
-import '../../widgets/common/accordion_widget.dart';
 import 'widgets/step_header_widget.dart';
 import '../../../data/models/project_details_model.dart';
 import '../../../data/models/project_row_model.dart';
@@ -61,6 +60,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final presetViewModel = context.read<PresetViewModel>();
       presetViewModel.loadPresets();
+      print('Loading presets...');
     });
   }
 
@@ -158,13 +158,22 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Header with item count
+        if (_projectRows.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              'Items (${_projectRows.length})',
+              style: AppTypography.interSemiBoldBlack16_24_0,
+            ),
+          ),
         // Project rows as accordions
         if (_projectRows.isEmpty)
           const Center(
             child: Padding(
               padding: EdgeInsets.all(32),
               child: Text(
-                'No items added yet.\nTap "Add Row" to get started.',
+                'No items added yet.\nTap "Add Row" or "Load Preset" to get started.',
                 textAlign: TextAlign.center,
                 style: AppTypography.interRegularGray16_24_00,
               ),
@@ -274,7 +283,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
           duration: const Duration(milliseconds: 300),
           height: isExpanded ? null : 0,
           child: isExpanded
-              ? Container(
+              ? SizedBox(
                   width: double.infinity,
                   child: content,
                 )
@@ -382,9 +391,22 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
 
     if (result is List<ProjectRowModel>) {
+      print('Received ${result.length} rows from preset selection');
       setState(() {
         _projectRows.addAll(result);
       });
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added ${result.length} items from preset'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } else {
+      print('No preset selected or invalid result type: $result');
     }
   }
 

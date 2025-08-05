@@ -5,7 +5,6 @@ import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../../../core/constants/colors.dart';
-import '../../../../core/constants/strings.dart';
 import '../../../widgets/common/custom_button.dart';
 
 /// Widget for previewing and managing generated PDFs

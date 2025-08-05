@@ -258,7 +258,7 @@ class PdfService {
               pw.SizedBox(height: 5),
               pw.Text(
                 'Professional Solar Solutions',
-                style: pw.TextStyle(
+                style: const pw.TextStyle(
                   fontSize: 12,
                   color: PdfColors.grey600,
                 ),

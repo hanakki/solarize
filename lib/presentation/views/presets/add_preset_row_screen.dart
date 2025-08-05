@@ -7,6 +7,7 @@ import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../../data/models/project_row_model.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/constants/strings.dart';
 
 /// Screen for adding or editing preset rows/particulars
 class AddPresetRowScreen extends StatefulWidget {
@@ -112,13 +113,13 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Title of particular
                   CustomTextField(
-                    label: 'Title of Particular',
+                    label: AppStrings.addParticularLabel,
                     controller: _titleController,
                     validator: (value) =>
                         Validators.validateRequired(value, 'Title'),
@@ -126,29 +127,33 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
 
                   const SizedBox(height: 16),
 
-                  // Quantity
-                  CustomTextField(
-                    label: 'Quantity',
-                    controller: _quantityController,
-                    keyboardType: TextInputType.number,
-                    validator: Validators.validateQuantity,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Unit
-                  CustomTextField(
-                    label: 'Unit',
-                    controller: _unitController,
-                    validator: (value) =>
-                        Validators.validateRequired(value, 'Unit'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          label: AppStrings.addQuantityLabel,
+                          controller: _quantityController,
+                          keyboardType: TextInputType.number,
+                          validator: Validators.validateQuantity,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomTextField(
+                          label: AppStrings.addUnitLabel,
+                          controller: _unitController,
+                          validator: (value) =>
+                              Validators.validateRequired(value, 'Unit'),
+                        ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 16),
 
                   // Description
                   CustomTextField(
-                    label: 'Description',
+                    label: AppStrings.addDescriptionLabel,
                     controller: _descriptionController,
                     maxLines: 3,
                     validator: (value) =>
@@ -159,7 +164,7 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
 
                   // Estimated Price
                   CustomTextField(
-                    label: 'Estimated Price',
+                    label: AppStrings.addEstimatedPriceLabel,
                     controller: _priceController,
                     keyboardType: TextInputType.number,
                     validator: Validators.validatePrice,
@@ -171,12 +176,9 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: CustomButton(
-                      text: 'Save',
-                      onPressed: _canSave() ? _saveRow : null,
-                      style: _canSave()
-                          ? CustomButtonStyle.primary
-                          : CustomButtonStyle.secondary,
-                    ),
+                        text: AppStrings.saveButton,
+                        onPressed: _canSave() ? _saveRow : null,
+                        style: CustomButtonStyle.primary),
                   ),
                 ],
               ),

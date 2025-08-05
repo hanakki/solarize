@@ -48,7 +48,6 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
     if (widget.preset != null) {
       _isEditing = true;
       _titleController.text = widget.preset!.name;
-      _descriptionController.text = widget.preset!.description ?? '';
       _rows = List.from(widget.preset!.defaultRows);
     }
   }
@@ -239,7 +238,7 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
           duration: const Duration(milliseconds: 300),
           height: isExpanded ? null : 0,
           child: isExpanded
-              ? Container(
+              ? SizedBox(
                   width: double.infinity,
                   child: content,
                 )

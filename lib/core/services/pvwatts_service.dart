@@ -41,8 +41,9 @@ class PVWattsService {
       print('  Dataset: $dataset');
       print('  Radius: $radius miles');
       if (dcAcRatio != null) print('  DC/AC Ratio: $dcAcRatio');
-      if (invEff != null)
+      if (invEff != null) {
         print('  Inverter Efficiency: ${invEff.toStringAsFixed(1)}%');
+      }
       if (gcr != null) print('  Ground Coverage Ratio: $gcr');
       if (bifaciality != null) print('  Bifaciality: $bifaciality');
       if (albedo != null) print('  Albedo: $albedo');
@@ -69,8 +70,9 @@ class PVWattsService {
       if (dcAcRatio != null) queryParams['dc_ac_ratio'] = dcAcRatio.toString();
       if (invEff != null) queryParams['inv_eff'] = invEff.toString();
       if (gcr != null) queryParams['gcr'] = gcr.toString();
-      if (bifaciality != null)
+      if (bifaciality != null) {
         queryParams['bifaciality'] = bifaciality.toString();
+      }
       if (albedo != null) queryParams['albedo'] = albedo.toString();
       if (soiling != null) {
         queryParams['soiling'] = soiling.join('|');

@@ -303,8 +303,9 @@ class SolarCalculations {
     if (monthlyBill <= 0) return false;
     if (billOffset < 0 || billOffset > 100) return false;
     if (sunHours <= 0 || sunHours > 24) return false;
-    if (backupHours != null && (backupHours < 0 || backupHours > 24))
+    if (backupHours != null && (backupHours < 0 || backupHours > 24)) {
       return false;
+    }
 
     return true;
   }

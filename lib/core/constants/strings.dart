@@ -49,6 +49,12 @@ class AppStrings {
   static const String backupDurationDescription =
       'How long you want your battery to provide power during outages or at night';
   static const String presetTitleLabel = "PRESET TITLE";
+  static const String addParticularLabel = "PARTICULAR";
+  static const String addQuantityLabel = "QUANTITY";
+  static const String addUnitLabel = "UNIT";
+  static const String addDescriptionLabel = "DESCRIPTION";
+  static const String addEstimatedPriceLabel = "ESTIMATED PRICE";
+  static const String addTotalPriceLabel = "TOTAL PRICE";
 
   // API Integration
   static const String apiIntegrationLabel = 'ENABLE API SUPPORT';

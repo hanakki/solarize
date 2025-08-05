@@ -20,50 +20,66 @@ class PresetItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Color(0xFFE0E0E0),
-            width: 1,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Color(0xFFE0E0E0),
+              width: 1,
+            ),
           ),
         ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              preset.name,
-              style: AppTypography.interSemiBoldBlack18_24_0,
-            ),
-          ),
-          if (onEdit != null)
-            Transform.translate(
-              offset: const Offset(16, 0),
-              child: IconButton(
-                onPressed: onEdit,
-                icon: const Icon(
-                  Icons.edit,
-                  size: 20,
-                  color: AppColors.primaryColor,
-                ),
-                tooltip: 'Edit preset',
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    preset.name,
+                    style: AppTypography.interSemiBoldBlack18_24_0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      '${preset.itemCount} items • ₱${preset.totalEstimatedPrice.toStringAsFixed(2)}',
+                      style: AppTypography.interRegularGray14_20_0,
+                    ),
+                  ),
+                ],
               ),
             ),
-          if (onDelete != null)
-            Transform.translate(
-              offset: const Offset(8, 0),
-              child: IconButton(
-                onPressed: onDelete,
-                icon: const Icon(
-                  Icons.delete,
-                  size: 20,
-                  color: Colors.red,
+            if (onEdit != null)
+              Transform.translate(
+                offset: const Offset(16, 0),
+                child: IconButton(
+                  onPressed: onEdit,
+                  icon: const Icon(
+                    Icons.edit,
+                    size: 20,
+                    color: AppColors.primaryColor,
+                  ),
+                  tooltip: 'Edit preset',
                 ),
-                tooltip: 'Delete preset',
               ),
-            ),
-        ],
+            if (onDelete != null)
+              Transform.translate(
+                offset: const Offset(8, 0),
+                child: IconButton(
+                  onPressed: onDelete,
+                  icon: const Icon(
+                    Icons.delete,
+                    size: 20,
+                    color: Colors.red,
+                  ),
+                  tooltip: 'Delete preset',
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

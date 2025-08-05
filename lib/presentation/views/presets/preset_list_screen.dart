@@ -187,6 +187,8 @@ class _PresetListScreenState extends State<PresetListScreen> {
 
   void _selectPreset(PresetModel preset) {
     // Return the preset's rows to the previous screen
+    print(
+        'Selected preset: ${preset.name} with ${preset.defaultRows.length} rows');
     Navigator.pop(context, preset.defaultRows);
   }
 

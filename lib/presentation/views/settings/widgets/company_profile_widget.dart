@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
-import '../../../../data/models/company_profile_model.dart';
 import '../../../viewmodels/settings_viewmodel.dart';
 import 'file_upload_widget.dart';
 

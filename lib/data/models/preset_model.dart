@@ -5,7 +5,6 @@ import 'project_row_model.dart';
 class PresetModel {
   final String id;
   final String name;
-  final String? description;
   final List<ProjectRowModel> defaultRows;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -14,7 +13,6 @@ class PresetModel {
   const PresetModel({
     required this.id,
     required this.name,
-    this.description,
     required this.defaultRows,
     required this.createdAt,
     required this.updatedAt,
@@ -53,7 +51,6 @@ class PresetModel {
     return {
       'id': id,
       'name': name,
-      'description': description,
       'defaultRows': defaultRows.map((row) => row.toJson()).toList(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
@@ -66,7 +63,6 @@ class PresetModel {
     return PresetModel(
       id: json['id'] as String,
       name: json['name'] as String,
-      description: json['description'] as String?,
       defaultRows: (json['defaultRows'] as List)
           .map((row) => ProjectRowModel.fromJson(row as Map<String, dynamic>))
           .toList(),

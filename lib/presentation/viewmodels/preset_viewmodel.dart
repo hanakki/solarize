@@ -204,7 +204,6 @@ class PresetViewModel extends ChangeNotifier {
     _currentPreset = PresetModel(
       id: _uuid.v4(),
       name: '',
-      description: '',
       defaultRows: [],
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),

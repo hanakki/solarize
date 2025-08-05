@@ -13,10 +13,9 @@ class PresetRepository {
   Future<List<PresetModel>> getAllPresets() async {
     try {
       final presets = await _storageService.getPresets();
-      if (presets.isEmpty) {
-        return _getDefaultPresets();
-      }
-      return presets;
+      // Always include default presets
+      final allPresets = [..._getDefaultPresets(), ...presets];
+      return allPresets;
     } catch (e) {
       // Return default presets if there's an error
       return _getDefaultPresets();
@@ -38,35 +37,29 @@ class PresetRepository {
     final preset = PresetModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
-      description: description ?? '',
       defaultRows: rows,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
 
-    final presets = await getAllPresets();
-    presets.add(preset);
-    await _savePresets(presets);
+    // Save only the new preset to storage
+    await _storageService.savePreset(preset);
 
     return preset;
   }
 
   /// Update an existing preset
   Future<void> updatePreset(PresetModel preset) async {
-    final presets = await getAllPresets();
-    final index = presets.indexWhere((p) => p.id == preset.id);
-
-    if (index != -1) {
-      presets[index] = preset;
-      await _savePresets(presets);
+    // Only update user-created presets
+    if (!preset.isDefault) {
+      await _storageService.savePreset(preset);
     }
   }
 
   /// Delete a preset
   Future<void> deletePreset(String id) async {
-    final presets = await getAllPresets();
-    presets.removeWhere((preset) => preset.id == id);
-    await _savePresets(presets);
+    // Only delete user-created presets
+    await _storageService.deletePreset(id);
   }
 
   /// Check if preset name exists
@@ -74,12 +67,15 @@ class PresetRepository {
     final presets = await getAllPresets();
     return presets.any((preset) =>
         preset.name.toLowerCase() == name.toLowerCase() &&
-        preset.id != excludeId);
+        preset.id != excludeId &&
+        !preset.isDefault); // Only check user-created presets
   }
 
   /// Save presets to storage
   Future<void> _savePresets(List<PresetModel> presets) async {
-    for (final preset in presets) {
+    // Clear existing presets and save only user-created presets
+    await _storageService.clearPresets();
+    for (final preset in presets.where((p) => !p.isDefault)) {
       await _storageService.savePreset(preset);
     }
   }
@@ -90,7 +86,6 @@ class PresetRepository {
       PresetModel(
         id: 'default_solar_5kw',
         name: '5kW Solar System',
-        description: 'Standard 5kW grid-tied solar system',
         defaultRows: [
           const ProjectRowModel(
             id: '1',
@@ -130,7 +125,6 @@ class PresetRepository {
       PresetModel(
         id: 'default_solar_10kw',
         name: '10kW Solar System',
-        description: 'Standard 10kW grid-tied solar system',
         defaultRows: [
           const ProjectRowModel(
             id: '1',

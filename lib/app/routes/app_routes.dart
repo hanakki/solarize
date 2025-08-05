@@ -4,9 +4,9 @@ import '../../presentation/views/quote_generation/quote_generation_screen.dart';
 import '../../presentation/views/quote_generation/step_one_screen.dart';
 import '../../presentation/views/quote_generation/step_two_screen.dart';
 import '../../presentation/views/quote_generation/step_three_screen.dart';
-import '../../presentation/views/quote_generation/add_row_screen.dart';
 import '../../presentation/views/presets/preset_list_screen.dart';
 import '../../presentation/views/presets/preset_detail_screen.dart';
+import '../../presentation/views/presets/add_preset_row_screen.dart';
 
 import '../../presentation/views/settings/settings_screen.dart';
 
@@ -45,9 +45,8 @@ class AppRoutes {
       case addRow:
         final args = routeSettings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => AddRowScreen(
+          builder: (_) => AddPresetRowScreen(
             existingRow: args?['existingRow'],
-            isEditing: args?['isEditing'] ?? false,
           ),
         );
 

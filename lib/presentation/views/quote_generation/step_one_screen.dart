@@ -631,10 +631,13 @@ class _StepOneScreenState extends State<StepOneScreen> {
   bool _canCalculate(QuoteGenerationViewModel viewModel) {
     if (viewModel.monthlyBillKwh <= 0) return false;
     if (viewModel.billOffsetPercentage <= 0) return false;
-    if (!viewModel.useApiIntegration && viewModel.sunHoursPerDay <= 0)
+    if (!viewModel.useApiIntegration && viewModel.sunHoursPerDay <= 0) {
       return false;
+    }
     if (viewModel.useApiIntegration &&
-        (viewModel.latitude <= 0 || viewModel.longitude <= 0)) return false;
+        (viewModel.latitude <= 0 || viewModel.longitude <= 0)) {
+      return false;
+    }
     if (viewModel.solarPanelSizeKw <= 0) return false;
     if (viewModel.solarPanelPricePhp <= 0) return false;
     if (viewModel.isOffGrid) {
