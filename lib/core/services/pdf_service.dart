@@ -6,44 +6,11 @@ import 'package:path_provider/path_provider.dart';
 import '../../data/models/quote_model.dart';
 import '../../data/models/company_profile_model.dart';
 
-/// Service class for generating PDF documents
-/// Creates professional quotation PDFs with company branding
+// for generating PDF documents
 class PdfService {
-  /// Test method to verify logo loading (for debugging)
-  static Future<void> testLogoLoading(String logoPath) async {
-    try {
-      print('=== LOGO LOADING TEST ===');
-      print('Testing logo path: $logoPath');
-
-      final file = File(logoPath);
-      if (!await file.exists()) {
-        print('Logo file does not exist');
-        return;
-      }
-
-      final fileSize = await file.length();
-      print('Logo file exists, size: $fileSize bytes');
-
-      final bytes = await file.readAsBytes();
-      print('Logo bytes read: ${bytes.length} bytes');
-
-      final preparedBytes = await _prepareImageForPdf(bytes);
-      if (preparedBytes != null) {
-        print('Logo prepared successfully for PDF');
-        print('Logo format detected and validated');
-      } else {
-        print('Logo preparation failed');
-      }
-
-      print('=== END LOGO TEST ===');
-    } catch (e) {
-      print('Logo test failed: $e');
-    }
-  }
-
-  /// Get user-friendly file path for display
+  // Get user-friendly file path for display (for snackbar)
+  // only the filename and folder for display
   static String getUserFriendlyPath(String filePath) {
-    // Extract just the filename and folder for display
     final pathParts = filePath.split('/');
     if (pathParts.length >= 2) {
       final folder = pathParts[pathParts.length - 2];
@@ -53,22 +20,19 @@ class PdfService {
     return filePath;
   }
 
-  /// Validate and prepare image for PDF
+  // Validate and prepare image for PDF for logo
   static Future<Uint8List?> _prepareImageForPdf(Uint8List imageBytes) async {
     try {
-      // Check if the image bytes start with common image format headers
       if (imageBytes.length < 4) {
         print('Image bytes too short');
         return null;
       }
 
-      // Check for JPEG header
       if (imageBytes[0] == 0xFF && imageBytes[1] == 0xD8) {
         print('Detected JPEG format');
         return imageBytes;
       }
 
-      // Check for PNG header
       if (imageBytes[0] == 0x89 &&
           imageBytes[1] == 0x50 &&
           imageBytes[2] == 0x4E &&
@@ -85,7 +49,7 @@ class PdfService {
     }
   }
 
-  /// Generate a PDF quotation document
+  // Generate a PDF
   static Future<File> generateQuotePdf(
     QuoteModel quote,
     CompanyProfileModel? companyProfile,
@@ -97,9 +61,6 @@ class PdfService {
     if (companyProfile?.hasLogo == true && companyProfile!.logoPath != null) {
       try {
         print('Attempting to load logo from: ${companyProfile.logoPath}');
-
-        // Test logo loading first
-        await testLogoLoading(companyProfile.logoPath!);
 
         final logoBytes = await _loadLogoImage(companyProfile.logoPath!);
         final preparedBytes = await _prepareImageForPdf(logoBytes);
@@ -134,8 +95,6 @@ class PdfService {
             _buildSystemSpecs(quote),
             pw.SizedBox(height: 20),
             _buildItemizedList(quote),
-            // pw.SizedBox(height: 20),
-            // _buildTotalSection(quote),
             pw.SizedBox(height: 30),
             _buildFooter(companyProfile),
           ];
@@ -143,7 +102,7 @@ class PdfService {
       ),
     );
 
-    // Save PDF to downloads folder for better accessibility
+    // Save to downloads folder
     final downloadsDir = await _getDownloadsDirectory();
     final fileName =
         'Solar_Quote_${quote.projectName.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')}_${DateTime.now().millisecondsSinceEpoch}.pdf';
@@ -153,13 +112,12 @@ class PdfService {
     return file;
   }
 
-  /// Get downloads directory
+  // Get downloads directory
   static Future<Directory> _getDownloadsDirectory() async {
     try {
-      // Try to get external storage directory (downloads)
       final externalDir = await getExternalStorageDirectory();
       if (externalDir != null) {
-        // Try different possible download folder paths
+        // Try different possible folder paths
         final possiblePaths = [
           '${externalDir.path}/Download',
           '${externalDir.path}/Downloads',
@@ -192,7 +150,7 @@ class PdfService {
     return downloadsDir;
   }
 
-  /// Build PDF header with company information and logo
+  // PDF header with company information and logo
   static pw.Widget _buildHeader(
       CompanyProfileModel? companyProfile, pw.MemoryImage? logoImage) {
     print('Building header - logoImage is null: ${logoImage == null}');
@@ -208,7 +166,7 @@ class PdfService {
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // Logo if available
+              // if logo available
               if (logoImage != null) ...[
                 pw.Image(
                   logoImage,
@@ -242,35 +200,11 @@ class PdfService {
             ],
           ),
         ),
-        // pw.Expanded(
-        //   flex: 1,
-        //   child: pw.Column(
-        //     crossAxisAlignment: pw.CrossAxisAlignment.end,
-        //     children: [
-        //       pw.Text(
-        //         'SOLAR QUOTATION',
-        //         style: pw.TextStyle(
-        //           fontSize: 20,
-        //           fontWeight: pw.FontWeight.bold,
-        //           color: PdfColors.blue,
-        //         ),
-        //       ),
-        //       pw.SizedBox(height: 5),
-        //       pw.Text(
-        //         'Professional Solar Solutions',
-        //         style: const pw.TextStyle(
-        //           fontSize: 12,
-        //           color: PdfColors.grey600,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ],
     );
   }
 
-  /// Load logo image from file path
+  // get logo image from file path
   static Future<Uint8List> _loadLogoImage(String logoPath) async {
     try {
       print('Loading logo from path: $logoPath');
@@ -299,17 +233,9 @@ class PdfService {
     }
   }
 
-  /// Build quote information section
+  // quote information section
   static pw.Widget _buildQuoteInfo(QuoteModel quote) {
-    return
-        // pw.Container(
-        //   padding: const pw.EdgeInsets.all(16),
-        //   decoration: pw.BoxDecoration(
-        //     border: pw.Border.all(color: PdfColors.grey300),
-        //     borderRadius: pw.BorderRadius.circular(8),
-        //   ),
-        //   child:
-        pw.Column(
+    return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
@@ -349,17 +275,9 @@ class PdfService {
     );
   }
 
-  /// Build system specifications section
+  // system specs section
   static pw.Widget _buildSystemSpecs(QuoteModel quote) {
-    return
-        // pw.Container(
-        //   padding: const pw.EdgeInsets.all(16),
-        //   decoration: pw.BoxDecoration(
-        //     color: PdfColors.blue50,
-        //     borderRadius: pw.BorderRadius.circular(8),
-        //   ),
-        //   child:
-        pw.Column(
+    return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
@@ -387,7 +305,7 @@ class PdfService {
     );
   }
 
-  /// Build itemized list of components
+  // itemized list of
   static pw.Widget _buildItemizedList(QuoteModel quote) {
     // Calculate total from rows
     final totalFromRows = quote.rows.fold<double>(
@@ -445,7 +363,7 @@ class PdfService {
                 ),
               ],
             ),
-            // Data rows
+            // Data row
             ...quote.rows.map((row) {
               final subtotal = row.quantity * row.estimatedPrice;
               return pw.TableRow(
@@ -507,42 +425,7 @@ class PdfService {
     );
   }
 
-  // /// Build total section
-  // static pw.Widget _buildTotalSection(QuoteModel quote) {
-  //   return pw.Container(
-  //     alignment: pw.Alignment.centerRight,
-  //     child: pw.Container(
-  //       width: 200,
-  //       padding: const pw.EdgeInsets.all(16),
-  //       decoration: pw.BoxDecoration(
-  //         color: PdfColors.blue,
-  //         borderRadius: pw.BorderRadius.circular(8),
-  //       ),
-  //       child: pw.Column(
-  //         children: [
-  //           pw.Text(
-  //             'Total Amount',
-  //             style: pw.TextStyle(
-  //               color: PdfColors.white,
-  //               fontSize: 16,
-  //               fontWeight: pw.FontWeight.bold,
-  //             ),
-  //           ),
-  //           pw.Text(
-  //             'PHP ${quote.totalPrice.toStringAsFixed(2)}',
-  //             style: pw.TextStyle(
-  //               color: PdfColors.white,
-  //               fontSize: 20,
-  //               fontWeight: pw.FontWeight.bold,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  /// Build footer with additional information
+  // footer with additional information
   static pw.Widget _buildFooter(CompanyProfileModel? companyProfile) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,

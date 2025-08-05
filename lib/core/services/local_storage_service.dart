@@ -5,17 +5,15 @@ import '../../data/models/quote_model.dart';
 import '../../data/models/preset_model.dart';
 import '../../data/models/company_profile_model.dart';
 
-/// Service class for handling local storage operations
-/// Uses SharedPreferences to store app data locally
+// for handling local storage operations
+// Uses SharedPreferences to store app data locally
 class LocalStorageService {
   static SharedPreferences? _prefs;
 
-  /// Initialize the local storage service
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  /// Get SharedPreferences instance
   static SharedPreferences get prefs {
     if (_prefs == null) {
       throw Exception(
@@ -26,7 +24,7 @@ class LocalStorageService {
 
   // Quote Operations
 
-  /// Save a quote to local storage
+  // for saving a quote to local storage
   Future<void> saveQuote(QuoteModel quote) async {
     try {
       final quotes = await getQuotes();
@@ -46,7 +44,7 @@ class LocalStorageService {
     }
   }
 
-  /// Get all quotes from local storage
+  // Get all quotes from local storage
   Future<List<QuoteModel>> getQuotes() async {
     try {
       final quotesString = prefs.getString(AppConstants.quotesStorageKey);
@@ -59,7 +57,7 @@ class LocalStorageService {
     }
   }
 
-  /// Delete a quote from local storage
+  // Delete a quote from local storage
   Future<void> deleteQuote(String quoteId) async {
     try {
       final quotes = await getQuotes();
@@ -75,7 +73,7 @@ class LocalStorageService {
 
   // Preset Operations
 
-  /// Save a preset to local storage
+  // for saving a preset to local storage
   Future<void> savePreset(PresetModel preset) async {
     try {
       final presets = await getPresets();
@@ -95,7 +93,7 @@ class LocalStorageService {
     }
   }
 
-  /// Get all presets from local storage
+  // Get all presets
   Future<List<PresetModel>> getPresets() async {
     try {
       final presetsString = prefs.getString(AppConstants.presetsStorageKey);
@@ -108,7 +106,7 @@ class LocalStorageService {
     }
   }
 
-  /// Delete a preset from local storage
+  // Delete a preset
   Future<void> deletePreset(String presetId) async {
     try {
       final presets = await getPresets();
@@ -122,7 +120,7 @@ class LocalStorageService {
     }
   }
 
-  /// Clear all presets from local storage
+  // For clearing all presets from local storage
   Future<void> clearPresets() async {
     try {
       await prefs.remove(AppConstants.presetsStorageKey);
@@ -133,7 +131,7 @@ class LocalStorageService {
 
   // Settings Operations
 
-  /// Save company profile settings
+  // For saving company profile settings
   Future<void> saveSettings(CompanyProfileModel settings) async {
     try {
       await prefs.setString(
@@ -143,7 +141,7 @@ class LocalStorageService {
     }
   }
 
-  /// Get company profile settings
+  // Get company profile settings
   Future<CompanyProfileModel?> getSettings() async {
     try {
       final settingsString = prefs.getString(AppConstants.settingsStorageKey);

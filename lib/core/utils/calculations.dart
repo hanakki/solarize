@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../constants/app_constants.dart';
 
-/// Utility class for solar system calculations
-/// Contains all formulas and logic for system sizing and pricing
+// for solar  calculations
+
 class SolarCalculations {
-  /// Calculate target daily consumption
-  /// Formula: (Electric Bill in kWh × Offset %) ÷ Days per Month
+  // target daily consumption
+  // (Electric Bill in kWh × Offset %) ÷ Days per Month
   static double calculateTargetDailyConsumption({
     required double monthlyBillKwh,
     required double billOffsetPercentage,
@@ -22,8 +22,8 @@ class SolarCalculations {
     return double.parse(targetDailyConsumption.toStringAsFixed(2));
   }
 
-  /// Calculate target daily consumption with automatic PHP to kWh conversion
-  /// Formula: (Monthly Bill (kWh) × Bill Offset Percentage) / Days in Month
+  //  target daily consumption PHP to kWh conversion
+  // (Monthly Bill (kWh) × Bill Offset Percentage) / Days in Month
   static double calculateTargetDailyConsumptionWithConversion({
     required double monthlyBillValue,
     required double billOffsetPercentage,
@@ -40,7 +40,7 @@ class SolarCalculations {
           'Electricity rate must be greater than 0 for PHP billing');
     }
 
-    // Convert PHP to kWh if needed
+    // PHP to kWh
     final monthlyBillKwh = isPhpBilling
         ? convertPhpToKwh(
             monthlyBillPhp: monthlyBillValue, electricityRate: electricityRate)
@@ -52,17 +52,17 @@ class SolarCalculations {
     return double.parse(targetDailyConsumption.toStringAsFixed(2));
   }
 
-  /// Get PVWatts API data for a specific location
-  /// Returns the ac_annual value from PVWatts API
+  // get PVWatts API data for a specific location
+  // Returns ac_annual from API
   static Future<double> getPvwattsAnnualOutput({
     required double latitude,
     required double longitude,
   }) async {
     try {
       const String baseUrl = 'https://developer.nrel.gov/api/pvwatts/v8';
-      const String apiKey = 'DEMO_KEY'; // Replace with your actual API key
+      const String apiKey =
+          'mz7EP8r1LLmzzN1HZFPiM5FRBtF46MrH3hi5voVb'; // backup: DEMO_KEY
 
-      // Build query parameters with fixed constants
       final queryParams = {
         'format': 'json',
         'api_key': apiKey,
@@ -77,16 +77,13 @@ class SolarCalculations {
         'timeframe': AppConstants.pvwattsTimeframe,
       };
 
-      // Build URL
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
 
-      // Make API call
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        // Check for API errors
         if (data['errors'] != null && (data['errors'] as List).isNotEmpty) {
           throw Exception('PVWatts API error: ${data['errors']}');
         }
@@ -107,37 +104,37 @@ class SolarCalculations {
     }
   }
 
-  /// Calculate system size using PVWatts data
-  /// Formula: Target Daily Consumption ÷ PVWatts Daily Output
+  // system size using PVWatts data
+  // Target Daily Consumption ÷ PVWatts Daily Output
   static Future<double> calculateSystemSizeWithPvwatts({
     required double monthlyBillKwh,
     required double billOffsetPercentage,
     required double latitude,
     required double longitude,
   }) async {
-    // Calculate target daily consumption
+    // target daily consumption
     final targetDailyConsumption = calculateTargetDailyConsumption(
       monthlyBillKwh: monthlyBillKwh,
       billOffsetPercentage: billOffsetPercentage,
     );
 
-    // Get PVWatts annual output
+    // PVWatts annual output
     final pvwattsAnnualOutput = await getPvwattsAnnualOutput(
       latitude: latitude,
       longitude: longitude,
     );
 
-    // Calculate PVWatts daily output
+    // PVWatts daily output
     final pvwattsDailyOutput = pvwattsAnnualOutput / 365;
 
-    // Calculate system size
+    // system size
     final systemSize = targetDailyConsumption / pvwattsDailyOutput;
 
     return double.parse(systemSize.toStringAsFixed(2));
   }
 
-  /// Calculate system size based on monthly consumption and requirements (legacy method)
-  /// Formula: (Electric Bill (kWh) × Bill Offset Percentage × Power Factor) / (30 × Sun Hours per Day)
+  // system size based on monthly consumption and requirements (non-API method)
+  // (Electric Bill (kWh) × Bill Offset Percentage × Power Factor) / (30 × Sun Hours per Day)
   static double calculateSystemSize({
     required double monthlyBillKwh,
     required double billOffsetPercentage,
@@ -155,8 +152,8 @@ class SolarCalculations {
     return double.parse(systemSize.toStringAsFixed(2));
   }
 
-  /// Calculate system size with automatic PHP to kWh conversion
-  /// Formula: (Electric Bill (kWh) × Bill Offset Percentage × Power Factor) / (30 × Sun Hours per Day)
+  // system size with PHP to kWh
+  // (Electric Bill (kWh) × Bill Offset Percentage × Power Factor) / (30 × Sun Hours per Day)
   static double calculateSystemSizeWithConversion({
     required double monthlyBillValue,
     required double billOffsetPercentage,
@@ -173,7 +170,7 @@ class SolarCalculations {
           'Electricity rate must be greater than 0 for PHP billing');
     }
 
-    // Convert PHP to kWh if needed
+    // PHP to kWh
     final monthlyBillKwh = isPhpBilling
         ? convertPhpToKwh(
             monthlyBillPhp: monthlyBillValue, electricityRate: electricityRate)
@@ -185,8 +182,8 @@ class SolarCalculations {
     return double.parse(systemSize.toStringAsFixed(2));
   }
 
-  /// Calculate battery size for off-grid/hybrid systems
-  /// Formula: (Daily Energy Consumption (kWh) × Backup Hours) / (DoD × Efficiency)
+  // battery size for off-grid/hybrid systems
+  // (Daily Energy Consumption (kWh) × Backup Hours) / (DoD × Efficiency)
   static double calculateBatterySize({
     required double dailyEnergyConsumption,
     required double backupHours,
@@ -202,12 +199,12 @@ class SolarCalculations {
     return double.parse(batterySize.toStringAsFixed(2));
   }
 
-  /// Calculate daily energy consumption from monthly bill
+  // daily energy consumption from monthly bill
   static double calculateDailyConsumption(double monthlyBillKwh) {
     return monthlyBillKwh / AppConstants.daysInMonth;
   }
 
-  /// Convert PHP bill to kWh using electricity rate
+  // PHP bill to kWh using electricity rate
   static double convertPhpToKwh({
     required double monthlyBillPhp,
     required double electricityRate,
@@ -219,7 +216,7 @@ class SolarCalculations {
     return monthlyBillPhp / electricityRate;
   }
 
-  /// Calculate solar panel cost using user-defined panel size and price
+  // solar panel cost using user-defined panel size and price
   static double calculateSolarPanelCost({
     required double systemSizeKw,
     required double panelSizeKw,
@@ -230,14 +227,13 @@ class SolarCalculations {
           'System size, panel size, and panel price must be greater than 0');
     }
 
-    // Calculate number of panels needed
     final numberOfPanels = (systemSizeKw / panelSizeKw).ceil();
     final totalCost = numberOfPanels * panelPricePhp;
 
     return double.parse(totalCost.toStringAsFixed(2));
   }
 
-  /// Calculate number of solar panels needed
+  // number of solar panels needed
   static int calculateNumberOfPanels({
     required double systemSizeKw,
     required double panelSizeKw,
@@ -249,7 +245,7 @@ class SolarCalculations {
     return (systemSizeKw / panelSizeKw).ceil();
   }
 
-  /// Calculate battery cost using user-defined battery size and price
+  // battery cost using user-defined battery size and price
   static double calculateBatteryCost({
     required double batterySizeKwh,
     required double batterySizeKw,
@@ -259,14 +255,13 @@ class SolarCalculations {
       throw ArgumentError('Battery size and price must be greater than 0');
     }
 
-    // Calculate number of batteries needed
     final numberOfBatteries = (batterySizeKwh / batterySizeKw).ceil();
     final totalCost = numberOfBatteries * batteryPricePhp;
 
     return double.parse(totalCost.toStringAsFixed(2));
   }
 
-  /// Calculate number of batteries needed
+  // number of batteries needed
   static int calculateNumberOfBatteries({
     required double batterySizeKwh,
     required double batterySizeKw,
@@ -278,7 +273,7 @@ class SolarCalculations {
     return (batterySizeKwh / batterySizeKw).ceil();
   }
 
-  /// Calculate total system cost including panels and battery
+  // total system cost including panels and battery
   static double calculateTotalSystemCost({
     required double solarPanelCost,
     required bool includesBattery,
@@ -293,7 +288,7 @@ class SolarCalculations {
     return double.parse(totalCost.toStringAsFixed(2));
   }
 
-  /// Validate calculation inputs
+  // Validation
   static bool validateCalculationInputs({
     required double monthlyBill,
     required double billOffset,
@@ -310,7 +305,6 @@ class SolarCalculations {
     return true;
   }
 
-  /// Get recommended system size range
   static Map<String, double> getRecommendedSystemRange(double calculatedSize) {
     return {
       'minimum': double.parse((calculatedSize * 0.8).toStringAsFixed(2)),
@@ -319,7 +313,7 @@ class SolarCalculations {
     };
   }
 
-  /// Calculate estimated monthly savings
+  // estimated monthly savings
   static double calculateMonthlySavings({
     required double systemSizeKw,
     required double sunHoursPerDay,

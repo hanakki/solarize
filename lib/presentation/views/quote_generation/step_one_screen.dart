@@ -338,7 +338,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
             ],
             validator: (value) =>
-                Validators.validatePositiveNumber(value, 'Monthly bill (kWh)'),
+                Validators.validatePositiveNumber(value, 'Monthly bill (PHP)'),
             onChanged: (value) {
               final numValue = double.tryParse(value) ?? 0;
               viewModel.updateMonthlyBillPhp(numValue);
@@ -631,6 +631,8 @@ class _StepOneScreenState extends State<StepOneScreen> {
   bool _canCalculate(QuoteGenerationViewModel viewModel) {
     if (viewModel.monthlyBillKwh <= 0) return false;
     if (viewModel.billOffsetPercentage <= 0) return false;
+    if (viewModel.usedPhpBilling && viewModel.electricityRate <= 0)
+      return false;
     if (!viewModel.useApiIntegration && viewModel.sunHoursPerDay <= 0) {
       return false;
     }

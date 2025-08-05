@@ -162,7 +162,10 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update monthly bill in PHP (stores the PHP value)
   void updateMonthlyBillPhp(double value) {
     _monthlyBillValue = value;
-    // Don't convert here, let the calculation functions handle it
+    // Calculate kWh from PHP value and electricity rate
+    if (_electricityRate > 0) {
+      _monthlyBillKwh = value / _electricityRate;
+    }
     _markDataChanged();
     _clearError();
     notifyListeners();
@@ -203,6 +206,14 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Toggle PHP billing mode
   void togglePhpBilling(bool value) {
     _usedPhpBilling = value;
+    // Convert between kWh and PHP when toggling
+    if (value && _monthlyBillKwh > 0 && _electricityRate > 0) {
+      // Converting from kWh to PHP
+      _monthlyBillValue = _monthlyBillKwh * _electricityRate;
+    } else if (!value && _monthlyBillValue > 0 && _electricityRate > 0) {
+      // Converting from PHP to kWh
+      _monthlyBillKwh = _monthlyBillValue / _electricityRate;
+    }
     _markDataChanged();
     _clearError();
     notifyListeners();
@@ -219,6 +230,10 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   /// Update electricity rate
   void updateElectricityRate(double value) {
     _electricityRate = value;
+    // Recalculate kWh from PHP value if using PHP billing
+    if (_usedPhpBilling && _monthlyBillValue > 0 && value > 0) {
+      _monthlyBillKwh = _monthlyBillValue / value;
+    }
     _markDataChanged();
     _clearError();
     notifyListeners();

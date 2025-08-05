@@ -1,7 +1,6 @@
-/// Utility class for form validation
-/// Contains validation methods for different input types
+// form validation
 class Validators {
-  /// Validate required text fields
+  // text fields
   static String? validateRequired(String? value, [String? fieldName]) {
     if (value == null || value.trim().isEmpty) {
       return '${fieldName ?? 'This field'} is required';
@@ -9,7 +8,7 @@ class Validators {
     return null;
   }
 
-  /// Validate email format
+  // email format
   static String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
@@ -23,13 +22,12 @@ class Validators {
     return null;
   }
 
-  /// Validate phone number format
+  // phone number format
   static String? validatePhoneNumber(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Phone number is required';
     }
 
-    // Remove all non-digit characters
     final digitsOnly = value.replaceAll(RegExp(r'[^\d]'), '');
 
     if (digitsOnly.length < 10 || digitsOnly.length > 15) {
@@ -39,7 +37,7 @@ class Validators {
     return null;
   }
 
-  /// Validate positive numbers
+  // positive numbers
   static String? validatePositiveNumber(String? value, [String? fieldName]) {
     if (value == null || value.trim().isEmpty) {
       return '${fieldName ?? 'This field'} is required';
@@ -57,7 +55,7 @@ class Validators {
     return null;
   }
 
-  /// Validate percentage (0-100)
+  // percentage (0-100)
   static String? validatePercentage(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Percentage is required';
@@ -75,7 +73,7 @@ class Validators {
     return null;
   }
 
-  /// Validate sun hours (reasonable range)
+  // sun hours (reasonable range)
   static String? validateSunHours(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Sun hours is required';
@@ -93,7 +91,7 @@ class Validators {
     return null;
   }
 
-  /// Validate backup hours (0-24)
+  // backup hours (0-24)
   static String? validateBackupHours(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Backup hours is required';
@@ -111,13 +109,12 @@ class Validators {
     return null;
   }
 
-  /// Validate price/currency values
+  // price/currency values
   static String? validatePrice(String? value, [String? fieldName]) {
     if (value == null || value.trim().isEmpty) {
       return '${fieldName ?? 'Price'} is required';
     }
 
-    // Remove currency symbols and commas
     final cleanValue = value.replaceAll(RegExp(r'[₱,\s]'), '');
     final number = double.tryParse(cleanValue);
 
@@ -132,7 +129,7 @@ class Validators {
     return null;
   }
 
-  /// Validate quantity (positive integer)
+  // quantity (positive integer)
   static String? validateQuantity(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Quantity is required';
@@ -150,7 +147,7 @@ class Validators {
     return null;
   }
 
-  /// Validate project name (no special characters)
+  // project name (no special characters)
   static String? validateProjectName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Project name is required';
@@ -167,7 +164,7 @@ class Validators {
     return null;
   }
 
-  /// Validate client name
+  // client name
   static String? validateClientName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Client name is required';
@@ -184,7 +181,7 @@ class Validators {
     return null;
   }
 
-  /// Validate location/address
+  // location/address
   static String? validateLocation(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Location is required';
