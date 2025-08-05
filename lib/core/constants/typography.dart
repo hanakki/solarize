@@ -59,12 +59,36 @@ class AppTypography {
     color: Color(0xFF45454B),
   );
 
+  static const TextStyle interRegularGray16_24_00 = TextStyle(
+    fontFamily: 'InterRegular',
+    fontSize: 16,
+    height: 24 / 16,
+    letterSpacing: 0,
+    color: Color(0xFF45454B),
+  );
+
   static const TextStyle interRegularGray14_20_0 = TextStyle(
     fontFamily: 'InterRegular',
     fontSize: 14,
     height: 20 / 14,
     letterSpacing: 0,
     color: Color(0xFF777687),
+  );
+
+  static const TextStyle interRegularBlack14_16_04 = TextStyle(
+    fontFamily: 'InterRegular',
+    fontSize: 14,
+    height: 16 / 14,
+    letterSpacing: 0,
+    color: Color(0xFF28282C),
+  );
+
+  static const TextStyle interSemiBoldBlack14_16_04 = TextStyle(
+    fontFamily: 'InterSemiBold',
+    fontSize: 14,
+    height: 16 / 14,
+    letterSpacing: 0,
+    color: Color(0xFF28282C),
   );
 
   static const TextStyle interRegularBlack12_16_04 = TextStyle(
@@ -130,6 +154,14 @@ class AppTypography {
     height: 16 / 14,
     letterSpacing: 1.5,
     color: Color(0xFF1976D2),
+  );
+
+  static const TextStyle interSemiBoldGray14_16_15 = TextStyle(
+    fontFamily: 'InterSemiBold',
+    fontSize: 14,
+    height: 16 / 14,
+    letterSpacing: 1.5,
+    color: Color(0xFF777687),
   );
 
   static const TextStyle interSemiBoldGray12_16_15 = TextStyle(

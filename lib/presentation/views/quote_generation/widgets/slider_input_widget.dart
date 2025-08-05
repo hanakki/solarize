@@ -40,7 +40,7 @@ class SliderInputWidget extends StatelessWidget {
         // Description
         Text(
           description,
-          style: AppTypography.interRegularGray12_16_04,
+          style: AppTypography.interRegularGray14_20_0,
         ),
 
         const SizedBox(height: 8),
@@ -80,11 +80,11 @@ class SliderInputWidget extends StatelessWidget {
           children: [
             Text(
               '${min.toStringAsFixed(1)}$suffix',
-              style: AppTypography.interRegularGray12_16_04,
+              style: AppTypography.interRegularGray14_20_0,
             ),
             Text(
               '${max.toStringAsFixed(1)}$suffix',
-              style: AppTypography.interRegularGray12_16_04,
+              style: AppTypography.interRegularGray14_20_0,
             ),
           ],
         ),

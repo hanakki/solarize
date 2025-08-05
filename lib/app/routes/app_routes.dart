@@ -4,7 +4,6 @@ import '../../presentation/views/quote_generation/quote_generation_screen.dart';
 import '../../presentation/views/quote_generation/step_one_screen.dart';
 import '../../presentation/views/quote_generation/step_two_screen.dart';
 import '../../presentation/views/quote_generation/step_three_screen.dart';
-import '../../presentation/views/quote_generation/calculation_results_screen.dart';
 import '../../presentation/views/quote_generation/add_row_screen.dart';
 import '../../presentation/views/presets/preset_list_screen.dart';
 import '../../presentation/views/presets/preset_detail_screen.dart';
@@ -42,11 +41,6 @@ class AppRoutes {
 
       case stepThree:
         return MaterialPageRoute(builder: (_) => const StepThreeScreen());
-
-      case calculationResults:
-        return MaterialPageRoute(
-          builder: (_) => const CalculationResultsScreen(),
-        );
 
       case addRow:
         final args = routeSettings.arguments as Map<String, dynamic>?;

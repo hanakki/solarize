@@ -88,14 +88,16 @@ class CustomButton extends StatelessWidget {
 
       case CustomButtonStyle.tertiary:
         return ElevatedButton.styleFrom(
-          backgroundColor: AppColors.tertiaryButtonColor,
-          foregroundColor: AppColors.primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(AppConstants.borderRadiusMedium),
-            side: const BorderSide(color: AppColors.primaryColor),
+          backgroundColor: Colors.transparent, // no background
+          elevation: 0, // no shadow
+          shadowColor: Colors.transparent, // suppress elevation shadow
+          surfaceTintColor: Colors.transparent, // avoid material tint
+          foregroundColor: AppColors.primaryColor, // text color
+          padding: EdgeInsets.zero, // optional: link feel
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero, // no border radius
+            side: BorderSide(color: Colors.transparent), // no visible border
           ),
-          elevation: 0,
         );
     }
   }
@@ -109,8 +111,8 @@ class CustomButton extends StatelessWidget {
         return AppTypography.interSemiBoldBlue14_16_15;
       case CustomButtonStyle.tertiary:
         return const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
         );
     }
   }

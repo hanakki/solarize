@@ -110,19 +110,19 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     switch (step) {
       case 1:
         return const StepInfo(
-          title: 'Calculate System Size',
+          title: 'Step 1: Calculate System Size',
           description:
               'Let\'s start by estimating the ideal solar setup for your client.',
         );
       case 2:
         return const StepInfo(
-          title: 'Enter Project Details',
+          title: 'Step 2: Enter Project Details',
           description:
               'Enter project-specific details to help us customize your solar quotation.',
         );
       case 3:
         return const StepInfo(
-          title: 'Review Quotation & Send to Client',
+          title: 'Step 3: Review Quotation & Send to Client',
           description:
               'Double-check the details, then send it directly to your client or save it for later.',
         );

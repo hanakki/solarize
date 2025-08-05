@@ -90,10 +90,18 @@ class AppStrings {
       'Enter your location coordinates for accurate solar calculations';
 
   // Calculation Results
-  static const String numberOfPanelsLabel = 'Number of Solar Panels';
-  static const String numberOfBatteriesLabel = 'Number of Batteries';
-  static const String panelsNeededLabel = 'Solar Panels Needed';
-  static const String batteriesNeededLabel = 'Batteries Needed';
+  static const String calculationSetup = 'Setup';
+  static const String calculationSystemSize = 'System Size';
+  static const String calculationNumberOfPanels = 'Number of Panels';
+  static const String calculationTotalPanelCost = 'Total Panel Cost';
+  static const String calculationBatterySize = 'Battery Size';
+  static const String calculationNumberOfBatteries = 'Number of Batteries';
+  static const String calculationTotalBatteryCost = 'Total Battery Cost';
+  static const String calculationOverallSystemCost = 'Overall System Cost';
+  static const String calculationAnnualProduction = 'Annual Production';
+  static const String calculationMonthlyProduction = 'Monthly Production';
+  static const String calculationOffGrid = 'Off-Grid / Hybrid';
+  static const String calculationGridTie = 'Grid-Tied';
 
   // Project Details
   static const String projectNameLabel = 'PROJECT NAME';

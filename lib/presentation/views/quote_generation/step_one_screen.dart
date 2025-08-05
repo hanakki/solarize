@@ -187,11 +187,12 @@ class _StepOneScreenState extends State<StepOneScreen> {
   Widget _buildResultsView(QuoteGenerationViewModel viewModel) {
     final result = viewModel.calculationResult!;
 
-    return Column(
-      children: [
-        // White Container with Results
-        Expanded(
-          child: Container(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // White Container with Results - now hugs content
+          Container(
+            width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -208,71 +209,72 @@ class _StepOneScreenState extends State<StepOneScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Results in key-value format
-                _buildResultRow('System Size',
+                _buildResultRow(
+                    AppStrings.calculationSetup,
+                    viewModel.isOffGrid
+                        ? AppStrings.calculationOffGrid
+                        : AppStrings.calculationGridTie),
+                _buildDivider(),
+                _buildResultRow(AppStrings.calculationSystemSize,
                     '${result.systemSize.toStringAsFixed(2)} kW'),
                 _buildDivider(),
-                _buildResultRow(
-                    'Setup', viewModel.isOffGrid ? 'Hybrid' : 'Grid-Tied'),
+                _buildResultRow(AppStrings.calculationNumberOfPanels,
+                    '${result.numberOfPanels} pcs'),
                 _buildDivider(),
-                _buildResultRow('System Cost',
-                    '₱${result.estimatedCost.toStringAsFixed(0)}'),
+                _buildResultRow(AppStrings.calculationTotalPanelCost,
+                    '₱${result.solarPanelCost.toStringAsFixed(0)}'),
                 _buildDivider(),
                 if (viewModel.isOffGrid) ...[
-                  _buildResultRow('Battery Storage',
+                  _buildResultRow(AppStrings.calculationBatterySize,
                       '${result.batterySize.toStringAsFixed(2)} kWh'),
                   _buildDivider(),
-                  _buildResultRow('Battery Cost',
+                  _buildResultRow(AppStrings.calculationNumberOfBatteries,
+                      '${result.numberOfBatteries} pcs'),
+                  _buildDivider(),
+                  _buildResultRow(AppStrings.calculationTotalBatteryCost,
                       '₱${result.batteryCost.toStringAsFixed(0)}'),
                   _buildDivider(),
                 ],
-                _buildResultRow(
-                    'Number of Panels', '${result.numberOfPanels} pcs'),
+                _buildResultRow(AppStrings.calculationOverallSystemCost,
+                    '₱${result.estimatedCost.toStringAsFixed(0)}'),
                 _buildDivider(),
-                if (viewModel.isOffGrid) ...[
-                  _buildResultRow(
-                      'Number of Batteries', '${result.numberOfBatteries} pcs'),
-                  _buildDivider(),
-                ],
-                _buildResultRow('Annual Production',
+                _buildResultRow(AppStrings.calculationAnnualProduction,
                     '${result.annualProduction.toStringAsFixed(0)} kWh'),
                 _buildDivider(),
-                _buildResultRow('Monthly Production',
+                _buildResultRow(AppStrings.calculationMonthlyProduction,
                     '${result.monthlyProduction.toStringAsFixed(0)} kWh'),
-                _buildDivider(),
-                _buildResultRow('Solar Panel Cost',
-                    '₱${result.solarPanelCost.toStringAsFixed(0)}'),
               ],
             ),
           ),
-        ),
 
-        // Buttons
-        Container(
-          padding: const EdgeInsets.only(top: 45),
-          child: Column(
-            children: [
-              // Proceed Button (Primary)
-              CustomButton(
-                text: AppStrings.proceedButton,
-                onPressed: () {
-                  viewModel.nextStep();
-                },
-              ),
-              const SizedBox(height: 16),
-              // Back Button (Secondary)
-              CustomButton(
-                text: AppStrings.backButton,
-                onPressed: () {
-                  setState(() {
-                    _showingResults = false;
-                  });
-                },
-                style: CustomButtonStyle.secondary,
-              ),
-            ],
+          // Buttons
+          Container(
+            padding: const EdgeInsets.only(top: 45),
+            child: Column(
+              children: [
+                // Proceed Button (Primary)
+                CustomButton(
+                  text: AppStrings.proceedButton,
+                  onPressed: () {
+                    viewModel.nextStep();
+                  },
+                ),
+                const SizedBox(height: 16),
+                // Back Button (Secondary)
+                CustomButton(
+                  text: AppStrings.backButton,
+                  onPressed: () {
+                    setState(() {
+                      _showingResults = false;
+                    });
+                  },
+                  style: CustomButtonStyle.secondary,
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -284,19 +286,11 @@ class _StepOneScreenState extends State<StepOneScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
+            style: AppTypography.interSemiBoldBlack16_24_0,
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
+            style: AppTypography.interRegularGray16_24_00,
           ),
         ],
       ),
