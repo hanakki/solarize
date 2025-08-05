@@ -5,14 +5,13 @@ import 'package:printing/printing.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../../../core/constants/colors.dart';
-import '../../../widgets/common/custom_button.dart';
+import '../../../../core/constants/typography.dart';
 
 /// Widget for previewing and managing generated PDFs
 class PdfPreviewWidget extends StatelessWidget {
   final File? pdfFile;
   final bool isLoading;
   final VoidCallback? onGeneratePdf;
-  final VoidCallback? onSharePdf;
   final String? errorMessage;
 
   const PdfPreviewWidget({
@@ -20,7 +19,6 @@ class PdfPreviewWidget extends StatelessWidget {
     this.pdfFile,
     this.isLoading = false,
     this.onGeneratePdf,
-    this.onSharePdf,
     this.errorMessage,
   });
 
@@ -30,7 +28,7 @@ class PdfPreviewWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: AppColors.borderColor),
       ),
       child: Column(
@@ -47,19 +45,14 @@ class PdfPreviewWidget extends StatelessWidget {
   Widget _buildHeader() {
     return const Row(
       children: [
-        Icon(
-          Icons.picture_as_pdf,
-          color: AppColors.primaryColor,
-          size: 24,
-        ),
-        SizedBox(width: 8),
+        // Icon(
+        //   Icons.picture_as_pdf,
+        //   color: AppColors.primaryColor,
+        //   size: 24,
+        // ),
         Text(
           'PDF Quotation',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.primaryTextColor,
-          ),
+          style: AppTypography.interSemiBoldBlack16_24_0,
         ),
       ],
     );
@@ -214,19 +207,6 @@ class PdfPreviewWidget extends StatelessWidget {
               actions: const [],
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: CustomButton(
-                text: 'Share PDF',
-                style: CustomButtonStyle.primary,
-                onPressed: onSharePdf,
-                icon: const Icon(Icons.share),
-              ),
-            ),
-          ],
         ),
       ],
     );

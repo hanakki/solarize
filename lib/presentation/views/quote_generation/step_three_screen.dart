@@ -35,21 +35,20 @@ class StepThreeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     // Quote summary widget
-                    if (viewModel.calculationResult != null &&
-                        viewModel.projectDetails != null)
-                      QuoteSummaryWidget(
-                        calculationResult: viewModel.calculationResult!,
-                        projectDetails: viewModel.projectDetails!,
-                      ),
+                    // if (viewModel.calculationResult != null &&
+                    //     viewModel.projectDetails != null)
+                    //   QuoteSummaryWidget(
+                    //     calculationResult: viewModel.calculationResult!,
+                    //     projectDetails: viewModel.projectDetails!,
+                    //   ),
 
-                    const SizedBox(height: 32),
+                    // const SizedBox(height: 32),
 
                     // PDF Preview widget
                     PdfPreviewWidget(
                       pdfFile: viewModel.generatedPdfFile,
                       isLoading: viewModel.isGeneratingPdf,
                       errorMessage: viewModel.errorMessage,
-                      onSharePdf: () => _sharePdf(context, viewModel),
                     ),
 
                     const SizedBox(height: 32),
@@ -57,10 +56,10 @@ class StepThreeScreen extends StatelessWidget {
                     // Action buttons
                     _buildActionButtons(context, viewModel),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 8),
 
                     // Navigation buttons
-                    _buildNavigationButtons(viewModel),
+                    _buildNavigationButtons(context, viewModel),
                   ],
                 ),
               ),
@@ -80,18 +79,16 @@ class StepThreeScreen extends StatelessWidget {
         CustomButton(
           text: AppStrings.shareWithClientButton,
           onPressed: () => _shareWithClient(context, viewModel),
-          icon: const Icon(Icons.share),
           isLoading: viewModel.isGeneratingPdf,
         ),
 
         const SizedBox(height: 16),
 
-        // Save PDF button (changed from Export as PNG)
+        // Save PDF button
         CustomButton(
           text: AppStrings.exportAsPngButton, // This now says "SAVE PDF"
           style: CustomButtonStyle.secondary,
           onPressed: () => _savePdf(context, viewModel),
-          icon: const Icon(Icons.save),
           isLoading: viewModel.isGeneratingPdf,
         ),
       ],
@@ -99,22 +96,23 @@ class StepThreeScreen extends StatelessWidget {
   }
 
   /// Build navigation buttons
-  Widget _buildNavigationButtons(QuoteGenerationViewModel viewModel) {
+  Widget _buildNavigationButtons(
+      BuildContext context, QuoteGenerationViewModel viewModel) {
     return Row(
       children: [
         Expanded(
           child: CustomButton(
             text: AppStrings.backButton,
-            style: CustomButtonStyle.secondary,
+            style: CustomButtonStyle.tertiary,
             onPressed: viewModel.previousStep,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: CustomButton(
-            text: AppStrings.backToHomeButton,
+            text: 'Back to Home',
             style: CustomButtonStyle.tertiary,
-            onPressed: () => _backToHome(viewModel),
+            onPressed: () => _backToHome(context, viewModel),
           ),
         ),
       ],
@@ -154,35 +152,7 @@ class StepThreeScreen extends StatelessWidget {
   //   }
   // }
 
-  /// Share PDF with client
-  Future<void> _sharePdf(
-      BuildContext context, QuoteGenerationViewModel viewModel) async {
-    try {
-      final success = await viewModel.sharePdf();
-
-      if (context.mounted && success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Share dialog opened. Select your preferred sharing method.'),
-            backgroundColor: Colors.blue,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to share PDF: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  /// Share quote with client (PDF) - Legacy method
+  /// Share quote with client (PDF)
   Future<void> _shareWithClient(
       BuildContext context, QuoteGenerationViewModel viewModel) async {
     try {
@@ -193,16 +163,10 @@ class StepThreeScreen extends StatelessWidget {
 
       if (viewModel.currentQuote != null) {
         final success = await viewModel.sharePdf();
-
-        if (context.mounted && success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'Share dialog opened. Select your preferred sharing method.'),
-              backgroundColor: Colors.blue,
-              duration: Duration(seconds: 3),
-            ),
-          );
+        if (success && context.mounted) {
+          // Reset quote generation after successful sharing
+          viewModel.resetQuoteGeneration();
+          Navigator.pop(context); // Go back to home screen
         }
       }
     } catch (e) {
@@ -243,6 +207,9 @@ class StepThreeScreen extends StatelessWidget {
                 textColor: Colors.white,
                 onPressed: () {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  // Reset quote generation and go back to home after user acknowledges
+                  viewModel.resetQuoteGeneration();
+                  Navigator.pop(context);
                 },
               ),
             ),
@@ -262,8 +229,8 @@ class StepThreeScreen extends StatelessWidget {
   }
 
   /// Navigate back to home and reset quote generation
-  void _backToHome(QuoteGenerationViewModel viewModel) {
+  void _backToHome(BuildContext context, QuoteGenerationViewModel viewModel) {
     viewModel.resetQuoteGeneration();
-    // Navigate to home - implementation depends on navigation structure
+    Navigator.pop(context); // Go back to home screen
   }
 }

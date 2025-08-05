@@ -17,27 +17,27 @@ class PdfService {
 
       final file = File(logoPath);
       if (!await file.exists()) {
-        print('❌ Logo file does not exist');
+        print('Logo file does not exist');
         return;
       }
 
       final fileSize = await file.length();
-      print('✅ Logo file exists, size: $fileSize bytes');
+      print('Logo file exists, size: $fileSize bytes');
 
       final bytes = await file.readAsBytes();
-      print('✅ Logo bytes read: ${bytes.length} bytes');
+      print('Logo bytes read: ${bytes.length} bytes');
 
       final preparedBytes = await _prepareImageForPdf(bytes);
       if (preparedBytes != null) {
-        print('✅ Logo prepared successfully for PDF');
-        print('✅ Logo format detected and validated');
+        print('Logo prepared successfully for PDF');
+        print('Logo format detected and validated');
       } else {
-        print('❌ Logo preparation failed');
+        print('Logo preparation failed');
       }
 
       print('=== END LOGO TEST ===');
     } catch (e) {
-      print('❌ Logo test failed: $e');
+      print('Logo test failed: $e');
     }
   }
 
@@ -134,8 +134,8 @@ class PdfService {
             _buildSystemSpecs(quote),
             pw.SizedBox(height: 20),
             _buildItemizedList(quote),
-            pw.SizedBox(height: 20),
-            _buildTotalSection(quote),
+            // pw.SizedBox(height: 20),
+            // _buildTotalSection(quote),
             pw.SizedBox(height: 30),
             _buildFooter(companyProfile),
           ];
@@ -242,30 +242,30 @@ class PdfService {
             ],
           ),
         ),
-        pw.Expanded(
-          flex: 1,
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.end,
-            children: [
-              pw.Text(
-                'SOLAR QUOTATION',
-                style: pw.TextStyle(
-                  fontSize: 20,
-                  fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.blue,
-                ),
-              ),
-              pw.SizedBox(height: 5),
-              pw.Text(
-                'Professional Solar Solutions',
-                style: const pw.TextStyle(
-                  fontSize: 12,
-                  color: PdfColors.grey600,
-                ),
-              ),
-            ],
-          ),
-        ),
+        // pw.Expanded(
+        //   flex: 1,
+        //   child: pw.Column(
+        //     crossAxisAlignment: pw.CrossAxisAlignment.end,
+        //     children: [
+        //       pw.Text(
+        //         'SOLAR QUOTATION',
+        //         style: pw.TextStyle(
+        //           fontSize: 20,
+        //           fontWeight: pw.FontWeight.bold,
+        //           color: PdfColors.blue,
+        //         ),
+        //       ),
+        //       pw.SizedBox(height: 5),
+        //       pw.Text(
+        //         'Professional Solar Solutions',
+        //         style: const pw.TextStyle(
+        //           fontSize: 12,
+        //           color: PdfColors.grey600,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
@@ -301,93 +301,98 @@ class PdfService {
 
   /// Build quote information section
   static pw.Widget _buildQuoteInfo(QuoteModel quote) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(16),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey300),
-        borderRadius: pw.BorderRadius.circular(8),
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            'Project Information',
-            style: pw.TextStyle(
-              fontSize: 16,
-              fontWeight: pw.FontWeight.bold,
+    return
+        // pw.Container(
+        //   padding: const pw.EdgeInsets.all(16),
+        //   decoration: pw.BoxDecoration(
+        //     border: pw.Border.all(color: PdfColors.grey300),
+        //     borderRadius: pw.BorderRadius.circular(8),
+        //   ),
+        //   child:
+        pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          'Project Information',
+          style: pw.TextStyle(
+            fontSize: 16,
+            fontWeight: pw.FontWeight.bold,
+          ),
+        ),
+        pw.SizedBox(height: 10),
+        pw.Row(
+          children: [
+            pw.Expanded(
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text('Project Name: ${quote.projectName}'),
+                  pw.Text('Client Name: ${quote.clientName}'),
+                  pw.Text('Location: ${quote.projectLocation}'),
+                ],
+              ),
             ),
-          ),
-          pw.SizedBox(height: 10),
-          pw.Row(
-            children: [
-              pw.Expanded(
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('Project Name: ${quote.projectName}'),
-                    pw.Text('Client Name: ${quote.clientName}'),
-                    pw.Text('Location: ${quote.projectLocation}'),
-                  ],
-                ),
+            pw.Expanded(
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text('Quote ID: ${quote.id}'),
+                  pw.Text('Date: ${quote.createdAt.toString().split(' ')[0]}'),
+                  pw.Text(
+                      'System Type: ${quote.isOffGrid ? 'Off-Grid/Hybrid' : 'Grid-Tied'}'),
+                ],
               ),
-              pw.Expanded(
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('Quote ID: ${quote.id}'),
-                    pw.Text(
-                        'Date: ${quote.createdAt.toString().split(' ')[0]}'),
-                    pw.Text(
-                        'System Type: ${quote.isOffGrid ? 'Off-Grid/Hybrid' : 'Grid-Tied'}'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
   /// Build system specifications section
   static pw.Widget _buildSystemSpecs(QuoteModel quote) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(16),
-      decoration: pw.BoxDecoration(
-        color: PdfColors.blue50,
-        borderRadius: pw.BorderRadius.circular(8),
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            'System Specifications',
-            style: pw.TextStyle(
-              fontSize: 16,
-              fontWeight: pw.FontWeight.bold,
-            ),
+    return
+        // pw.Container(
+        //   padding: const pw.EdgeInsets.all(16),
+        //   decoration: pw.BoxDecoration(
+        //     color: PdfColors.blue50,
+        //     borderRadius: pw.BorderRadius.circular(8),
+        //   ),
+        //   child:
+        pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          'System Specifications',
+          style: pw.TextStyle(
+            fontSize: 16,
+            fontWeight: pw.FontWeight.bold,
           ),
-          pw.SizedBox(height: 10),
-          pw.Row(
-            children: [
+        ),
+        pw.SizedBox(height: 10),
+        pw.Row(
+          children: [
+            pw.Expanded(
+              child: pw.Text(
+                  'System Size: ${quote.systemSize.toStringAsFixed(2)} kW'),
+            ),
+            if (quote.isOffGrid)
               pw.Expanded(
                 child: pw.Text(
-                    'System Size: ${quote.systemSize.toStringAsFixed(2)} kW'),
+                    'Battery Size: ${quote.batterySize.toStringAsFixed(2)} kWh'),
               ),
-              if (quote.isOffGrid)
-                pw.Expanded(
-                  child: pw.Text(
-                      'Battery Size: ${quote.batterySize.toStringAsFixed(2)} kWh'),
-                ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 
   /// Build itemized list of components
   static pw.Widget _buildItemizedList(QuoteModel quote) {
+    // Calculate total from rows
+    final totalFromRows = quote.rows.fold<double>(
+        0.0, (sum, row) => sum + (row.quantity * row.estimatedPrice));
+
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -401,6 +406,13 @@ class PdfService {
         pw.SizedBox(height: 10),
         pw.Table(
           border: pw.TableBorder.all(color: PdfColors.grey300),
+          columnWidths: const {
+            0: pw.FlexColumnWidth(2), // Description
+            1: pw.FlexColumnWidth(0.5), // Qty
+            2: pw.FlexColumnWidth(0.8), // Unit
+            3: pw.FlexColumnWidth(1.2), // Unit Price
+            4: pw.FlexColumnWidth(1.2), // Subtotal
+          },
           children: [
             // Header row
             pw.TableRow(
@@ -423,73 +435,112 @@ class PdfService {
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
-                  child: pw.Text('Price',
+                  child: pw.Text('Unit Price',
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('Subtotal',
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                 ),
               ],
             ),
             // Data rows
-            ...quote.rows.map((row) => pw.TableRow(
-                  children: [
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(row.description),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(row.quantity.toString()),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(row.unit),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child:
-                          pw.Text('₱${row.estimatedPrice.toStringAsFixed(2)}'),
-                    ),
-                  ],
-                )),
+            ...quote.rows.map((row) {
+              final subtotal = row.quantity * row.estimatedPrice;
+              return pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text(row.description),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text(row.quantity.toString()),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text(row.unit),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('P${row.estimatedPrice.toStringAsFixed(2)}'),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('P${subtotal.toStringAsFixed(2)}'),
+                  ),
+                ],
+              );
+            }),
+            // Subtotal row
+            pw.TableRow(
+              decoration: const pw.BoxDecoration(color: PdfColors.grey50),
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(''),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(''),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(''),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('Subtotal:',
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text('P${totalFromRows.toStringAsFixed(2)}',
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                ),
+              ],
+            ),
           ],
         ),
       ],
     );
   }
 
-  /// Build total section
-  static pw.Widget _buildTotalSection(QuoteModel quote) {
-    return pw.Container(
-      alignment: pw.Alignment.centerRight,
-      child: pw.Container(
-        width: 200,
-        padding: const pw.EdgeInsets.all(16),
-        decoration: pw.BoxDecoration(
-          color: PdfColors.blue,
-          borderRadius: pw.BorderRadius.circular(8),
-        ),
-        child: pw.Column(
-          children: [
-            pw.Text(
-              'Total Amount',
-              style: pw.TextStyle(
-                color: PdfColors.white,
-                fontSize: 16,
-                fontWeight: pw.FontWeight.bold,
-              ),
-            ),
-            pw.Text(
-              '₱${quote.totalPrice.toStringAsFixed(2)}',
-              style: pw.TextStyle(
-                color: PdfColors.white,
-                fontSize: 20,
-                fontWeight: pw.FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // /// Build total section
+  // static pw.Widget _buildTotalSection(QuoteModel quote) {
+  //   return pw.Container(
+  //     alignment: pw.Alignment.centerRight,
+  //     child: pw.Container(
+  //       width: 200,
+  //       padding: const pw.EdgeInsets.all(16),
+  //       decoration: pw.BoxDecoration(
+  //         color: PdfColors.blue,
+  //         borderRadius: pw.BorderRadius.circular(8),
+  //       ),
+  //       child: pw.Column(
+  //         children: [
+  //           pw.Text(
+  //             'Total Amount',
+  //             style: pw.TextStyle(
+  //               color: PdfColors.white,
+  //               fontSize: 16,
+  //               fontWeight: pw.FontWeight.bold,
+  //             ),
+  //           ),
+  //           pw.Text(
+  //             'PHP ${quote.totalPrice.toStringAsFixed(2)}',
+  //             style: pw.TextStyle(
+  //               color: PdfColors.white,
+  //               fontSize: 20,
+  //               fontWeight: pw.FontWeight.bold,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   /// Build footer with additional information
   static pw.Widget _buildFooter(CompanyProfileModel? companyProfile) {
@@ -503,15 +554,15 @@ class PdfService {
         ),
         pw.SizedBox(height: 5),
         pw.Text(
-          '• This quotation is valid for 30 days from the date of issue.',
+          '- This quotation is for estimation purposes only and does not constitute a formal offer or agreement.',
           style: const pw.TextStyle(fontSize: 10),
         ),
         pw.Text(
-          '• Installation timeline: 2-4 weeks after contract signing.',
+          '- It should not be treated as an official or legally binding document.',
           style: const pw.TextStyle(fontSize: 10),
         ),
         pw.Text(
-          '• 25-year warranty on solar panels, 10-year warranty on inverters.',
+          '- Figures provided herein are indicative and subject to change upon detailed site inspection and finalized agreement.',
           style: const pw.TextStyle(fontSize: 10),
         ),
         pw.SizedBox(height: 10),

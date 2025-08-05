@@ -26,11 +26,8 @@ class QuoteGenerationScreen extends StatelessWidget {
                 CustomAppBar(
                   title: 'Generate Quote',
                   onBackPressed: () {
-                    if (viewModel.currentStep > 1) {
-                      viewModel.previousStep();
-                    } else {
-                      Navigator.pop(context);
-                    }
+                    // Always go back to home screen
+                    Navigator.pop(context);
                   },
                 ),
 

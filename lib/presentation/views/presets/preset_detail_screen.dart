@@ -297,7 +297,7 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
   }
 
   bool _canSave() {
-    return _titleController.text.trim().isNotEmpty && _rows.isNotEmpty;
+    return _titleController.text.trim().isNotEmpty;
   }
 
   void _addRow() async {

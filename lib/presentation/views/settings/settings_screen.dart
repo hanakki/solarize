@@ -40,44 +40,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Consumer<SettingsViewModel>(
                   builder: (context, viewModel, child) {
                     if (viewModel.isLoading) {
-                      return const WhiteContentContainer(
+                      return const SingleChildScrollView(
                         child: Center(
                           child: CircularProgressIndicator(),
                         ),
                       );
                     }
 
-                    return WhiteContentContainer(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            // Company Profile Section
-                            const CompanyProfileWidget(),
+                    return SingleChildScrollView(
+                      // padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          // Company Profile Section
+                          const CompanyProfileWidget(),
 
-                            const SizedBox(height: 32),
+                          const SizedBox(height: 32),
 
-                            // About Section
-                            const AboutSectionWidget(),
+                          // About Section
+                          const AboutSectionWidget(),
 
-                            const SizedBox(height: 32),
-
-                            // Success/Error Messages
-                            if (viewModel.successMessage != null)
-                              _buildMessageCard(
-                                viewModel.successMessage!,
-                                Colors.green,
-                                Icons.check_circle,
-                              ),
-
-                            if (viewModel.errorMessage != null)
-                              _buildMessageCard(
-                                viewModel.errorMessage!,
-                                Colors.red,
-                                Icons.error,
-                              ),
-                          ],
-                        ),
+                          const SizedBox(height: 32),
+                        ],
                       ),
                     );
                   },
@@ -86,37 +69,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMessageCard(String message, Color color, IconData icon) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: color,
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: AppTypography.interRegularBlack16_24_0.copyWith(
-                color: color,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

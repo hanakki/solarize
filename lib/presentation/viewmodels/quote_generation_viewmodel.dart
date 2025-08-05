@@ -691,30 +691,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  /// Generate PNG image
-  Future<void> generateImage() async {
-    try {
-      _isGeneratingImage = true;
-      _clearError();
-      notifyListeners();
-
-      if (_currentQuote == null) {
-        throw Exception('No quote available for image generation');
-      }
-
-      // TODO: Implement actual image generation
-      // For now, we'll just simulate it
-      await Future.delayed(const Duration(seconds: 2));
-
-      notifyListeners();
-    } catch (e) {
-      _setError('Failed to generate image: ${e.toString()}');
-    } finally {
-      _isGeneratingImage = false;
-      notifyListeners();
-    }
-  }
-
   // Utility Methods
 
   /// Reset the entire quote generation process

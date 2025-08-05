@@ -55,6 +55,15 @@ class AppStrings {
   static const String addDescriptionLabel = "DESCRIPTION";
   static const String addEstimatedPriceLabel = "ESTIMATED PRICE";
   static const String addTotalPriceLabel = "TOTAL PRICE";
+  static const String companyLogoLabel = "COMPANY LOGO";
+  static const String companyNameLabel = "COMPANY NAME";
+  static const String companyAddressLabel = "ADDRESS";
+  static const String comapnyMobileLabel = "MOBILE NUMBER";
+  static const String companyPhoneLabel = "TELEPHONE NUMBER";
+  static const String companyEmailLabel = "EMAIL ADDRESS";
+  static const String companyWebsiteLabel = "WEBSITE";
+  static const String footerNotesLabel = "FOOTER NOTES";
+  static const String preparedByLabel = "PREPARED BY";
 
   // API Integration
   static const String apiIntegrationLabel = 'ENABLE API SUPPORT';
@@ -129,6 +138,7 @@ class AppStrings {
   static const String shareWithClientButton = 'SHARE WITH CLIENT';
   static const String exportAsPngButton = 'SAVE PDF';
   static const String backToHomeButton = 'BACK TO HOME';
+  static const String saveCompanyProfileButton = 'SAVE COMPANY PROFILE';
 
   // About Section
   static const String aboutAppTitle = 'About the App';
@@ -137,7 +147,7 @@ class AppStrings {
 
   static const String aboutUsTitle = 'About Us';
   static const String aboutUsDescription =
-      'This app was built by Hanakki, a solo developer and 3rd year Computer Engineering student from Toledo City, Cebu, studying at the University of San Carlos (USC). Originally created as a final project for CPE 3323 Mobile Applications Development, this app also serves as a small tribute to her father, who runs a solar company and inspired the idea behind making quotation estimates simpler and more efficient. Got issues or suggestions? Hit her up at solarize@gmail.com.';
+      'This app was built by Hanakki, a solo developer and 3rd year Computer Engineering student from Toledo City, Cebu, studying at the University of San Carlos (USC). \n\nOriginally created as a final project for CPE 3323 Mobile Applications Development, this app also serves as a small tribute to her father, who runs a solar company and inspired the idea behind making quotation estimates simpler and more efficient. \n\nGot issues or suggestions? Hit her up at solarize@gmail.com.';
 
   // Error Messages
   static const String requiredFieldError = 'This field is required';

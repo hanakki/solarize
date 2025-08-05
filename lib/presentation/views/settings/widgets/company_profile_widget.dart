@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:solarize/presentation/widgets/common/custom_text_field.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
+import '../../../../core/constants/strings.dart';
 import '../../../viewmodels/settings_viewmodel.dart';
 import 'file_upload_widget.dart';
 
@@ -18,7 +20,6 @@ class CompanyProfileWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.borderColor),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +34,7 @@ class CompanyProfileWidget extends StatelessWidget {
               const SizedBox(height: 24),
               _buildFooterSection(viewModel),
               const SizedBox(height: 24),
-              _buildSaveButton(viewModel),
+              _buildSaveButton(context, viewModel),
             ],
           ),
         );
@@ -44,12 +45,6 @@ class CompanyProfileWidget extends StatelessWidget {
   Widget _buildHeader() {
     return const Row(
       children: [
-        Icon(
-          Icons.business,
-          color: AppColors.primaryColor,
-          size: 24,
-        ),
-        SizedBox(width: 12),
         Text(
           'Company Profile',
           style: AppTypography.interSemiBoldBlack18_24_0,
@@ -63,8 +58,8 @@ class CompanyProfileWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Company Logo',
-          style: AppTypography.interSemiBoldBlack16_24_0,
+          AppStrings.companyLogoLabel,
+          style: AppTypography.interSemiBoldGray12_16_15,
         ),
         const SizedBox(height: 12),
         FileUploadWidget(
@@ -81,24 +76,16 @@ class CompanyProfileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Company Information',
-          style: AppTypography.interSemiBoldBlack16_24_0,
-        ),
+        CustomTextField(
+            label: AppStrings.companyNameLabel,
+            hint: 'Enter your company name',
+            controller: viewModel.companyNameController),
         const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.companyNameController,
-          label: 'Company Name *',
-          hint: 'Enter your company name',
-          isRequired: true,
-        ),
-        const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.addressController,
-          label: 'Address',
-          hint: 'Enter company address',
-          maxLines: 3,
-        ),
+        CustomTextField(
+            label: AppStrings.companyAddressLabel,
+            hint: 'Enter company address',
+            controller: viewModel.addressController,
+            maxLines: 3),
       ],
     );
   }
@@ -107,38 +94,29 @@ class CompanyProfileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Contact Information',
-          style: AppTypography.interSemiBoldBlack16_24_0,
-        ),
+        CustomTextField(
+            label: AppStrings.comapnyMobileLabel,
+            hint: 'Enter mobile number',
+            controller: viewModel.phoneNumberController,
+            keyboardType: TextInputType.phone),
         const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.phoneNumberController,
-          label: 'Mobile Number',
-          hint: 'Enter mobile number',
-          keyboardType: TextInputType.phone,
-        ),
+        CustomTextField(
+            label: AppStrings.companyPhoneLabel,
+            hint: 'Enter telephone number',
+            controller: viewModel.telephoneNumberController,
+            keyboardType: TextInputType.phone),
         const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.telephoneNumberController,
-          label: 'Telephone Number',
-          hint: 'Enter telephone number',
-          keyboardType: TextInputType.phone,
-        ),
+        CustomTextField(
+            label: AppStrings.companyEmailLabel,
+            hint: 'Enter email address',
+            controller: viewModel.emailController,
+            keyboardType: TextInputType.emailAddress),
         const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.emailController,
-          label: 'Email Address',
-          hint: 'Enter email address',
-          keyboardType: TextInputType.emailAddress,
-        ),
-        const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.websiteController,
-          label: 'Website',
-          hint: 'Enter website URL',
-          keyboardType: TextInputType.url,
-        ),
+        CustomTextField(
+            label: AppStrings.companyWebsiteLabel,
+            hint: 'Enter website URL',
+            controller: viewModel.websiteController,
+            keyboardType: TextInputType.url),
       ],
     );
   }
@@ -147,99 +125,95 @@ class CompanyProfileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'PDF Footer Information',
-          style: AppTypography.interSemiBoldBlack16_24_0,
-        ),
-        const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.footerNotesController,
-          label: 'Footer Notes',
+        CustomTextField(
+          label: AppStrings.footerNotesLabel,
           hint: 'Enter additional notes for PDF footer',
+          controller: viewModel.footerNotesController,
           maxLines: 3,
         ),
         const SizedBox(height: 16),
-        _buildTextField(
-          controller: viewModel.preparedByController,
-          label: 'Prepared By',
+        CustomTextField(
+          label: AppStrings.preparedByLabel,
           hint: 'Enter name of person preparing quotes',
+          controller: viewModel.preparedByController,
         ),
       ],
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    bool isRequired = false,
-    int maxLines = 1,
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              label,
-              style: AppTypography.interSemiBoldBlack16_24_0,
-            ),
-            if (isRequired)
-              const Text(
-                ' *',
-                style: TextStyle(
-                  fontFamily: 'InterSemiBold',
-                  fontSize: 16,
-                  height: 24 / 16,
-                  letterSpacing: 0,
-                  color: AppColors.errorColor,
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: AppTypography.interRegularGray14_20_0,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.borderColor),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.borderColor),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide:
-                  const BorderSide(color: AppColors.primaryColor, width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildTextField({
+  //   required TextEditingController controller,
+  //   required String label,
+  //   required String hint,
+  //   bool isRequired = false,
+  //   int maxLines = 1,
+  //   TextInputType? keyboardType,
+  // }) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Row(
+  //         children: [
+  //           Text(
+  //             label,
+  //             style: AppTypography.interSemiBoldBlack16_24_0,
+  //           ),
+  //           if (isRequired)
+  //             const Text(
+  //               ' *',
+  //               style: TextStyle(
+  //                 fontFamily: 'InterSemiBold',
+  //                 fontSize: 16,
+  //                 height: 24 / 16,
+  //                 letterSpacing: 0,
+  //                 color: AppColors.errorColor,
+  //               ),
+  //             ),
+  //         ],
+  //       ),
+  //       const SizedBox(height: 8),
+  //       TextField(
+  //         controller: controller,
+  //         maxLines: maxLines,
+  //         keyboardType: keyboardType,
+  //         decoration: InputDecoration(
+  //           hintText: hint,
+  //           hintStyle: AppTypography.interRegularGray14_20_0,
+  //           border: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(8),
+  //             borderSide: const BorderSide(color: AppColors.borderColor),
+  //           ),
+  //           enabledBorder: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(8),
+  //             borderSide: const BorderSide(color: AppColors.borderColor),
+  //           ),
+  //           focusedBorder: OutlineInputBorder(
+  //             borderRadius: BorderRadius.circular(8),
+  //             borderSide:
+  //                 const BorderSide(color: AppColors.primaryColor, width: 2),
+  //           ),
+  //           contentPadding: const EdgeInsets.symmetric(
+  //             horizontal: 16,
+  //             vertical: 12,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildSaveButton(SettingsViewModel viewModel) {
+  Widget _buildSaveButton(BuildContext context, SettingsViewModel viewModel) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: viewModel.isSaving ? null : viewModel.saveCompanyProfile,
+        onPressed:
+            viewModel.isSaving ? null : () => _handleSave(context, viewModel),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryColor,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
         ),
         child: viewModel.isSaving
@@ -252,10 +226,36 @@ class CompanyProfileWidget extends StatelessWidget {
                 ),
               )
             : const Text(
-                'Save Company Profile',
+                AppStrings.saveCompanyProfileButton,
                 style: AppTypography.interSemiBoldWhite14_16_15,
               ),
       ),
     );
+  }
+
+  Future<void> _handleSave(
+      BuildContext context, SettingsViewModel viewModel) async {
+    final success = await viewModel.saveCompanyProfile();
+
+    if (context.mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Company profile saved successfully'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                viewModel.errorMessage ?? 'Failed to save company profile'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
   }
 }

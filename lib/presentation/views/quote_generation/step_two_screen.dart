@@ -223,7 +223,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
               children: [
                 _buildDetailRow('Quantity', '${row.quantity}'),
                 _buildDetailRow('Unit', row.unit),
-                _buildDetailRow('Description', 'Model: ${row.title}'),
+                _buildDetailRow('Description', row.description),
                 _buildDetailRow('Estimated Price',
                     '₱${row.estimatedPrice.toStringAsFixed(2)}'),
               ],
@@ -266,6 +266,8 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
                       Text(
                         title,
                         style: AppTypography.interSemiBoldBlack18_24_0,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

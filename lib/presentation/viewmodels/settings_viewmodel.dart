@@ -125,7 +125,6 @@ class SettingsViewModel extends ChangeNotifier {
       // Verify the save was successful by reloading
       await loadCompanyProfile();
 
-      _setSuccess('Company profile saved successfully');
       return true;
     } catch (e) {
       _setError('Failed to save company profile: ${e.toString()}');
@@ -166,7 +165,6 @@ class SettingsViewModel extends ChangeNotifier {
         // Verify the save was successful by reloading
         await loadCompanyProfile();
 
-        _setSuccess('Logo uploaded successfully');
         return true;
       } else {
         throw Exception('Company profile not loaded');
@@ -186,14 +184,17 @@ class SettingsViewModel extends ChangeNotifier {
       _clearMessages();
 
       if (_companyProfile != null) {
+        // Delete the logo file from storage first
+        if (_companyProfile!.logoPath != null) {
+          await ImageService.deleteLogo(_companyProfile!.logoPath);
+        }
+
         final updatedProfile = _companyProfile!.copyWith(logoPath: null);
         await _settingsRepository.saveCompanyProfile(updatedProfile);
         _companyProfile = updatedProfile;
 
         // Verify the save was successful by reloading
         await loadCompanyProfile();
-
-        _setSuccess('Logo removed successfully');
       }
     } catch (e) {
       _setError('Failed to remove logo: ${e.toString()}');
