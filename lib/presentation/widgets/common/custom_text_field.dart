@@ -4,8 +4,6 @@ import '../../../core/constants/colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/typography.dart';
 
-/// Custom text field widget with consistent styling
-/// Supports various input types and validation
 class CustomTextField extends StatelessWidget {
   final String label;
   final TextStyle? labelStyle;
@@ -51,15 +49,11 @@ class CustomTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
         Text(
           label,
           style: AppTypography.interSemiBoldGray12_16_15,
         ),
-
         const SizedBox(height: 8),
-
-        // Text field
         TextFormField(
           controller: controller,
           validator: validator,

@@ -9,7 +9,7 @@ import '../../../data/models/project_row_model.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/constants/strings.dart';
 
-/// Screen for adding or editing preset rows/particulars
+// for adding or editing preset rows/particulars
 class AddPresetRowScreen extends StatefulWidget {
   final ProjectRowModel? existingRow;
 
@@ -38,7 +38,7 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
     super.initState();
     _initializeData();
 
-    // Add listeners to trigger validation on text changes
+    // listeners to trigger validation on text changes
     _titleController.addListener(_onFieldChanged);
     _quantityController.addListener(_onFieldChanged);
     _unitController.addListener(_onFieldChanged);
@@ -87,13 +87,10 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
       body: BackgroundContainer(
         child: Column(
           children: [
-            // Custom app bar
             CustomAppBar(
               title: _isEditing ? 'Edit Particular' : 'Add Particular',
               onBackPressed: () => Navigator.pop(context),
             ),
-
-            // Content
             Expanded(
               child: WhiteContentContainer(
                 topMargin: 0,
@@ -117,16 +114,13 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title of particular
                   CustomTextField(
                     label: AppStrings.addParticularLabel,
                     controller: _titleController,
                     validator: (value) =>
                         Validators.validateRequired(value, 'Title'),
                   ),
-
                   const SizedBox(height: 16),
-
                   Row(
                     children: [
                       Expanded(
@@ -148,10 +142,7 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Description
                   CustomTextField(
                     label: AppStrings.addDescriptionLabel,
                     controller: _descriptionController,
@@ -159,20 +150,14 @@ class _AddPresetRowScreenState extends State<AddPresetRowScreen> {
                     validator: (value) =>
                         Validators.validateRequired(value, 'Description'),
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Estimated Price
                   CustomTextField(
                     label: AppStrings.addEstimatedPriceLabel,
                     controller: _priceController,
                     keyboardType: TextInputType.number,
                     validator: Validators.validatePrice,
                   ),
-
                   const SizedBox(height: 32),
-
-                  // Save button
                   SizedBox(
                     width: double.infinity,
                     child: CustomButton(

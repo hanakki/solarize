@@ -42,7 +42,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
   void _initializeData() {
     final viewModel = context.read<QuoteGenerationViewModel>();
 
-    // Initialize with existing project details or defaults
     if (viewModel.projectDetails != null) {
       final details = viewModel.projectDetails!;
       _projectNameController.text = details.projectName;
@@ -50,13 +49,11 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
       _locationController.text = details.location;
       _projectRows = List.from(details.rows);
     } else {
-      // Add default rows based on calculation results
       _projectRows = viewModel.getDefaultRows();
     }
   }
 
   void _loadPresets() {
-    // Load presets using PresetViewModel
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final presetViewModel = context.read<PresetViewModel>();
       presetViewModel.loadPresets();
@@ -82,15 +79,11 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
           key: _formKey,
           child: Column(
             children: [
-              // Step header
               StepHeaderWidget(
                 title: stepInfo.title,
                 description: stepInfo.description,
               ),
-
               const SizedBox(height: 24),
-
-              // Form content
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -115,7 +108,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Build load preset section
+  // Build load preset section
   Widget _buildLoadPresetSection() {
     return CustomButton(
       text: AppStrings.loadPresetButton,
@@ -124,7 +117,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Build project information section (no container)
+  // Build project information section
   Widget _buildProjectInfoSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,7 +151,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header with item count
         if (_projectRows.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
@@ -167,7 +159,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
               style: AppTypography.interSemiBoldBlack16_24_0,
             ),
           ),
-        // Project rows as accordions
         if (_projectRows.isEmpty)
           const Center(
             child: Padding(
@@ -201,7 +192,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Build item accordion
+  // Build item accordion
   Widget _buildItemAccordion(ProjectRowModel row, int index) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +227,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Build custom accordion widget
+  // Build custom accordion widget
   Widget _buildCustomAccordion({
     required String title,
     required String subtitle,
@@ -296,7 +287,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Build detail row for accordion content
+  // Build detail row for accordion content
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -333,17 +324,15 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Build navigation buttons (column layout)
+  // Build navigation buttons
   Widget _buildNavigationButtons(QuoteGenerationViewModel viewModel) {
     return Column(
       children: [
-        // Proceed Button (Primary)
         CustomButton(
           text: AppStrings.proceedButton,
           onPressed: _canProceed() ? () => _handleProceed(viewModel) : null,
         ),
         const SizedBox(height: 16),
-        // Back Button (Secondary)
         CustomButton(
           text: AppStrings.backButton,
           style: CustomButtonStyle.secondary,
@@ -353,12 +342,12 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Calculate total price of all rows
+  // Calculate total price of all rows
   double _calculateTotal() {
     return _projectRows.fold(0.0, (sum, row) => sum + row.totalPrice);
   }
 
-  /// Check if can proceed to next step
+  // Check if can proceed to next step
   bool _canProceed() {
     return _projectNameController.text.trim().isNotEmpty &&
         _clientNameController.text.trim().isNotEmpty &&
@@ -366,15 +355,14 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
         _projectRows.isNotEmpty;
   }
 
-  /// Handle proceed to next step
+  // Handle proceed to next step
   void _handleProceed(QuoteGenerationViewModel viewModel) {
     if (_formKey.currentState?.validate() ?? false) {
       final projectDetails = ProjectDetailsModel(
         projectName: _projectNameController.text.trim(),
         clientName: _clientNameController.text.trim(),
         location: _locationController.text.trim(),
-        installationDate:
-            DateTime.now().toString().split(' ')[0], // Today's date as string
+        installationDate: DateTime.now().toString().split(' ')[0],
         rows: _projectRows,
       );
 
@@ -383,7 +371,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     }
   }
 
-  /// Navigate to load preset screen
   void _navigateToLoadPreset() async {
     final result = await Navigator.push(
       context,
@@ -398,7 +385,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
         _projectRows.addAll(result);
       });
 
-      // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -412,7 +398,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     }
   }
 
-  /// Add new row
   void _addRow() async {
     final result = await Navigator.pushNamed(
       context,
@@ -459,7 +444,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  /// Edit existing row
   void _editRow(int index) async {
     final result = await Navigator.pushNamed(
       context,
@@ -477,7 +461,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     }
   }
 
-  /// Delete row
   void _deleteRow(int index) {
     showDialog(
       context: context,

@@ -13,21 +13,17 @@ import 'presentation/viewmodels/settings_viewmodel.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize local storage service
   await LocalStorageService.init();
 
   runApp(
     MultiProvider(
       providers: [
-        // Repositories
         Provider<QuoteRepository>(
             create: (_) => QuoteRepository(LocalStorageService())),
         Provider<PresetRepository>(
             create: (_) => PresetRepository(LocalStorageService())),
         Provider<SettingsRepository>(
             create: (_) => SettingsRepository(LocalStorageService())),
-
-        // ViewModels
         ChangeNotifierProvider<HomeViewModel>(create: (_) => HomeViewModel()),
         ChangeNotifierProvider<QuoteGenerationViewModel>(
           create: (context) => QuoteGenerationViewModel(

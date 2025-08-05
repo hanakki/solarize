@@ -3,8 +3,6 @@ import '../../../core/constants/colors.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/typography.dart';
 
-/// Custom button widget with different styles (primary, secondary, tertiary)
-/// Provides consistent button styling throughout the app
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -57,7 +55,6 @@ class CustomButton extends StatelessWidget {
     );
   }
 
-  /// Get button style based on type
   ButtonStyle _getButtonStyle() {
     switch (style) {
       case CustomButtonStyle.primary:
@@ -67,42 +64,38 @@ class CustomButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.borderRadiusSmall),
           ),
-          // textStyle: AppTypography.interSemiBoldWhite14_16_15,
           elevation: 2,
         );
       case CustomButtonStyle.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent, // transparent fill
-          foregroundColor: AppColors.primaryDarkColor, // blue text
+          backgroundColor: Colors.transparent,
+          foregroundColor: AppColors.primaryDarkColor,
           side: const BorderSide(
             color: AppColors.primaryDarkColor,
-            width: 2.5, // stroke width
+            width: 2.5,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                AppConstants.borderRadiusSmall), // smaller radius
+            borderRadius: BorderRadius.circular(AppConstants.borderRadiusSmall),
           ),
-          // textStyle: AppTypography.interSemiBoldBlue14_16_15,
-          elevation: 0, // no shadow for transparent buttons
+          elevation: 0,
         );
 
       case CustomButtonStyle.tertiary:
         return ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent, // no background
-          elevation: 0, // no shadow
-          shadowColor: Colors.transparent, // suppress elevation shadow
-          surfaceTintColor: Colors.transparent, // avoid material tint
-          foregroundColor: AppColors.primaryColor, // text color
-          padding: EdgeInsets.zero, // optional: link feel
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          foregroundColor: AppColors.primaryColor,
+          padding: EdgeInsets.zero,
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero, // no border radius
-            side: BorderSide(color: Colors.transparent), // no visible border
+            borderRadius: BorderRadius.zero,
+            side: BorderSide(color: Colors.transparent),
           ),
         );
     }
   }
 
-  /// Get text style based on button type
   TextStyle _getTextStyle() {
     switch (style) {
       case CustomButtonStyle.primary:
@@ -118,7 +111,6 @@ class CustomButton extends StatelessWidget {
   }
 }
 
-/// Enum for button styles
 enum CustomButtonStyle {
   primary,
   secondary,

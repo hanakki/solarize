@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 
-/// Custom transparent app bar that shows background through it
-/// Used throughout the app to maintain consistent navigation
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;

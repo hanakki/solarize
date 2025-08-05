@@ -21,19 +21,15 @@ import 'package:solarize/presentation/viewmodels/settings_viewmodel.dart';
 
 void main() {
   testWidgets('Solarize app smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
     await tester.pumpWidget(
       MultiProvider(
         providers: [
-          // Repositories
           Provider<QuoteRepository>(
               create: (_) => QuoteRepository(LocalStorageService())),
           Provider<PresetRepository>(
               create: (_) => PresetRepository(LocalStorageService())),
           Provider<SettingsRepository>(
               create: (_) => SettingsRepository(LocalStorageService())),
-
-          // ViewModels
           ChangeNotifierProvider<HomeViewModel>(create: (_) => HomeViewModel()),
           ChangeNotifierProvider<QuoteGenerationViewModel>(
             create: (context) => QuoteGenerationViewModel(
@@ -54,7 +50,6 @@ void main() {
       ),
     );
 
-    // Verify that the app loads without errors
     expect(find.byType(MaterialApp), findsOneWidget);
   });
 }

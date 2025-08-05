@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 
-/// Loading overlay widget that covers the entire screen
-/// Shows loading indicator with optional message
 class LoadingOverlay extends StatelessWidget {
   final String? message;
   final bool isVisible;

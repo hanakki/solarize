@@ -1,21 +1,18 @@
 import 'project_row_model.dart';
 
-/// Model class representing a solar quotation
-/// Contains all information needed for generating quotes and PDFs
 class QuoteModel {
   final String id;
   final String projectName;
   final String clientName;
   final String projectLocation;
-  final double systemSize; // in kW
+  final double systemSize;
   final bool isOffGrid;
-  final double batterySize; // in kWh
+  final double batterySize;
   final List<ProjectRowModel> rows;
   final DateTime createdAt;
   final DateTime updatedAt;
   final double totalPrice;
-  
-  // Calculation inputs for reference
+
   final double monthlyBillKwh;
   final double billOffsetPercentage;
   final double sunHoursPerDay;
@@ -43,7 +40,6 @@ class QuoteModel {
     this.electricityRate,
   });
 
-  /// Create a copy of the quote with updated values
   QuoteModel copyWith({
     String? id,
     String? projectName,
@@ -84,7 +80,6 @@ class QuoteModel {
     );
   }
 
-  /// Convert quote to JSON for storage
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -107,7 +102,6 @@ class QuoteModel {
     };
   }
 
-  /// Create quote from JSON
   factory QuoteModel.fromJson(Map<String, dynamic> json) {
     return QuoteModel(
       id: json['id'] as String,
@@ -126,12 +120,12 @@ class QuoteModel {
       monthlyBillKwh: (json['monthlyBillKwh'] as num).toDouble(),
       billOffsetPercentage: (json['billOffsetPercentage'] as num).toDouble(),
       sunHoursPerDay: (json['sunHoursPerDay'] as num).toDouble(),
-      backupHours: json['backupHours'] != null 
-          ? (json['backupHours'] as num).toDouble() 
+      backupHours: json['backupHours'] != null
+          ? (json['backupHours'] as num).toDouble()
           : null,
       usedPhpBilling: json['usedPhpBilling'] as bool? ?? false,
-      electricityRate: json['electricityRate'] != null 
-          ? (json['electricityRate'] as num).toDouble() 
+      electricityRate: json['electricityRate'] != null
+          ? (json['electricityRate'] as num).toDouble()
           : null,
     );
   }

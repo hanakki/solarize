@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../viewmodels/quote_generation_viewmodel.dart';
 import '../../../../core/constants/colors.dart';
 
-/// Widget for displaying step progress in quote generation
-/// Uses custom icons: ProgressActive, ProgressDisabled, ProgressDone
+// for displaying step progress in quote generation
 class ProgressIndicatorWidget extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -20,14 +19,11 @@ class ProgressIndicatorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // First icon
         Image.asset(
           _getProgressIcon(getProgressState(1)),
           width: 25,
           height: 25,
         ),
-
-        // Connector and second icon
         if (totalSteps > 1) ...[
           const SizedBox(width: 16),
           Expanded(
@@ -43,8 +39,6 @@ class ProgressIndicatorWidget extends StatelessWidget {
             height: 25,
           ),
         ],
-
-        // Connector and third icon
         if (totalSteps > 2) ...[
           const SizedBox(width: 16),
           Expanded(

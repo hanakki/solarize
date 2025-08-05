@@ -4,24 +4,19 @@ import '../../data/models/company_profile_model.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../core/services/image_service.dart';
 
-/// ViewModel for app settings and company profile management
-/// Handles company information, logo upload, and app preferences
 class SettingsViewModel extends ChangeNotifier {
   final SettingsRepository _settingsRepository;
 
   SettingsViewModel(this._settingsRepository);
 
-  // Company profile data
   CompanyProfileModel? _companyProfile;
 
-  // State variables
   bool _isLoading = false;
   bool _isSaving = false;
   bool _isUploadingLogo = false;
   String? _errorMessage;
   String? _successMessage;
 
-  // Form controllers (for UI binding)
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
@@ -32,7 +27,6 @@ class SettingsViewModel extends ChangeNotifier {
   final TextEditingController footerNotesController = TextEditingController();
   final TextEditingController preparedByController = TextEditingController();
 
-  // Getters
   CompanyProfileModel? get companyProfile => _companyProfile;
   bool get isLoading => _isLoading;
   bool get isSaving => _isSaving;
@@ -42,12 +36,10 @@ class SettingsViewModel extends ChangeNotifier {
   bool get hasLogo => _companyProfile?.hasLogo ?? false;
   String? get logoPath => _companyProfile?.logoPath;
 
-  /// Initialize settings (load company profile)
   Future<void> initialize() async {
     await loadCompanyProfile();
   }
 
-  /// Load company profile from storage
   Future<void> loadCompanyProfile() async {
     try {
       _isLoading = true;
@@ -57,12 +49,10 @@ class SettingsViewModel extends ChangeNotifier {
       _companyProfile =
           await _settingsRepository.getCompanyProfileWithDefaults();
 
-      // Validate logo file exists if logo path is set
       if (_companyProfile?.hasLogo == true) {
         final logoExists =
             await ImageService.logoExists(_companyProfile!.logoPath);
         if (!logoExists) {
-          // Logo file no longer exists, remove the path
           final updatedProfile = _companyProfile!.copyWith(logoPath: null);
           await _settingsRepository.saveCompanyProfile(updatedProfile);
           _companyProfile = updatedProfile;
@@ -78,24 +68,21 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  /// Save company profile
   Future<bool> saveCompanyProfile() async {
     try {
       _isSaving = true;
       _clearMessages();
       notifyListeners();
 
-      // Validate form
       final validationError = validateForm();
       if (validationError != null) {
         _setError(validationError);
         return false;
       }
 
-      // Create updated profile from form controllers
       final updatedProfile = CompanyProfileModel(
         companyName: companyNameController.text.trim(),
-        logoPath: _companyProfile?.logoPath, // Preserve existing logo path
+        logoPath: _companyProfile?.logoPath,
         address: addressController.text.trim().isEmpty
             ? null
             : addressController.text.trim(),
@@ -122,7 +109,6 @@ class SettingsViewModel extends ChangeNotifier {
       await _settingsRepository.saveCompanyProfile(updatedProfile);
       _companyProfile = updatedProfile;
 
-      // Verify the save was successful by reloading
       await loadCompanyProfile();
 
       return true;
@@ -135,34 +121,28 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  /// Upload company logo
   Future<bool> uploadLogo(File logoFile) async {
     try {
       _isUploadingLogo = true;
       _clearMessages();
       notifyListeners();
 
-      // Validate file exists and is readable
       if (!await ImageService.logoExists(logoFile.path)) {
         throw Exception('Selected file does not exist');
       }
 
-      // Validate file size (max 5MB)
       final fileSize = await logoFile.length();
       if (fileSize > 5 * 1024 * 1024) {
         throw Exception('File size must be less than 5MB');
       }
 
-      // Store the logo path
       final logoPath = await ImageService.copyLogoToAppDirectory(logoFile.path);
 
-      // Update company profile with logo path
       if (_companyProfile != null) {
         final updatedProfile = _companyProfile!.copyWith(logoPath: logoPath);
         await _settingsRepository.saveCompanyProfile(updatedProfile);
         _companyProfile = updatedProfile;
 
-        // Verify the save was successful by reloading
         await loadCompanyProfile();
 
         return true;
@@ -178,13 +158,11 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  /// Remove company logo
   Future<void> removeLogo() async {
     try {
       _clearMessages();
 
       if (_companyProfile != null) {
-        // Delete the logo file from storage first
         if (_companyProfile!.logoPath != null) {
           await ImageService.deleteLogo(_companyProfile!.logoPath);
         }
@@ -193,7 +171,6 @@ class SettingsViewModel extends ChangeNotifier {
         await _settingsRepository.saveCompanyProfile(updatedProfile);
         _companyProfile = updatedProfile;
 
-        // Verify the save was successful by reloading
         await loadCompanyProfile();
       }
     } catch (e) {
@@ -203,7 +180,6 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  /// Reset company profile to defaults
   Future<void> resetToDefaults() async {
     try {
       _isSaving = true;
@@ -221,7 +197,6 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  /// Update form controllers with current profile data
   void _updateControllers() {
     if (_companyProfile != null) {
       companyNameController.text = _companyProfile!.companyName;
@@ -235,7 +210,6 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  /// Validate company profile form
   String? validateForm() {
     if (companyNameController.text.trim().isEmpty) {
       return 'Company name is required';
@@ -245,7 +219,6 @@ class SettingsViewModel extends ChangeNotifier {
       return 'Company name must be at least 2 characters';
     }
 
-    // Validate email if provided
     if (emailController.text.trim().isNotEmpty) {
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
       if (!emailRegex.hasMatch(emailController.text.trim())) {
@@ -253,7 +226,6 @@ class SettingsViewModel extends ChangeNotifier {
       }
     }
 
-    // Validate website if provided
     if (websiteController.text.trim().isNotEmpty) {
       final websiteText = websiteController.text.trim();
       if (!websiteText.startsWith('http://') &&
@@ -265,74 +237,23 @@ class SettingsViewModel extends ChangeNotifier {
     return null;
   }
 
-  /// Check if form has unsaved changes
-  bool get hasUnsavedChanges {
-    if (_companyProfile == null) return false;
-
-    return companyNameController.text.trim() != _companyProfile!.companyName ||
-        addressController.text.trim() != (_companyProfile!.address ?? '') ||
-        phoneNumberController.text.trim() !=
-            (_companyProfile!.phoneNumber ?? '') ||
-        telephoneNumberController.text.trim() !=
-            (_companyProfile!.telephoneNumber ?? '') ||
-        emailController.text.trim() != (_companyProfile!.email ?? '') ||
-        websiteController.text.trim() != (_companyProfile!.website ?? '') ||
-        footerNotesController.text.trim() !=
-            (_companyProfile!.footerNotes ?? '') ||
-        preparedByController.text.trim() != (_companyProfile!.preparedBy ?? '');
-  }
-
-  /// Discard unsaved changes
-  void discardChanges() {
-    _updateControllers();
-    _clearMessages();
-    notifyListeners();
-  }
-
-  /// Get app information
-  Map<String, String> get appInfo => {
-        'appName': 'Solarize',
-        'version': '1.0.0',
-        'description': 'Professional Solar Quotations Made Simple',
-      };
-
-  /// Get about app text
-  String get aboutAppText =>
-      'Solarize is a simple yet powerful app built for solar consultants to quickly create professional quotations using customizable input presets. Whether you\'re selecting price values, dropdowns, or checkboxes, the app helps you generate clear estimates and export them as PDFs or images you can easily share via email or messaging apps.';
-
-  /// Get about us text
-  String get aboutUsText =>
-      'This app was built by Hanakki, a solo developer and 3rd year Computer Engineering student from Toledo City, Cebu, studying at the University of San Carlos (USC). Originally created as a final project for CPE 3323 Mobile Applications Development, this app also serves as a small tribute to her father, who runs a solar company and inspired the idea behind making quotation estimates simpler and more efficient. Got issues or suggestions? Hit her up at solarize@gmail.com.';
-
-  // Utility Methods
-
-  /// Clear all messages
   void _clearMessages() {
     _errorMessage = null;
     _successMessage = null;
   }
 
-  /// Set error message
   void _setError(String message) {
     _errorMessage = message;
     _successMessage = null;
   }
 
-  /// Set success message
   void _setSuccess(String message) {
     _successMessage = message;
     _errorMessage = null;
   }
 
-  /// Clear messages (public method)
-  void clearMessages() {
-    _clearMessages();
-    notifyListeners();
-  }
-
   @override
   void dispose() {
-    // Dispose controllers
     companyNameController.dispose();
     addressController.dispose();
     phoneNumberController.dispose();

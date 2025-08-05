@@ -3,7 +3,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/constants/strings.dart';
 
-/// Widget for displaying app and company information
+// for displaying app and company information
 class AboutSectionWidget extends StatelessWidget {
   const AboutSectionWidget({super.key});
 
@@ -82,16 +82,6 @@ class AboutSectionWidget extends StatelessWidget {
           _buildInfoRow('Platform', 'Flutter'),
           _buildInfoRow('Last Updated', 'August 2025'),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFeatureItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Text(
-        text,
-        style: AppTypography.interRegularGray14_20_0,
       ),
     );
   }

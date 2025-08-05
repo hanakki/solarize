@@ -1,6 +1,5 @@
 import 'project_row_model.dart';
 
-/// Model representing project details for quotes
 class ProjectDetailsModel {
   final String projectName;
   final String clientName;
@@ -16,13 +15,10 @@ class ProjectDetailsModel {
     required this.rows,
   });
 
-  /// Calculate total project cost
   double get totalCost => rows.fold(0.0, (sum, row) => sum + row.totalPrice);
 
-  /// Get number of items
   int get itemCount => rows.length;
 
-  /// Create a copy with updated values
   ProjectDetailsModel copyWith({
     String? projectName,
     String? clientName,
@@ -39,7 +35,6 @@ class ProjectDetailsModel {
     );
   }
 
-  /// Convert to JSON
   Map<String, dynamic> toJson() {
     return {
       'projectName': projectName,
@@ -50,7 +45,6 @@ class ProjectDetailsModel {
     };
   }
 
-  /// Create from JSON
   factory ProjectDetailsModel.fromJson(Map<String, dynamic> json) {
     return ProjectDetailsModel(
       projectName: json['projectName'] as String,

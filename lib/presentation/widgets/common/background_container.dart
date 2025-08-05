@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Container widget that provides the app's background image
-/// Handles responsive resizing and ensures background covers entire screen
+// provides the app's background image
 class BackgroundContainer extends StatelessWidget {
   final Widget child;
   final String? backgroundImagePath;
@@ -20,9 +19,8 @@ class BackgroundContainer extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: const AssetImage('assets/images/bg.png'),
-          fit: BoxFit.cover, // Ensures responsive resizing
+          fit: BoxFit.cover, // responsive resizing
           onError: (exception, stackTrace) {
-            // Fallback to gradient background if image fails to load
             debugPrint('Background image failed to load: $exception');
           },
         ),

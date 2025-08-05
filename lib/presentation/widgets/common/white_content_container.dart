@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/app_constants.dart';
 
-/// White rounded container that appears "above" the background
-/// Creates the layered paper effect described in the requirements
 class WhiteContentContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -20,7 +18,7 @@ class WhiteContentContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(top: topMargin ?? 100), // Show background at top
+      margin: EdgeInsets.only(top: topMargin ?? 100),
       decoration: BoxDecoration(
         color: AppColors.cardBackgroundColor.withValues(alpha: 0.8),
         borderRadius: const BorderRadius.only(

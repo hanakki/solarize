@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../data/models/project_row_model.dart';
 
-/// Widget for displaying a project row with edit and delete functionality
+// for displaying a project row with edit and delete functionality
 class ProjectRowWidget extends StatelessWidget {
   final ProjectRowModel row;
   final VoidCallback onEdit;
@@ -27,7 +27,6 @@ class ProjectRowWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row with description and actions
           Row(
             children: [
               Expanded(
@@ -39,7 +38,6 @@ class ProjectRowWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              // Action buttons
               Row(
                 children: [
                   IconButton(
@@ -56,13 +54,9 @@ class ProjectRowWidget extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-
-          // Details row
           Row(
             children: [
-              // Quantity and unit
               Expanded(
                 child: Text(
                   '${row.quantity} ${row.unit}',
@@ -72,8 +66,6 @@ class ProjectRowWidget extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Unit price
               Expanded(
                 child: Text(
                   '₱${row.estimatedPrice.toStringAsFixed(2)} each',
@@ -84,8 +76,6 @@ class ProjectRowWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-
-              // Total price
               Text(
                 '₱${row.totalPrice.toStringAsFixed(2)}',
                 style: const TextStyle(
@@ -96,8 +86,6 @@ class ProjectRowWidget extends StatelessWidget {
               ),
             ],
           ),
-
-          // Category indicator (if available)
           if (row.category != null) ...[
             const SizedBox(height: 8),
             Container(

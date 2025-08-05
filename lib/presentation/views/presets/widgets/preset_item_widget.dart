@@ -3,7 +3,7 @@ import '../../../../data/models/preset_model.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 
-/// Widget for displaying a preset item in the list
+// for displaying a preset item in the list
 class PresetItemWidget extends StatelessWidget {
   final PresetModel preset;
   final VoidCallback onTap;

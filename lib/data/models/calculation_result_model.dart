@@ -1,14 +1,12 @@
-/// Model representing solar calculation results
 class CalculationResultModel {
-  final double systemSize; // in kW
-  final double annualProduction; // in kWh
-  final double monthlyProduction; // in kWh
-  final double batterySize; // in kWh
+  final double systemSize;
+  final double annualProduction;
+  final double monthlyProduction;
+  final double batterySize;
   final double estimatedCost;
-  final double? sunHoursPerDay; // null if using API
-  final double? pvwattsAnnualOutput; // null if not using API
+  final double? sunHoursPerDay;
+  final double? pvwattsAnnualOutput;
 
-  // New fields for solar panel and battery configuration
   final int numberOfPanels;
   final int numberOfBatteries;
   final double solarPanelCost;
@@ -28,11 +26,9 @@ class CalculationResultModel {
     required this.batteryCost,
   });
 
-  /// Get system type description
   String get systemType =>
       batterySize > 0 ? 'Off-Grid/Hybrid System' : 'Grid-Tied System';
 
-  /// Create a copy with updated values
   CalculationResultModel copyWith({
     double? systemSize,
     double? annualProduction,
@@ -61,7 +57,6 @@ class CalculationResultModel {
     );
   }
 
-  /// Convert to JSON
   Map<String, dynamic> toJson() {
     return {
       'systemSize': systemSize,
@@ -78,7 +73,6 @@ class CalculationResultModel {
     };
   }
 
-  /// Create from JSON
   factory CalculationResultModel.fromJson(Map<String, dynamic> json) {
     return CalculationResultModel(
       systemSize: (json['systemSize'] as num).toDouble(),

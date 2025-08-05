@@ -9,8 +9,7 @@ import 'step_one_screen.dart';
 import 'step_two_screen.dart';
 import 'step_three_screen.dart';
 
-/// Main quote generation screen that manages the 3-step process
-/// Acts as a container for the step screens with progress indicator
+// container for the step screens with progress indicator
 class QuoteGenerationScreen extends StatelessWidget {
   const QuoteGenerationScreen({super.key});
 
@@ -22,22 +21,17 @@ class QuoteGenerationScreen extends StatelessWidget {
           builder: (context, viewModel, child) {
             return Column(
               children: [
-                // Custom app bar
                 CustomAppBar(
                   title: 'Generate Quote',
                   onBackPressed: () {
-                    // Always go back to home screen
                     Navigator.pop(context);
                   },
                 ),
-
-                // Step content
                 Expanded(
                   child: WhiteContentContainer(
                     topMargin: 0,
                     child: Column(
                       children: [
-                        // Progress indicator
                         Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: ProgressIndicatorWidget(
@@ -46,8 +40,6 @@ class QuoteGenerationScreen extends StatelessWidget {
                             getProgressState: viewModel.getProgressState,
                           ),
                         ),
-
-                        // Step content
                         Expanded(
                           child: _buildStepContent(viewModel.currentStep),
                         ),
@@ -63,7 +55,6 @@ class QuoteGenerationScreen extends StatelessWidget {
     );
   }
 
-  /// Build content for current step
   Widget _buildStepContent(int currentStep) {
     switch (currentStep) {
       case 1:

@@ -14,7 +14,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/constants/typography.dart';
 import 'add_preset_row_screen.dart';
 
-/// Screen for creating or editing presets
+// for creating or editing presets
 class PresetDetailScreen extends StatefulWidget {
   final PresetModel? preset;
 
@@ -35,7 +35,7 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
   List<ProjectRowModel> _rows = [];
   bool _isEditing = false;
 
-  // Track expanded state for each accordion
+  // Track expanded state
   final Map<int, bool> _expandedStates = {};
 
   @override
@@ -191,7 +191,7 @@ class _PresetDetailScreenState extends State<PresetDetailScreen> {
     );
   }
 
-  /// Build custom accordion widget
+  //  custom accordion widget
   Widget _buildCustomAccordion({
     required String title,
     required String subtitle,

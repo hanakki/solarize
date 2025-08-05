@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 
-/// Widget for uploading company logo
+// for uploading company logo
 class FileUploadWidget extends StatelessWidget {
   final String? currentImagePath;
   final Function(File) onImageSelected;
@@ -63,7 +63,6 @@ class FileUploadWidget extends StatelessWidget {
   Widget _buildImagePreview() {
     return Stack(
       children: [
-        // Image preview
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: Image.file(
@@ -73,7 +72,6 @@ class FileUploadWidget extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        // Overlay with actions
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
@@ -180,7 +178,6 @@ class FileUploadWidget extends StatelessWidget {
         onImageSelected(File(image.path));
       }
     } catch (e) {
-      // Handle error silently or show snackbar
       debugPrint('Error picking image: $e');
     }
   }

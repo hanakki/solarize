@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Widget for displaying calculation results in a card format
+// for displaying calculation results in a card format
 class CalculationResultCard extends StatelessWidget {
   final String title;
   final String value;
@@ -28,7 +28,6 @@ class CalculationResultCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Icon
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -41,10 +40,7 @@ class CalculationResultCard extends StatelessWidget {
               size: 24,
             ),
           ),
-
           const SizedBox(width: 16),
-
-          // Content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

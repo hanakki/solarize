@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../data/models/calculation_result_model.dart';
 import '../../../../data/models/project_details_model.dart';
 
-/// Widget for displaying quote summary with calculation results and project details
+// for displaying quote summary with calculation results and project details
 class QuoteSummaryWidget extends StatelessWidget {
   final CalculationResultModel calculationResult;
   final ProjectDetailsModel projectDetails;
@@ -25,7 +25,6 @@ class QuoteSummaryWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
           Row(
             children: [
               Icon(Icons.summarize, color: Colors.blue.shade700),
@@ -39,10 +38,7 @@ class QuoteSummaryWidget extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 20),
-
-          // System details
           _buildSummarySection(
             'System Details',
             [
@@ -59,10 +55,7 @@ class QuoteSummaryWidget extends StatelessWidget {
                     '${calculationResult.numberOfBatteries} pcs'),
             ],
           ),
-
           const SizedBox(height: 16),
-
-          // Financial details
           _buildSummarySection(
             'Financial Details',
             [
@@ -75,10 +68,7 @@ class QuoteSummaryWidget extends StatelessWidget {
                   '₱${calculationResult.estimatedCost.toStringAsFixed(0)}'),
             ],
           ),
-
           const SizedBox(height: 16),
-
-          // Project details
           _buildSummarySection(
             'Project Details',
             [

@@ -7,7 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 
-/// Widget for previewing and managing generated PDFs
+// for previewing and managing generated PDFs
 class PdfPreviewWidget extends StatelessWidget {
   final File? pdfFile;
   final bool isLoading;
@@ -45,11 +45,6 @@ class PdfPreviewWidget extends StatelessWidget {
   Widget _buildHeader() {
     return const Row(
       children: [
-        // Icon(
-        //   Icons.picture_as_pdf,
-        //   color: AppColors.primaryColor,
-        //   size: 24,
-        // ),
         Text(
           'PDF Quotation',
           style: AppTypography.interSemiBoldBlack16_24_0,
@@ -214,10 +209,8 @@ class PdfPreviewWidget extends StatelessWidget {
 
   Future<Uint8List> _buildPdfDocument() async {
     if (pdfFile != null && pdfFile!.existsSync()) {
-      // Read the actual generated PDF file
       return await pdfFile!.readAsBytes();
     } else {
-      // Fallback to placeholder if no PDF file exists
       final pdf = pw.Document();
       pdf.addPage(
         pw.Page(

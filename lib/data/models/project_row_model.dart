@@ -1,4 +1,3 @@
-/// Model representing a project row/item in a quote
 class ProjectRowModel {
   final String id;
   final String title;
@@ -20,10 +19,8 @@ class ProjectRowModel {
     this.category,
   });
 
-  /// Calculate total price for this row
   double get totalPrice => quantity * estimatedPrice;
 
-  /// Create a copy with updated values
   ProjectRowModel copyWith({
     String? id,
     String? title,
@@ -46,7 +43,6 @@ class ProjectRowModel {
     );
   }
 
-  /// Convert to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -60,12 +56,10 @@ class ProjectRowModel {
     };
   }
 
-  /// Create from JSON
   factory ProjectRowModel.fromJson(Map<String, dynamic> json) {
     return ProjectRowModel(
       id: json['id'] as String,
-      title: json['title'] as String? ??
-          json['description'] as String, // Fallback for backward compatibility
+      title: json['title'] as String? ?? json['description'] as String,
       quantity: json['quantity'] as int,
       unit: json['unit'] as String,
       description: json['description'] as String,

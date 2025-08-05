@@ -10,8 +10,8 @@ import '../../../core/utils/validators.dart';
 import '../../../core/constants/strings.dart';
 import '../../../core/constants/typography.dart';
 
-/// Step 1: Calculate System Size
-/// Collects user inputs for solar system calculations
+// Step 1: Calculate System Size
+// Collects user inputs for solar system calculations
 class StepOneScreen extends StatefulWidget {
   const StepOneScreen({super.key});
 
@@ -73,7 +73,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Step header
             StepHeaderWidget(
               title: stepInfo.title,
               description: stepInfo.description,
@@ -81,7 +80,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
 
             const SizedBox(height: 21),
 
-            // Content - either form or results
+            // either form or results
             Expanded(
               child: _showingResults && viewModel.calculationResult != null
                   ? _buildResultsView(viewModel)
@@ -93,59 +92,36 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build the form view
+  // Build the form view
   Widget _buildFormView(QuoteGenerationViewModel viewModel) {
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // Monthly bill input
             _buildMonthlyBillSection(viewModel),
-
             const SizedBox(height: 24),
-
-            // Bill offset percentage
             _buildBillOffsetSection(viewModel),
-
             const SizedBox(height: 24),
-
-            // Sun hours per day (only show when API is disabled)
             if (!viewModel.useApiIntegration) ...[
               _buildSunHoursSection(viewModel),
               const SizedBox(height: 24),
             ],
-
-            // API Integration toggle
             _buildApiIntegrationSection(viewModel),
-
             const SizedBox(height: 16),
-
-            // Location input (only show when API is enabled)
             if (viewModel.useApiIntegration) ...[
               _buildLocationSection(viewModel),
               const SizedBox(height: 24),
             ],
-
-            // Solar Panel Configuration
             _buildSolarPanelSection(viewModel),
-
             const SizedBox(height: 24),
-
-            // Off-grid setup
             _buildOffGridSection(viewModel),
-
             const SizedBox(height: 24),
-
-            // Battery Configuration (only show when off-grid is enabled)
             if (viewModel.isOffGrid) ...[
               _buildBatterySection(viewModel),
               const SizedBox(height: 24),
             ],
-
             const SizedBox(height: 45),
-
-            // Error message
             if (viewModel.errorMessage != null)
               Container(
                 padding: const EdgeInsets.all(12),
@@ -168,8 +144,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
                   ],
                 ),
               ),
-
-            // Calculate button
             CustomButton(
               text: AppStrings.calculateButton,
               onPressed: _canCalculate(viewModel)
@@ -183,14 +157,13 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build the results view
+  // Build the results view
   Widget _buildResultsView(QuoteGenerationViewModel viewModel) {
     final result = viewModel.calculationResult!;
 
     return SingleChildScrollView(
       child: Column(
         children: [
-          // White Container with Results - now hugs content
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -208,7 +181,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Results in key-value format
                 _buildResultRow(
                     AppStrings.calculationSetup,
                     viewModel.isOffGrid
@@ -237,22 +209,13 @@ class _StepOneScreenState extends State<StepOneScreen> {
                 ],
                 _buildResultRow(AppStrings.calculationOverallSystemCost,
                     '₱${result.estimatedCost.toStringAsFixed(0)}'),
-                _buildDivider(),
-                _buildResultRow(AppStrings.calculationAnnualProduction,
-                    '${result.annualProduction.toStringAsFixed(0)} kWh'),
-                _buildDivider(),
-                _buildResultRow(AppStrings.calculationMonthlyProduction,
-                    '${result.monthlyProduction.toStringAsFixed(0)} kWh'),
               ],
             ),
           ),
-
-          // Buttons
           Container(
             padding: const EdgeInsets.only(top: 45),
             child: Column(
               children: [
-                // Proceed Button (Primary)
                 CustomButton(
                   text: AppStrings.proceedButton,
                   onPressed: () {
@@ -260,7 +223,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                // Back Button (Secondary)
                 CustomButton(
                   text: AppStrings.backButton,
                   onPressed: () {
@@ -305,12 +267,11 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build monthly bill input section
+  // Build monthly bill input section
   Widget _buildMonthlyBillSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // kWh input
         if (!viewModel.usedPhpBilling) ...[
           CustomTextField(
             label: AppStrings.monthlyElectricBillLabel,
@@ -327,8 +288,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
             },
           ),
         ],
-
-        // kWh input (when checked)
         if (viewModel.usedPhpBilling) ...[
           CustomTextField(
             label: AppStrings.monthlyElectricBillPhpLabel,
@@ -360,8 +319,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
             },
           ),
         ],
-
-        // Checkbox below the text field(s)
         Row(
           children: [
             Checkbox(
@@ -376,7 +333,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build bill offset percentage section
+  // Build bill offset percentage section
   Widget _buildBillOffsetSection(QuoteGenerationViewModel viewModel) {
     return SliderInputWidget(
       label: AppStrings.billOffsetPercentageLabel,
@@ -390,7 +347,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build sun hours per day section
+  // Build sun hours per day section
   Widget _buildSunHoursSection(QuoteGenerationViewModel viewModel) {
     return SliderInputWidget(
       label: AppStrings.sunHoursLabel,
@@ -404,7 +361,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build API integration section
+  // Build API integration section
   Widget _buildApiIntegrationSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,16 +386,11 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build location input section
+  // Build location input section
   Widget _buildLocationSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // const Text(
-        //   AppStrings.locationConfigurationTitle,
-        //   style: AppTypography.interSemiBoldGray12_16_15,
-        // ),
-        // const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
@@ -482,16 +434,11 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build solar panel configuration section
+  // Build solar panel configuration section
   Widget _buildSolarPanelSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // const Text(
-        //   AppStrings.solarPanelConfigurationTitle,
-        //   style: AppTypography.interSemiBoldGray12_16_15,
-        // ),
-        // const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
@@ -535,7 +482,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build off-grid setup section
+  // Build off-grid setup section
   Widget _buildOffGridSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -574,16 +521,11 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Build battery configuration section
+  // Build battery configuration section
   Widget _buildBatterySection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // const Text(
-        //   AppStrings.batteryConfigurationTitle,
-        //   style: AppTypography.interSemiBoldGray12_16_15,
-        // ),
-        // const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
@@ -627,7 +569,7 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  /// Check if calculation can be performed
+  // Check if calculation can be performed
   bool _canCalculate(QuoteGenerationViewModel viewModel) {
     if (viewModel.monthlyBillKwh <= 0) return false;
     if (viewModel.billOffsetPercentage <= 0) return false;
@@ -650,14 +592,13 @@ class _StepOneScreenState extends State<StepOneScreen> {
     return true;
   }
 
-  /// Handle calculate button press
+  // calculate button press
   Future<void> _handleCalculate(QuoteGenerationViewModel viewModel) async {
     if (_formKey.currentState?.validate() ?? false) {
       await viewModel.calculateSystem();
 
       if (viewModel.calculationResult != null &&
           viewModel.errorMessage == null) {
-        // Show results instead of navigating
         setState(() {
           _showingResults = true;
         });

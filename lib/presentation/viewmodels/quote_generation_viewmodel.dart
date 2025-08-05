@@ -11,8 +11,6 @@ import '../../core/utils/calculations.dart';
 import '../../core/services/pdf_service.dart';
 import '../../core/services/share_service.dart';
 
-/// ViewModel for the quote generation flow
-/// Manages the 3-step quote creation process and calculations
 class QuoteGenerationViewModel extends ChangeNotifier {
   final QuoteRepository _quoteRepository;
   final SettingsRepository _settingsRepository;
@@ -20,63 +18,47 @@ class QuoteGenerationViewModel extends ChangeNotifier {
 
   QuoteGenerationViewModel(this._quoteRepository, this._settingsRepository);
 
-  // Current step (1, 2, or 3)
   int _currentStep = 1;
 
-  // Loading states
   bool _isCalculating = false;
   bool _isSaving = false;
   bool _isGeneratingPdf = false;
-  bool _isGeneratingImage = false;
 
-  // Step 1: Calculation inputs
   double _monthlyBillKwh = 0;
-  double _monthlyBillValue = 0; // The actual value entered (PHP or kWh)
+  double _monthlyBillValue = 0;
   double _billOffsetPercentage = 80;
   double _sunHoursPerDay = 4.5;
   bool _isOffGrid = false;
   double _backupHours = 8;
   bool _usedPhpBilling = false;
-  double _electricityRate = 12.0; // Default PHP rate per kWh
-  bool _useApiIntegration = true; // Enable API integration by default
+  double _electricityRate = 14.0;
+  bool _useApiIntegration = true;
 
-  // Solar Panel Configuration
-  double _solarPanelSizeKw = 1.0; // Default 1kW panel
-  double _solarPanelPricePhp = 40000.0; // Default ₱40,000 per panel
+  double _solarPanelSizeKw = 1.0;
+  double _solarPanelPricePhp = 40000.0;
 
-  // Battery Configuration (for off-grid/hybrid)
-  double _batterySizeKwh = 5.0; // Default 5kWh battery
-  double _batteryPricePhp = 125000.0; // Default ₱125,000 per battery
+  double _batterySizeKwh = 5.0;
+  double _batteryPricePhp = 125000.0;
 
-  // Location for PVWatts API (Toledo City, Philippines default)
   double _latitude = 10.387; // Toledo City coordinates
   double _longitude = 123.6502;
 
-  // Calculation results
   CalculationResultModel? _calculationResult;
 
-  // Step 2: Project details
   ProjectDetailsModel? _projectDetails;
 
-  // Current quote being created
   QuoteModel? _currentQuote;
 
-  // Generated files
   File? _generatedPdfFile;
-  File? _generatedImageFile;
 
-  // Error handling
   String? _errorMessage;
 
-  // State variables for tracking changes
   bool _dataChanged = false;
 
-  // Getters
   int get currentStep => _currentStep;
   bool get isCalculating => _isCalculating;
   bool get isSaving => _isSaving;
   bool get isGeneratingPdf => _isGeneratingPdf;
-  bool get isGeneratingImage => _isGeneratingImage;
   double get monthlyBillKwh => _monthlyBillKwh;
   double get monthlyBillValue => _monthlyBillValue;
   double get billOffsetPercentage => _billOffsetPercentage;
@@ -89,11 +71,9 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   double get latitude => _latitude;
   double get longitude => _longitude;
 
-  // Solar Panel Configuration Getters
   double get solarPanelSizeKw => _solarPanelSizeKw;
   double get solarPanelPricePhp => _solarPanelPricePhp;
 
-  // Battery Configuration Getters
   double get batterySizeKwh => _batterySizeKwh;
   double get batteryPricePhp => _batteryPricePhp;
 
@@ -101,11 +81,9 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   ProjectDetailsModel? get projectDetails => _projectDetails;
   QuoteModel? get currentQuote => _currentQuote;
   File? get generatedPdfFile => _generatedPdfFile;
-  File? get generatedImageFile => _generatedImageFile;
   String? get errorMessage => _errorMessage;
   bool get dataChanged => _dataChanged;
 
-  /// Get step information
   StepInfo getStepInfo(int step) {
     switch (step) {
       case 1:
@@ -131,26 +109,20 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  /// Get progress state for each step
   ProgressState getProgressState(int step) {
     if (step < _currentStep) return ProgressState.completed;
     if (step == _currentStep) return ProgressState.active;
     return ProgressState.inactive;
   }
 
-  /// Mark data as changed (will trigger PDF regeneration)
   void _markDataChanged() {
     _dataChanged = true;
   }
 
-  /// Clear data changed flag
   void _clearDataChanged() {
     _dataChanged = false;
   }
 
-  // Step 1 Methods
-
-  /// Update monthly bill in kWh
   void updateMonthlyBillKwh(double value) {
     _monthlyBillKwh = value;
     _monthlyBillValue = value;
@@ -159,10 +131,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update monthly bill in PHP (stores the PHP value)
   void updateMonthlyBillPhp(double value) {
     _monthlyBillValue = value;
-    // Calculate kWh from PHP value and electricity rate
     if (_electricityRate > 0) {
       _monthlyBillKwh = value / _electricityRate;
     }
@@ -171,7 +141,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update bill offset percentage
   void updateBillOffsetPercentage(double value) {
     _billOffsetPercentage = value;
     _markDataChanged();
@@ -179,7 +148,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update sun hours per day
   void updateSunHoursPerDay(double value) {
     _sunHoursPerDay = value;
     _markDataChanged();
@@ -187,7 +155,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Toggle off-grid setup
   void toggleOffGrid(bool value) {
     _isOffGrid = value;
     _markDataChanged();
@@ -195,7 +162,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update backup hours
   void updateBackupHours(double value) {
     _backupHours = value;
     _markDataChanged();
@@ -203,15 +169,11 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Toggle PHP billing mode
   void togglePhpBilling(bool value) {
     _usedPhpBilling = value;
-    // Convert between kWh and PHP when toggling
     if (value && _monthlyBillKwh > 0 && _electricityRate > 0) {
-      // Converting from kWh to PHP
       _monthlyBillValue = _monthlyBillKwh * _electricityRate;
     } else if (!value && _monthlyBillValue > 0 && _electricityRate > 0) {
-      // Converting from PHP to kWh
       _monthlyBillKwh = _monthlyBillValue / _electricityRate;
     }
     _markDataChanged();
@@ -219,7 +181,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Toggle API integration
   void toggleApiIntegration(bool value) {
     _useApiIntegration = value;
     _markDataChanged();
@@ -227,10 +188,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update electricity rate
   void updateElectricityRate(double value) {
     _electricityRate = value;
-    // Recalculate kWh from PHP value if using PHP billing
     if (_usedPhpBilling && _monthlyBillValue > 0 && value > 0) {
       _monthlyBillKwh = _monthlyBillValue / value;
     }
@@ -239,7 +198,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update solar panel size
   void updateSolarPanelSize(double value) {
     _solarPanelSizeKw = value;
     _markDataChanged();
@@ -247,7 +205,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update solar panel price
   void updateSolarPanelPrice(double value) {
     _solarPanelPricePhp = value;
     _markDataChanged();
@@ -255,7 +212,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update battery size
   void updateBatterySize(double value) {
     _batterySizeKwh = value;
     _markDataChanged();
@@ -263,7 +219,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update battery price
   void updateBatteryPrice(double value) {
     _batteryPricePhp = value;
     _markDataChanged();
@@ -271,7 +226,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update location coordinates
   void updateLocation(double latitude, double longitude) {
     _latitude = latitude;
     _longitude = longitude;
@@ -280,9 +234,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Calculate system size and generate results
   Future<void> calculateSystem() async {
-    // Check if we have the minimum required inputs
     if (_monthlyBillKwh <= 0 || _billOffsetPercentage <= 0) {
       _setError('Please provide valid monthly bill and bill offset percentage');
       return;
@@ -293,28 +245,11 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       _clearError();
       notifyListeners();
 
-      print('=== CALCULATION START ===');
-      print('Monthly Bill (kWh): $_monthlyBillKwh');
-      print('Electricity Rate: $_electricityRate');
-      print('Bill Offset: $_billOffsetPercentage%');
-      print('Sun Hours: $_sunHoursPerDay');
-      print('Backup Hours: $_backupHours');
-      print('API Integration: $_useApiIntegration');
-      print('Solar Panel Size: $_solarPanelSizeKw kW');
-      print('Solar Panel Price: ₱$_solarPanelPricePhp');
-      print('Battery Size: $_batterySizeKwh kWh');
-      print('Battery Price: ₱$_batteryPricePhp');
-      print('Latitude: $_latitude');
-      print('Longitude: $_longitude');
-
       double systemSizeKw;
       double? pvwattsAnnualOutput;
       double? pvwattsDailyOutput;
 
       if (_useApiIntegration) {
-        print('=== USING PVWATTS API ===');
-
-        // Calculate target daily consumption with conversion
         final targetDailyConsumption =
             SolarCalculations.calculateTargetDailyConsumptionWithConversion(
           monthlyBillValue: _monthlyBillValue,
@@ -324,7 +259,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         );
         print('Target Daily Consumption: $targetDailyConsumption kWh');
 
-        // Get PVWatts data
         final pvwattsResponse = await SolarCalculations.getPvwattsAnnualOutput(
           latitude: _latitude,
           longitude: _longitude,
@@ -334,13 +268,11 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         print('PVWatts Annual Output: $pvwattsAnnualOutput kWh');
         print('PVWatts Daily Output: $pvwattsDailyOutput kWh');
 
-        // Calculate system size using PVWatts
         systemSizeKw = targetDailyConsumption / pvwattsDailyOutput;
         print('System Size (PVWatts): $systemSizeKw kW');
       } else {
         print('=== USING ESTIMATED CALCULATIONS ===');
 
-        // Use new calculation method with conversion
         systemSizeKw = SolarCalculations.calculateSystemSizeWithConversion(
           monthlyBillValue: _monthlyBillValue,
           billOffsetPercentage: _billOffsetPercentage,
@@ -351,7 +283,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         print('System Size (Estimated): $systemSizeKw kW');
       }
 
-      // Calculate annual and monthly production
       double annualProduction;
       double monthlyProduction;
 
@@ -367,7 +298,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         print('Monthly Production (Estimated): $monthlyProduction kWh');
       }
 
-      // Calculate solar panel cost and number of panels
       final solarPanelCost = SolarCalculations.calculateSolarPanelCost(
         systemSizeKw: systemSizeKw,
         panelSizeKw: _solarPanelSizeKw,
@@ -380,7 +310,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       print('Solar Panel Cost: ₱$solarPanelCost');
       print('Number of Panels: $numberOfPanels');
 
-      // Calculate battery cost and number of batteries (if off-grid/hybrid)
       double batteryCost = 0;
       int numberOfBatteries = 0;
       double batterySizeKwh = 0;
@@ -388,7 +317,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       if (_isOffGrid) {
         print('=== BATTERY CALCULATIONS ===');
 
-        // Calculate battery size
         final dailyConsumption = _usedPhpBilling
             ? SolarCalculations.calculateDailyConsumption(
                 SolarCalculations.convertPhpToKwh(
@@ -402,7 +330,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         );
         print('Battery Size: $batterySizeKwh kWh');
 
-        // Calculate battery cost
         batteryCost = SolarCalculations.calculateBatteryCost(
           batterySizeKwh: batterySizeKwh,
           batterySizeKw: _batterySizeKwh,
@@ -416,7 +343,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         print('Number of Batteries: $numberOfBatteries');
       }
 
-      // Calculate total system cost
       final totalSystemCost = SolarCalculations.calculateTotalSystemCost(
         solarPanelCost: solarPanelCost,
         includesBattery: _isOffGrid,
@@ -424,20 +350,16 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       );
       print('Total System Cost: ₱$totalSystemCost');
 
-      // Calculate monthly savings
       final monthlySavings = SolarCalculations.calculateMonthlySavings(
         systemSizeKw: systemSizeKw,
-        sunHoursPerDay:
-            _useApiIntegration ? 4.5 : _sunHoursPerDay, // Use average for API
+        sunHoursPerDay: _useApiIntegration ? 4.5 : _sunHoursPerDay,
         electricityRate: _electricityRate,
       );
       print('Monthly Savings: ₱$monthlySavings');
 
-      // Calculate payback period
       final paybackPeriod = totalSystemCost / monthlySavings;
       print('Payback Period: ${paybackPeriod.toStringAsFixed(1)} months');
 
-      // Create calculation result
       _calculationResult = CalculationResultModel(
         systemSize: systemSizeKw,
         annualProduction: annualProduction,
@@ -464,15 +386,11 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  // Step 2 Methods
-
-  /// Update project details
   void updateProjectDetails(ProjectDetailsModel details) {
     _projectDetails = details;
     _markDataChanged();
     _clearError();
 
-    // Update current quote with new project details if it exists
     if (_currentQuote != null) {
       _currentQuote = QuoteModel(
         id: _currentQuote!.id,
@@ -498,18 +416,11 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Add default rows based on calculation results
   List<ProjectRowModel> getDefaultRows() {
     if (_calculationResult == null) return [];
 
     final rows = <ProjectRowModel>[];
 
-    // Add solar panels row
-    // final solarPanelCost = SolarCalculations.calculateSolarPanelCost(
-    //   systemSizeKw: _calculationResult!.systemSize,
-    //   panelSizeKw: _solarPanelSizeKw,
-    //   panelPricePhp: _solarPanelPricePhp,
-    // );
     rows.add(
       ProjectRowModel(
         id: _uuid.v4(),
@@ -523,13 +434,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       ),
     );
 
-    // Add battery row if off-grid
     if (_isOffGrid && _calculationResult!.batterySize > 0) {
-      // final batteryCost = SolarCalculations.calculateBatteryCost(
-      //   batterySizeKwh: _calculationResult!.batterySize,
-      //   batterySizeKw: _batterySizeKwh,
-      //   batteryPricePhp: _batteryPricePhp,
-      // );
       rows.add(
         ProjectRowModel(
           id: _uuid.v4(),
@@ -547,15 +452,11 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     return rows;
   }
 
-  // Navigation Methods
-
-  /// Go to next step
   void nextStep() async {
     if (_currentStep < 3) {
       _currentStep++;
       _clearError();
 
-      // Auto-generate PDF when entering step 3
       if (_currentStep == 3) {
         await _autoGeneratePdf();
       }
@@ -564,7 +465,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  /// Go to previous step
   void previousStep() {
     if (_currentStep > 1) {
       _currentStep--;
@@ -573,13 +473,11 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  /// Go to specific step
   void goToStep(int step) async {
     if (step >= 1 && step <= 3) {
       _currentStep = step;
       _clearError();
 
-      // Auto-generate PDF when entering step 3
       if (_currentStep == 3) {
         await _autoGeneratePdf();
       }
@@ -588,33 +486,26 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  /// Auto-generate PDF when entering step 3
   Future<void> _autoGeneratePdf() async {
     try {
-      // Create quote first if not exists
       if (_currentQuote == null) {
         await createQuote();
       }
 
       if (_currentQuote != null) {
-        // Check if data has changed since last PDF generation
         if (_dataChanged || _generatedPdfFile == null) {
           print('Data changed or no PDF exists, regenerating PDF...');
           await generatePdf();
-          _clearDataChanged(); // Clear the changed flag after successful generation
+          _clearDataChanged();
         } else {
           print('No data changes detected, using existing PDF');
         }
       }
     } catch (e) {
-      // Don't show error for auto-generation, just log it
       print('Auto PDF generation failed: $e');
     }
   }
 
-  // Step 3 Methods
-
-  /// Create final quote
   Future<void> createQuote() async {
     try {
       if (_calculationResult == null || _projectDetails == null) {
@@ -624,7 +515,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       _isSaving = true;
       notifyListeners();
 
-      // Create quote with all information
       _currentQuote = QuoteModel(
         id: _uuid.v4(),
         projectName: _projectDetails!.projectName,
@@ -645,7 +535,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         electricityRate: _usedPhpBilling ? _electricityRate : null,
       );
 
-      // Save quote
       await _quoteRepository.saveQuote(_currentQuote!);
     } catch (e) {
       _setError('Failed to create quote: ${e.toString()}');
@@ -655,7 +544,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  /// Generate PDF
   Future<void> generatePdf() async {
     try {
       _isGeneratingPdf = true;
@@ -666,11 +554,9 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         throw Exception('No quote available for PDF generation');
       }
 
-      // Get company profile for PDF header
       final companyProfile =
           await _settingsRepository.getCompanyProfileWithDefaults();
 
-      // Generate PDF using PdfService
       _generatedPdfFile = await PdfService.generateQuotePdf(
         _currentQuote!,
         companyProfile,
@@ -685,7 +571,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  /// Share PDF with client
   Future<bool> sharePdf() async {
     try {
       if (_generatedPdfFile == null) {
@@ -706,9 +591,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     }
   }
 
-  // Utility Methods
-
-  /// Reset the entire quote generation process
   void resetQuoteGeneration() {
     _currentStep = 1;
     _monthlyBillKwh = 0;
@@ -723,29 +605,19 @@ class QuoteGenerationViewModel extends ChangeNotifier {
     _projectDetails = null;
     _currentQuote = null;
     _generatedPdfFile = null;
-    _generatedImageFile = null;
     _clearError();
     notifyListeners();
   }
 
-  /// Clear error message
   void _clearError() {
     _errorMessage = null;
   }
 
-  /// Set error message
   void _setError(String message) {
     _errorMessage = message;
   }
-
-  /// Clear error message (public method)
-  void clearError() {
-    _clearError();
-    notifyListeners();
-  }
 }
 
-/// Data class for step information
 class StepInfo {
   final String title;
   final String description;
@@ -753,5 +625,4 @@ class StepInfo {
   const StepInfo({required this.title, required this.description});
 }
 
-/// Enum for progress states
 enum ProgressState { inactive, active, completed }

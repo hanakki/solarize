@@ -9,7 +9,7 @@ import '../../../data/models/preset_model.dart';
 import 'widgets/preset_item_widget.dart';
 import 'preset_detail_screen.dart';
 
-/// Screen for displaying and managing presets
+// for displaying and managing presets
 class PresetListScreen extends StatefulWidget {
   const PresetListScreen({super.key});
 
@@ -21,7 +21,7 @@ class _PresetListScreenState extends State<PresetListScreen> {
   @override
   void initState() {
     super.initState();
-    // Load presets when screen initializes
+    // Load presets
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PresetViewModel>().loadPresets();
     });
@@ -37,13 +37,10 @@ class _PresetListScreenState extends State<PresetListScreen> {
               children: [
                 Column(
                   children: [
-                    // Custom app bar
                     CustomAppBar(
                       title: 'Load Preset',
                       onBackPressed: () => Navigator.pop(context),
                     ),
-
-                    // Content
                     Expanded(
                       child: WhiteContentContainer(
                         topMargin: 0,
@@ -52,8 +49,6 @@ class _PresetListScreenState extends State<PresetListScreen> {
                     ),
                   ],
                 ),
-
-                // Loading overlay
                 if (viewModel.isLoading) const LoadingOverlay(),
               ],
             );
@@ -61,7 +56,7 @@ class _PresetListScreenState extends State<PresetListScreen> {
         ),
       ),
 
-      // Floating action button for adding new preset
+      // action button for adding new preset
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 48),
         child: FloatingActionButton(

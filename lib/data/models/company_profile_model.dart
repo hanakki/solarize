@@ -1,5 +1,3 @@
-/// Model class representing company profile information
-/// Used for PDF generation and app settings
 class CompanyProfileModel {
   final String companyName;
   final String? logoPath;
@@ -23,7 +21,6 @@ class CompanyProfileModel {
     this.preparedBy,
   });
 
-  /// Create a copy with updated values
   CompanyProfileModel copyWith({
     String? companyName,
     String? logoPath,
@@ -48,13 +45,10 @@ class CompanyProfileModel {
     );
   }
 
-  /// Check if company has logo
   bool get hasLogo => logoPath != null && logoPath!.isNotEmpty;
 
-  /// Get display name for prepared by field
   String get displayPreparedBy => preparedBy ?? 'Solar Consultant';
 
-  /// Convert to JSON
   Map<String, dynamic> toJson() {
     return {
       'companyName': companyName,
@@ -69,7 +63,6 @@ class CompanyProfileModel {
     };
   }
 
-  /// Create from JSON
   factory CompanyProfileModel.fromJson(Map<String, dynamic> json) {
     return CompanyProfileModel(
       companyName: json['companyName'] as String,

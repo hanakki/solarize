@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/quote_generation_viewmodel.dart';
 import '../../widgets/common/custom_button.dart';
 import 'widgets/step_header_widget.dart';
-import 'widgets/quote_summary_widget.dart';
 import 'widgets/pdf_preview_widget.dart';
 import '../../../core/constants/strings.dart';
 import '../../../core/services/pdf_service.dart';
@@ -21,44 +20,23 @@ class StepThreeScreen extends StatelessWidget {
 
         return Column(
           children: [
-            // Step header
             StepHeaderWidget(
               title: stepInfo.title,
               description: stepInfo.description,
             ),
-
             const SizedBox(height: 24),
-
-            // Quote summary
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Quote summary widget
-                    // if (viewModel.calculationResult != null &&
-                    //     viewModel.projectDetails != null)
-                    //   QuoteSummaryWidget(
-                    //     calculationResult: viewModel.calculationResult!,
-                    //     projectDetails: viewModel.projectDetails!,
-                    //   ),
-
-                    // const SizedBox(height: 32),
-
-                    // PDF Preview widget
                     PdfPreviewWidget(
                       pdfFile: viewModel.generatedPdfFile,
                       isLoading: viewModel.isGeneratingPdf,
                       errorMessage: viewModel.errorMessage,
                     ),
-
                     const SizedBox(height: 32),
-
-                    // Action buttons
                     _buildActionButtons(context, viewModel),
-
                     const SizedBox(height: 8),
-
-                    // Navigation buttons
                     _buildNavigationButtons(context, viewModel),
                   ],
                 ),
@@ -70,23 +48,19 @@ class StepThreeScreen extends StatelessWidget {
     );
   }
 
-  /// Build action buttons for export and sharing
+  // Build action buttons for export and sharing
   Widget _buildActionButtons(
       BuildContext context, QuoteGenerationViewModel viewModel) {
     return Column(
       children: [
-        // Share with client button
         CustomButton(
           text: AppStrings.shareWithClientButton,
           onPressed: () => _shareWithClient(context, viewModel),
           isLoading: viewModel.isGeneratingPdf,
         ),
-
         const SizedBox(height: 16),
-
-        // Save PDF button
         CustomButton(
-          text: AppStrings.exportAsPngButton, // This now says "SAVE PDF"
+          text: AppStrings.exportAsPngButton,
           style: CustomButtonStyle.secondary,
           onPressed: () => _savePdf(context, viewModel),
           isLoading: viewModel.isGeneratingPdf,
@@ -95,7 +69,7 @@ class StepThreeScreen extends StatelessWidget {
     );
   }
 
-  /// Build navigation buttons
+  // Build navigation buttons
   Widget _buildNavigationButtons(
       BuildContext context, QuoteGenerationViewModel viewModel) {
     return Row(
@@ -110,7 +84,7 @@ class StepThreeScreen extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: CustomButton(
-            text: 'Back to Home',
+            text: 'BACK TO HOME',
             style: CustomButtonStyle.tertiary,
             onPressed: () => _backToHome(context, viewModel),
           ),
@@ -119,44 +93,10 @@ class StepThreeScreen extends StatelessWidget {
     );
   }
 
-  /// Generate PDF
-  // Future<void> _generatePdf(
-  //     BuildContext context, QuoteGenerationViewModel viewModel) async {
-  //   try {
-  //     // Create quote first if not exists
-  //     if (viewModel.currentQuote == null) {
-  //       await viewModel.createQuote();
-  //     }
-
-  //     if (viewModel.currentQuote != null) {
-  //       await viewModel.generatePdf();
-
-  //       if (context.mounted) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(
-  //             content: Text('PDF generated successfully!'),
-  //             backgroundColor: Colors.green,
-  //           ),
-  //         );
-  //       }
-  //     }
-  //   } catch (e) {
-  //     if (context.mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text('Failed to generate PDF: $e'),
-  //           backgroundColor: Colors.red,
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
-
-  /// Share quote with client (PDF)
+  // Share quote with client (PDF)
   Future<void> _shareWithClient(
       BuildContext context, QuoteGenerationViewModel viewModel) async {
     try {
-      // Create quote first if not exists
       if (viewModel.currentQuote == null) {
         await viewModel.createQuote();
       }
@@ -164,9 +104,8 @@ class StepThreeScreen extends StatelessWidget {
       if (viewModel.currentQuote != null) {
         final success = await viewModel.sharePdf();
         if (success && context.mounted) {
-          // Reset quote generation after successful sharing
           viewModel.resetQuoteGeneration();
-          Navigator.pop(context); // Go back to home screen
+          Navigator.pop(context);
         }
       }
     } catch (e) {
@@ -181,11 +120,10 @@ class StepThreeScreen extends StatelessWidget {
     }
   }
 
-  /// Save PDF to device
+  // Save PDF to device
   Future<void> _savePdf(
       BuildContext context, QuoteGenerationViewModel viewModel) async {
     try {
-      // Create quote first if not exists
       if (viewModel.currentQuote == null) {
         await viewModel.createQuote();
       }
@@ -207,7 +145,6 @@ class StepThreeScreen extends StatelessWidget {
                 textColor: Colors.white,
                 onPressed: () {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  // Reset quote generation and go back to home after user acknowledges
                   viewModel.resetQuoteGeneration();
                   Navigator.pop(context);
                 },
@@ -228,9 +165,8 @@ class StepThreeScreen extends StatelessWidget {
     }
   }
 
-  /// Navigate back to home and reset quote generation
   void _backToHome(BuildContext context, QuoteGenerationViewModel viewModel) {
     viewModel.resetQuoteGeneration();
-    Navigator.pop(context); // Go back to home screen
+    Navigator.pop(context);
   }
 }

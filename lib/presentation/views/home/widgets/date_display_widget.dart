@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/typography.dart';
 
-/// Widget for displaying the current date in a formatted way
-/// Shows date in "Monday • July 7" format
+// for displaying the current date in a formatted way
 class DateDisplayWidget extends StatelessWidget {
   final String formattedDate;
 

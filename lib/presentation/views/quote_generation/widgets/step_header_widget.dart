@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/typography.dart';
 
-/// Widget for displaying step header with title and description
+// for displaying step header with title and description
 class StepHeaderWidget extends StatelessWidget {
   final String title;
   final String description;

@@ -7,7 +7,7 @@ import '../../../../core/constants/strings.dart';
 import '../../../viewmodels/settings_viewmodel.dart';
 import 'file_upload_widget.dart';
 
-/// Widget for editing company profile information
+// for editing company profile information
 class CompanyProfileWidget extends StatelessWidget {
   const CompanyProfileWidget({super.key});
 
@@ -140,67 +140,6 @@ class CompanyProfileWidget extends StatelessWidget {
       ],
     );
   }
-
-  // Widget _buildTextField({
-  //   required TextEditingController controller,
-  //   required String label,
-  //   required String hint,
-  //   bool isRequired = false,
-  //   int maxLines = 1,
-  //   TextInputType? keyboardType,
-  // }) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Row(
-  //         children: [
-  //           Text(
-  //             label,
-  //             style: AppTypography.interSemiBoldBlack16_24_0,
-  //           ),
-  //           if (isRequired)
-  //             const Text(
-  //               ' *',
-  //               style: TextStyle(
-  //                 fontFamily: 'InterSemiBold',
-  //                 fontSize: 16,
-  //                 height: 24 / 16,
-  //                 letterSpacing: 0,
-  //                 color: AppColors.errorColor,
-  //               ),
-  //             ),
-  //         ],
-  //       ),
-  //       const SizedBox(height: 8),
-  //       TextField(
-  //         controller: controller,
-  //         maxLines: maxLines,
-  //         keyboardType: keyboardType,
-  //         decoration: InputDecoration(
-  //           hintText: hint,
-  //           hintStyle: AppTypography.interRegularGray14_20_0,
-  //           border: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(8),
-  //             borderSide: const BorderSide(color: AppColors.borderColor),
-  //           ),
-  //           enabledBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(8),
-  //             borderSide: const BorderSide(color: AppColors.borderColor),
-  //           ),
-  //           focusedBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(8),
-  //             borderSide:
-  //                 const BorderSide(color: AppColors.primaryColor, width: 2),
-  //           ),
-  //           contentPadding: const EdgeInsets.symmetric(
-  //             horizontal: 16,
-  //             vertical: 12,
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 
   Widget _buildSaveButton(BuildContext context, SettingsViewModel viewModel) {
     return SizedBox(

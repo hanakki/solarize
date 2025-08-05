@@ -7,8 +7,6 @@ import 'widgets/date_display_widget.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/typography.dart';
 
-/// Home screen displaying the main navigation cards
-/// Shows today's date and four feature cards for main app functions
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -24,17 +22,10 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // App title (optional, can be removed if not needed)
                     const SizedBox(height: 16),
-
-                    // Today section
                     _buildTodaySection(viewModel),
-
                     const SizedBox(height: 32),
-
-                    // Feature cards grid
                     _buildFeatureCardsGrid(context, viewModel),
-
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -46,20 +37,15 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// Build the today section with date display
   Widget _buildTodaySection(HomeViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // "Today" label
         Text(
           viewModel.todayLabel,
           style: AppTypography.leagueSpartanBoldBlack57_64_0,
         ),
-
         const SizedBox(height: 8),
-
-        // Date display
         DateDisplayWidget(
           formattedDate: viewModel.formattedDate,
         ),
@@ -67,7 +53,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// Build the feature cards grid (2x2 layout)
   Widget _buildFeatureCardsGrid(BuildContext context, HomeViewModel viewModel) {
     final cards = viewModel.featureCards;
 
@@ -76,7 +61,7 @@ class HomeScreen extends StatelessWidget {
         return FeatureCardWidget(
           title: card.title,
           description: card.description,
-          imagePath: card.iconPath, // Using iconPath as imagePath for now
+          imagePath: card.iconPath,
           onTap: () => viewModel.navigateToFeature(context, card.route),
         );
       }).toList(),

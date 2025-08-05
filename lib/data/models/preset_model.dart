@@ -1,14 +1,12 @@
 import 'project_row_model.dart';
 
-/// Model class representing a reusable preset template
-/// Contains default rows that can be applied to new quotes
 class PresetModel {
   final String id;
   final String name;
   final List<ProjectRowModel> defaultRows;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final bool isDefault; // System-provided presets vs user-created
+  final bool isDefault;
 
   const PresetModel({
     required this.id,
@@ -19,7 +17,6 @@ class PresetModel {
     this.isDefault = false,
   });
 
-  /// Create a copy of the preset with updated values
   PresetModel copyWith({
     String? id,
     String? name,
@@ -38,15 +35,12 @@ class PresetModel {
     );
   }
 
-  /// Calculate total estimated price of all rows in preset
   double get totalEstimatedPrice {
     return defaultRows.fold(0.0, (sum, row) => sum + row.totalPrice);
   }
 
-  /// Get number of items in preset
   int get itemCount => defaultRows.length;
 
-  /// Convert preset to JSON for storage
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -58,7 +52,6 @@ class PresetModel {
     };
   }
 
-  /// Create preset from JSON
   factory PresetModel.fromJson(Map<String, dynamic> json) {
     return PresetModel(
       id: json['id'] as String,
