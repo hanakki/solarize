@@ -1,9 +1,4 @@
 class AppStrings {
-  // App Information
-  static const String appName = 'Solarize';
-  static const String appTagline = 'Professional Solar Quotations Made Simple';
-
-  // Home Screen
   static const String todayLabel = 'Today';
   static const String generateQuoteTitle = 'Generate Quote';
   static const String generateQuoteDescription =
@@ -18,7 +13,6 @@ class AppStrings {
   static const String appSettingsDescription =
       'Adjust theme preferences, view app details, and contact our team.';
 
-  // Quote Generation Steps
   static const String stepOneTitle = 'Calculate System Size';
   static const String stepOneDescription =
       'Let\'s start by estimating the ideal solar setup for your client.';
@@ -29,17 +23,17 @@ class AppStrings {
   static const String stepThreeDescription =
       'Double-check the details, then send it directly to your client or save it for later.';
 
-  // Form Labels
-  static const String monthlyElectricBillLabel = 'MONTHLY ELECTRIC BILL (KWH)';
+  static const String monthlyElectricBillLabel =
+      'MONTHLY ELECTRICITY BILL (KWH)';
   static const String monthlyElectricBillPhpLabel =
-      'MONTHLY ELECTRIC BILL (PHP)';
+      'MONTHLY ELECTRICITY BILL (PHP)';
   static const String electricityProviderRateLabel =
-      'ELECTRICTY PROVIDER RATE (₱/KWH)';
+      'ELECTRICITY PROVIDER RATE (₱/KWH)';
   static const String electricBillPhpToggle =
-      'Enter monthly electric bill in PHP (₱)';
+      'Enter monthly electricity bill in PHP (₱)';
   static const String billOffsetPercentageLabel = 'BILL OFFSET PERCENTAGE';
   static const String billOffsetDescription =
-      'The portion of your electric bill you want to cover with solar energy';
+      'The portion of your electricity bill you want to cover with solar energy';
   static const String sunHoursLabel = 'SUN HOURS PER DAY';
   static const String sunHoursDescription =
       'Avg. sunlight hours per day (e.g., 5-6 hours on clear days, less on rainy days)';
@@ -53,7 +47,7 @@ class AppStrings {
   static const String addQuantityLabel = "QUANTITY";
   static const String addUnitLabel = "UNIT";
   static const String addDescriptionLabel = "DESCRIPTION";
-  static const String addEstimatedPriceLabel = "ESTIMATED PRICE";
+  static const String addEstimatedPriceLabel = "UNIT PRICE";
   static const String addTotalPriceLabel = "TOTAL PRICE";
   static const String companyLogoLabel = "COMPANY LOGO";
   static const String companyNameLabel = "COMPANY NAME";
@@ -65,7 +59,6 @@ class AppStrings {
   static const String footerNotesLabel = "FOOTER NOTES";
   static const String preparedByLabel = "PREPARED BY";
 
-  // API Integration
   static const String apiIntegrationLabel = 'ENABLE API SUPPORT';
   static const String apiIntegrationToggle =
       'Use PVWatts for more accurate calculations';
@@ -77,7 +70,6 @@ class AppStrings {
   static const String apiDisabledDescription =
       'Using estimated calculations (less accurate)';
 
-  // Solar Panel Configuration
   static const String solarPanelSizeLabel = 'PANEL SIZE (KW)';
   static const String solarPanelSizeHint = 'e.g., 1.0';
   static const String solarPanelPriceLabel = 'PANEL PRICE (₱)';
@@ -87,7 +79,6 @@ class AppStrings {
   static const String solarPanelConfigurationDescription =
       'Configure your solar panel specifications';
 
-  // Battery Configuration
   static const String batterySizeLabel = 'BATTERY SIZE (KWH)';
   static const String batterySizeHint = 'e.g., 5.0';
   static const String batteryPriceLabel = 'BATTERY PRICE (₱)';
@@ -96,7 +87,6 @@ class AppStrings {
   static const String batteryConfigurationDescription =
       'Configure your battery specifications for off-grid/hybrid systems';
 
-  // Location Configuration
   static const String latitudeLabel = 'LATITUDE';
   static const String latitudeHint = 'e.g., 10.387';
   static const String longitudeLabel = 'LONGITUDE';
@@ -105,7 +95,6 @@ class AppStrings {
   static const String locationConfigurationDescription =
       'Enter your location coordinates for accurate solar calculations';
 
-  // Calculation Results
   static const String calculationSetup = 'Setup';
   static const String calculationSystemSize = 'System Size';
   static const String calculationNumberOfPanels = 'Number of Panels';
@@ -119,7 +108,6 @@ class AppStrings {
   static const String calculationOffGrid = 'Off-Grid / Hybrid';
   static const String calculationGridTie = 'Grid-Tied';
 
-  // Project Details
   static const String projectNameLabel = 'PROJECT NAME';
   static const String clientNameLabel = 'CLIENT NAME';
   static const String projectLocationLabel = 'PROJECT LOCATION';
@@ -128,7 +116,6 @@ class AppStrings {
   static const String descriptionLabel = 'DESCRIPTION';
   static const String estimatedPriceLabel = 'ESTIMATED PRICE';
 
-  // Buttons
   static const String calculateButton = 'CALCULATE';
   static const String proceedButton = 'PROCEED';
   static const String backButton = 'BACK';
@@ -140,7 +127,6 @@ class AppStrings {
   static const String backToHomeButton = 'BACK TO HOME';
   static const String saveCompanyProfileButton = 'SAVE COMPANY PROFILE';
 
-  // About Section
   static const String aboutAppTitle = 'About the App';
   static const String aboutAppDescription =
       'Solarize is a simple yet powerful app built for solar consultants to quickly create professional quotations using customizable input presets. Whether you\'re selecting price values, dropdowns, or checkboxes, the app helps you generate clear estimates and export them as PDFs or images you can easily share via email or messaging apps.';
@@ -148,12 +134,4 @@ class AppStrings {
   static const String aboutUsTitle = 'About Us';
   static const String aboutUsDescription =
       'This app was built by Hanakki, a solo developer and 3rd year Computer Engineering student from Toledo City, Cebu, studying at the University of San Carlos (USC). \n\nOriginally created as a final project for CPE 3323 Mobile Applications Development, this app also serves as a small tribute to her father, who runs a solar company and inspired the idea behind making quotation estimates simpler and more efficient. \n\nGot issues or suggestions? Hit her up at solarize@gmail.com.';
-
-  // Error Messages
-  static const String requiredFieldError = 'This field is required';
-  static const String invalidEmailError = 'Please enter a valid email address';
-  static const String invalidNumberError = 'Please enter a valid number';
-  static const String calculationError = 'Error occurred during calculation';
-  static const String saveError = 'Error saving data';
-  static const String loadError = 'Error loading data';
 }

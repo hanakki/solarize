@@ -4,9 +4,7 @@ import 'package:solarize/core/constants/strings.dart';
 
 class HomeViewModel extends ChangeNotifier {
   DateTime _currentDate = DateTime.now();
-
   DateTime get currentDate => _currentDate;
-
   String get formattedDate {
     final dayFormat = DateFormat('EEEE');
     final dateFormat = DateFormat('MMMM d');

@@ -45,10 +45,8 @@ class SettingsViewModel extends ChangeNotifier {
       _isLoading = true;
       _clearMessages();
       notifyListeners();
-
       _companyProfile =
           await _settingsRepository.getCompanyProfileWithDefaults();
-
       if (_companyProfile?.hasLogo == true) {
         final logoExists =
             await ImageService.logoExists(_companyProfile!.logoPath);

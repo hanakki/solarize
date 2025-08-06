@@ -21,27 +21,20 @@ class AppRoutes {
   static const String addRow = '/add-row';
   static const String presetList = '/presets';
   static const String presetDetail = '/preset-detail';
-
   static const String settings = '/settings';
 
-  // Route generator
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-
       case quoteGeneration:
         return MaterialPageRoute(builder: (_) => const QuoteGenerationScreen());
-
       case stepOne:
         return MaterialPageRoute(builder: (_) => const StepOneScreen());
-
       case stepTwo:
         return MaterialPageRoute(builder: (_) => const StepTwoScreen());
-
       case stepThree:
         return MaterialPageRoute(builder: (_) => const StepThreeScreen());
-
       case addRow:
         final args = routeSettings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
@@ -49,10 +42,8 @@ class AppRoutes {
             existingRow: args?['existingRow'],
           ),
         );
-
       case presetList:
         return MaterialPageRoute(builder: (_) => const PresetListScreen());
-
       case presetDetail:
         final args = routeSettings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
@@ -60,10 +51,8 @@ class AppRoutes {
             preset: args?['preset'],
           ),
         );
-
       case settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
-
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

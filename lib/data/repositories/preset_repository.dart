@@ -5,9 +5,7 @@ import '../../core/services/local_storage_service.dart';
 // Handles CRUD operations with local storage
 class PresetRepository {
   final LocalStorageService _storageService;
-
   PresetRepository(this._storageService);
-
   Future<List<PresetModel>> getAllPresets() async {
     try {
       final presets = await _storageService.getPresets();
@@ -36,9 +34,7 @@ class PresetRepository {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
-
     await _storageService.savePreset(preset);
-
     return preset;
   }
 

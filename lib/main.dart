@@ -12,7 +12,6 @@ import 'presentation/viewmodels/settings_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await LocalStorageService.init();
 
   runApp(

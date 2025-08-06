@@ -14,17 +14,9 @@ class AppColors {
   static const Color hintTextColor = Color.fromRGBO(119, 118, 135, 1);
 
   static const Color primaryButtonColor = Color(0xFF2196F3);
-  static const Color secondaryButtonColor = Color(0xFFE0E0E0);
-  static const Color tertiaryButtonColor = Colors.transparent;
 
-  static const Color successColor = Color(0xFF4CAF50);
   static const Color errorColor = Color(0xFFF44336);
   static const Color warningColor = Color(0xFFFF9800);
-  static const Color infoColor = Color(0xFF2196F3);
-
-  static const Color progressActiveColor = Color(0xFF2196F3);
-  static const Color progressInactiveColor = Color(0xFFE0E0E0);
-  static const Color progressCompletedColor = Color(0xFF4CAF50);
 
   static const Color borderColor = Color.fromRGBO(119, 118, 135, 1);
   static const Color focusedBorderColor = Color(0xFF2196F3);

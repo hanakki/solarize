@@ -7,7 +7,6 @@ class ImageService {
   static Future<String> copyLogoToAppDirectory(String originalPath) async {
     try {
       final originalFile = File(originalPath);
-
       if (!await originalFile.exists()) {
         throw Exception('Original logo file does not exist');
       }

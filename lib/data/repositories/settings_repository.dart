@@ -4,16 +4,13 @@ import '../../core/services/local_storage_service.dart';
 // Handles company information storage and retrieval
 class SettingsRepository {
   final LocalStorageService _storageService;
-
   SettingsRepository(this._storageService);
-
   Future<CompanyProfileModel> getCompanyProfileWithDefaults() async {
     try {
       final profile = await _storageService.getSettings();
       if (profile != null) {
         return profile;
       }
-
       return _getDefaultCompanyProfile();
     } catch (e) {
       return _getDefaultCompanyProfile();

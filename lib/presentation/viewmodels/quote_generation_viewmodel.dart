@@ -44,15 +44,10 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   double _longitude = 123.6502;
 
   CalculationResultModel? _calculationResult;
-
   ProjectDetailsModel? _projectDetails;
-
   QuoteModel? _currentQuote;
-
   File? _generatedPdfFile;
-
   String? _errorMessage;
-
   bool _dataChanged = false;
 
   int get currentStep => _currentStep;
@@ -73,7 +68,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
 
   double get solarPanelSizeKw => _solarPanelSizeKw;
   double get solarPanelPricePhp => _solarPanelPricePhp;
-
   double get batterySizeKwh => _batterySizeKwh;
   double get batteryPricePhp => _batteryPricePhp;
 
@@ -257,7 +251,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
           isPhpBilling: _usedPhpBilling,
           electricityRate: _electricityRate,
         );
-        print('Target Daily Consumption: $targetDailyConsumption kWh');
 
         final pvwattsResponse = await SolarCalculations.getPvwattsAnnualOutput(
           latitude: _latitude,
@@ -265,14 +258,8 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         );
         pvwattsAnnualOutput = pvwattsResponse;
         pvwattsDailyOutput = pvwattsResponse / 365;
-        print('PVWatts Annual Output: $pvwattsAnnualOutput kWh');
-        print('PVWatts Daily Output: $pvwattsDailyOutput kWh');
-
         systemSizeKw = targetDailyConsumption / pvwattsDailyOutput;
-        print('System Size (PVWatts): $systemSizeKw kW');
       } else {
-        print('=== USING ESTIMATED CALCULATIONS ===');
-
         systemSizeKw = SolarCalculations.calculateSystemSizeWithConversion(
           monthlyBillValue: _monthlyBillValue,
           billOffsetPercentage: _billOffsetPercentage,
@@ -280,7 +267,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
           isPhpBilling: _usedPhpBilling,
           electricityRate: _electricityRate,
         );
-        print('System Size (Estimated): $systemSizeKw kW');
       }
 
       double annualProduction;
@@ -289,13 +275,9 @@ class QuoteGenerationViewModel extends ChangeNotifier {
       if (_useApiIntegration && pvwattsAnnualOutput != null) {
         annualProduction = pvwattsAnnualOutput;
         monthlyProduction = pvwattsAnnualOutput / 12;
-        print('Annual Production (PVWatts): $annualProduction kWh');
-        print('Monthly Production (PVWatts): $monthlyProduction kWh');
       } else {
         annualProduction = systemSizeKw * _sunHoursPerDay * 365 * 0.75;
         monthlyProduction = annualProduction / 12;
-        print('Annual Production (Estimated): $annualProduction kWh');
-        print('Monthly Production (Estimated): $monthlyProduction kWh');
       }
 
       final solarPanelCost = SolarCalculations.calculateSolarPanelCost(
@@ -307,16 +289,12 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         systemSizeKw: systemSizeKw,
         panelSizeKw: _solarPanelSizeKw,
       );
-      print('Solar Panel Cost: ₱$solarPanelCost');
-      print('Number of Panels: $numberOfPanels');
 
       double batteryCost = 0;
       int numberOfBatteries = 0;
       double batterySizeKwh = 0;
 
       if (_isOffGrid) {
-        print('=== BATTERY CALCULATIONS ===');
-
         final dailyConsumption = _usedPhpBilling
             ? SolarCalculations.calculateDailyConsumption(
                 SolarCalculations.convertPhpToKwh(
@@ -328,7 +306,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
           dailyEnergyConsumption: dailyConsumption,
           backupHours: _backupHours,
         );
-        print('Battery Size: $batterySizeKwh kWh');
 
         batteryCost = SolarCalculations.calculateBatteryCost(
           batterySizeKwh: batterySizeKwh,
@@ -339,8 +316,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
           batterySizeKwh: batterySizeKwh,
           batterySizeKw: _batterySizeKwh,
         );
-        print('Battery Cost: ₱$batteryCost');
-        print('Number of Batteries: $numberOfBatteries');
       }
 
       final totalSystemCost = SolarCalculations.calculateTotalSystemCost(
@@ -348,17 +323,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         includesBattery: _isOffGrid,
         batteryCost: batteryCost,
       );
-      print('Total System Cost: ₱$totalSystemCost');
-
-      final monthlySavings = SolarCalculations.calculateMonthlySavings(
-        systemSizeKw: systemSizeKw,
-        sunHoursPerDay: _useApiIntegration ? 4.5 : _sunHoursPerDay,
-        electricityRate: _electricityRate,
-      );
-      print('Monthly Savings: ₱$monthlySavings');
-
-      final paybackPeriod = totalSystemCost / monthlySavings;
-      print('Payback Period: ${paybackPeriod.toStringAsFixed(1)} months');
 
       _calculationResult = CalculationResultModel(
         systemSize: systemSizeKw,
@@ -373,11 +337,7 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         solarPanelCost: solarPanelCost,
         batteryCost: batteryCost,
       );
-
-      print('=== CALCULATION COMPLETE ===');
-      print('Result: $_calculationResult');
     } catch (e) {
-      print('Calculation error: $e');
       _setError('Calculation failed: ${e.toString()}');
       _calculationResult = null;
     } finally {
@@ -412,7 +372,6 @@ class QuoteGenerationViewModel extends ChangeNotifier {
         electricityRate: _currentQuote!.electricityRate,
       );
     }
-
     notifyListeners();
   }
 
@@ -487,22 +446,15 @@ class QuoteGenerationViewModel extends ChangeNotifier {
   }
 
   Future<void> _autoGeneratePdf() async {
-    try {
-      if (_currentQuote == null) {
-        await createQuote();
-      }
+    if (_currentQuote == null) {
+      await createQuote();
+    }
 
-      if (_currentQuote != null) {
-        if (_dataChanged || _generatedPdfFile == null) {
-          print('Data changed or no PDF exists, regenerating PDF...');
-          await generatePdf();
-          _clearDataChanged();
-        } else {
-          print('No data changes detected, using existing PDF');
-        }
+    if (_currentQuote != null) {
+      if (_dataChanged || _generatedPdfFile == null) {
+        await generatePdf();
+        _clearDataChanged();
       }
-    } catch (e) {
-      print('Auto PDF generation failed: $e');
     }
   }
 

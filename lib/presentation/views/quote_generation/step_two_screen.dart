@@ -57,7 +57,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final presetViewModel = context.read<PresetViewModel>();
       presetViewModel.loadPresets();
-      print('Loading presets...');
     });
   }
 
@@ -108,7 +107,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  // Build load preset section
   Widget _buildLoadPresetSection() {
     return CustomButton(
       text: AppStrings.loadPresetButton,
@@ -117,7 +115,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  // Build project information section
   Widget _buildProjectInfoSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +189,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  // Build item accordion
   Widget _buildItemAccordion(ProjectRowModel row, int index) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +223,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  // Build custom accordion widget
   Widget _buildCustomAccordion({
     required String title,
     required String subtitle,
@@ -287,7 +282,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  // Build detail row for accordion content
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -324,7 +318,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  // Build navigation buttons
   Widget _buildNavigationButtons(QuoteGenerationViewModel viewModel) {
     return Column(
       children: [
@@ -342,12 +335,10 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
   }
 
-  // Calculate total price of all rows
   double _calculateTotal() {
     return _projectRows.fold(0.0, (sum, row) => sum + row.totalPrice);
   }
 
-  // Check if can proceed to next step
   bool _canProceed() {
     return _projectNameController.text.trim().isNotEmpty &&
         _clientNameController.text.trim().isNotEmpty &&
@@ -355,7 +346,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
         _projectRows.isNotEmpty;
   }
 
-  // Handle proceed to next step
   void _handleProceed(QuoteGenerationViewModel viewModel) {
     if (_formKey.currentState?.validate() ?? false) {
       final projectDetails = ProjectDetailsModel(
@@ -380,7 +370,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     );
 
     if (result is List<ProjectRowModel>) {
-      print('Received ${result.length} rows from preset selection');
       setState(() {
         _projectRows.addAll(result);
       });
@@ -393,8 +382,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
           ),
         );
       }
-    } else {
-      print('No preset selected or invalid result type: $result');
     }
   }
 
@@ -404,7 +391,6 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
       '/add-row',
       arguments: {'isEditing': false},
     );
-
     if (result is ProjectRowModel) {
       setState(() {
         _projectRows.add(result);
@@ -412,7 +398,7 @@ class _StepTwoScreenState extends State<StepTwoScreen> {
     }
   }
 
-  /// Show edit/delete options on long press
+  // Show edit/delete options on long press
   void _showEditDeleteOptions(int index) {
     showModalBottomSheet(
       context: context,

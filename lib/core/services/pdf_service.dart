@@ -8,7 +8,7 @@ import '../../data/models/company_profile_model.dart';
 
 // for generating PDF documents
 class PdfService {
-  // Get user-friendly file path for display (for snackbar)
+  // user-friendly file path for display (for snackbar)
   // only the filename and folder for display
   static String getUserFriendlyPath(String filePath) {
     final pathParts = filePath.split('/');
@@ -20,16 +20,13 @@ class PdfService {
     return filePath;
   }
 
-  // Validate and prepare image for PDF for logo
   static Future<Uint8List?> _prepareImageForPdf(Uint8List imageBytes) async {
     try {
       if (imageBytes.length < 4) {
-        print('Image bytes too short');
         return null;
       }
 
       if (imageBytes[0] == 0xFF && imageBytes[1] == 0xD8) {
-        print('Detected JPEG format');
         return imageBytes;
       }
 
@@ -37,14 +34,11 @@ class PdfService {
           imageBytes[1] == 0x50 &&
           imageBytes[2] == 0x4E &&
           imageBytes[3] == 0x47) {
-        print('Detected PNG format');
         return imageBytes;
       }
 
-      print('Unknown image format, attempting to use anyway');
       return imageBytes;
     } catch (e) {
-      print('Error preparing image for PDF: $e');
       return null;
     }
   }
@@ -59,29 +53,14 @@ class PdfService {
     // Load logo image if available
     pw.MemoryImage? logoImage;
     if (companyProfile?.hasLogo == true && companyProfile!.logoPath != null) {
-      try {
-        print('Attempting to load logo from: ${companyProfile.logoPath}');
+      final logoBytes = await _loadLogoImage(companyProfile.logoPath!);
+      final preparedBytes = await _prepareImageForPdf(logoBytes);
 
-        final logoBytes = await _loadLogoImage(companyProfile.logoPath!);
-        final preparedBytes = await _prepareImageForPdf(logoBytes);
-
-        if (preparedBytes != null) {
-          logoImage = pw.MemoryImage(preparedBytes);
-          print(
-              'Logo loaded successfully, size: ${preparedBytes.length} bytes');
-        } else {
-          print('Failed to prepare logo for PDF');
-        }
-      } catch (e) {
-        // Logo loading failed, continue without logo
-        print('Failed to load logo: $e');
+      if (preparedBytes != null) {
+        logoImage = pw.MemoryImage(preparedBytes);
       }
-    } else {
-      print(
-          'No logo available - hasLogo: ${companyProfile?.hasLogo}, logoPath: ${companyProfile?.logoPath}');
     }
 
-    // Add pages to PDF
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -114,31 +93,26 @@ class PdfService {
 
   // Get downloads directory
   static Future<Directory> _getDownloadsDirectory() async {
-    try {
-      final externalDir = await getExternalStorageDirectory();
-      if (externalDir != null) {
-        // Try different possible folder paths
-        final possiblePaths = [
-          '${externalDir.path}/Download',
-          '${externalDir.path}/Downloads',
-          '/storage/emulated/0/Download',
-          '/storage/emulated/0/Downloads',
-        ];
+    final externalDir = await getExternalStorageDirectory();
+    if (externalDir != null) {
+      final possiblePaths = [
+        '${externalDir.path}/Download',
+        '${externalDir.path}/Downloads',
+        '/storage/emulated/0/Download',
+        '/storage/emulated/0/Downloads',
+      ];
 
-        for (final path in possiblePaths) {
-          final dir = Directory(path);
-          if (await dir.exists()) {
-            return dir;
-          }
+      for (final path in possiblePaths) {
+        final dir = Directory(path);
+        if (await dir.exists()) {
+          return dir;
         }
-
-        // Create Download folder in external storage
-        final downloadsDir = Directory('${externalDir.path}/Download');
-        await downloadsDir.create(recursive: true);
-        return downloadsDir;
       }
-    } catch (e) {
-      print('Failed to access external storage: $e');
+
+      // Create Download folder in external storage
+      final downloadsDir = Directory('${externalDir.path}/Download');
+      await downloadsDir.create(recursive: true);
+      return downloadsDir;
     }
 
     // Fallback to app documents directory
@@ -150,14 +124,8 @@ class PdfService {
     return downloadsDir;
   }
 
-  // PDF header with company information and logo
   static pw.Widget _buildHeader(
       CompanyProfileModel? companyProfile, pw.MemoryImage? logoImage) {
-    print('Building header - logoImage is null: ${logoImage == null}');
-    if (logoImage != null) {
-      print('Logo image will be displayed in PDF');
-    }
-
     return pw.Row(
       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [
@@ -166,7 +134,6 @@ class PdfService {
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              // if logo available
               if (logoImage != null) ...[
                 pw.Image(
                   logoImage,
@@ -207,28 +174,17 @@ class PdfService {
   // get logo image from file path
   static Future<Uint8List> _loadLogoImage(String logoPath) async {
     try {
-      print('Loading logo from path: $logoPath');
       final file = File(logoPath);
-
       if (!await file.exists()) {
-        print('Logo file does not exist at path: $logoPath');
         throw Exception('Logo file does not exist');
       }
-
       final fileSize = await file.length();
-      print('Logo file size: $fileSize bytes');
-
       if (fileSize == 0) {
-        print('Logo file is empty');
         throw Exception('Logo file is empty');
       }
-
       final bytes = await file.readAsBytes();
-      print('Successfully read logo bytes: ${bytes.length} bytes');
-
       return bytes;
     } catch (e) {
-      print('Error loading logo: $e');
       throw Exception('Failed to load logo: $e');
     }
   }
@@ -305,7 +261,7 @@ class PdfService {
     );
   }
 
-  // itemized list of
+  // itemized list
   static pw.Widget _buildItemizedList(QuoteModel quote) {
     // Calculate total from rows
     final totalFromRows = quote.rows.fold<double>(

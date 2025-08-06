@@ -78,10 +78,8 @@ class PresetViewModel extends ChangeNotifier {
         description: description,
         rows: rows,
       );
-
       _presets.add(preset);
       _currentPreset = preset;
-
       return true;
     } catch (e) {
       _setError('Failed to create preset: ${e.toString()}');
@@ -108,29 +106,23 @@ class PresetViewModel extends ChangeNotifier {
         _setError('Preset not found');
         return false;
       }
-
       final nameExists =
           await _presetRepository.presetNameExists(name, excludeId: id);
       if (nameExists) {
         _setError('A preset with this name already exists');
         return false;
       }
-
       final updatedPreset = existingPreset.copyWith(
         name: name,
         defaultRows: rows,
         updatedAt: DateTime.now(),
       );
-
       await _presetRepository.updatePreset(updatedPreset);
-
       final index = _presets.indexWhere((p) => p.id == id);
       if (index != -1) {
         _presets[index] = updatedPreset;
       }
-
       _currentPreset = updatedPreset;
-
       return true;
     } catch (e) {
       _setError('Failed to update preset: ${e.toString()}');
@@ -146,15 +138,11 @@ class PresetViewModel extends ChangeNotifier {
       _isLoading = true;
       _clearError();
       notifyListeners();
-
       await _presetRepository.deletePreset(id);
-
       _presets.removeWhere((p) => p.id == id);
-
       if (_currentPreset?.id == id) {
         _currentPreset = null;
       }
-
       return true;
     } catch (e) {
       _setError('Failed to delete preset: ${e.toString()}');
@@ -198,15 +186,12 @@ class PresetViewModel extends ChangeNotifier {
     if (name.trim().isEmpty) {
       return 'Preset name is required';
     }
-
     if (name.trim().length < 3) {
       return 'Preset name must be at least 3 characters';
     }
-
     if (rows.isEmpty) {
       return 'Preset must have at least one row';
     }
-
     return null;
   }
 

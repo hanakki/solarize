@@ -175,15 +175,11 @@ class _PresetListScreenState extends State<PresetListScreen> {
     );
 
     if (result == true && mounted) {
-      // Refresh the list if a preset was created
       context.read<PresetViewModel>().loadPresets();
     }
   }
 
   void _selectPreset(PresetModel preset) {
-    // Return the preset's rows to the previous screen
-    print(
-        'Selected preset: ${preset.name} with ${preset.defaultRows.length} rows');
     Navigator.pop(context, preset.defaultRows);
   }
 

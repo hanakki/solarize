@@ -46,10 +46,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     return const SingleChildScrollView(
                       child: Column(
                         children: [
-                          const CompanyProfileWidget(),
-                          const SizedBox(height: 32),
-                          const AboutSectionWidget(),
-                          const SizedBox(height: 32),
+                          CompanyProfileWidget(),
+                          SizedBox(height: 32),
+                          AboutSectionWidget(),
+                          SizedBox(height: 32),
                         ],
                       ),
                     );

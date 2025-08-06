@@ -23,8 +23,6 @@ class LocalStorageService {
   }
 
   // Quote Operations
-
-  // for saving a quote to local storage
   Future<void> saveQuote(QuoteModel quote) async {
     try {
       final quotes = await getQuotes();
@@ -44,7 +42,6 @@ class LocalStorageService {
     }
   }
 
-  // Get all quotes from local storage
   Future<List<QuoteModel>> getQuotes() async {
     try {
       final quotesString = prefs.getString(AppConstants.quotesStorageKey);
@@ -57,7 +54,6 @@ class LocalStorageService {
     }
   }
 
-  // Delete a quote from local storage
   Future<void> deleteQuote(String quoteId) async {
     try {
       final quotes = await getQuotes();
@@ -72,8 +68,6 @@ class LocalStorageService {
   }
 
   // Preset Operations
-
-  // for saving a preset to local storage
   Future<void> savePreset(PresetModel preset) async {
     try {
       final presets = await getPresets();
@@ -93,7 +87,6 @@ class LocalStorageService {
     }
   }
 
-  // Get all presets
   Future<List<PresetModel>> getPresets() async {
     try {
       final presetsString = prefs.getString(AppConstants.presetsStorageKey);
@@ -106,7 +99,6 @@ class LocalStorageService {
     }
   }
 
-  // Delete a preset
   Future<void> deletePreset(String presetId) async {
     try {
       final presets = await getPresets();
@@ -120,7 +112,6 @@ class LocalStorageService {
     }
   }
 
-  // For clearing all presets from local storage
   Future<void> clearPresets() async {
     try {
       await prefs.remove(AppConstants.presetsStorageKey);
@@ -130,8 +121,6 @@ class LocalStorageService {
   }
 
   // Settings Operations
-
-  // For saving company profile settings
   Future<void> saveSettings(CompanyProfileModel settings) async {
     try {
       await prefs.setString(
@@ -141,7 +130,6 @@ class LocalStorageService {
     }
   }
 
-  // Get company profile settings
   Future<CompanyProfileModel?> getSettings() async {
     try {
       final settingsString = prefs.getString(AppConstants.settingsStorageKey);

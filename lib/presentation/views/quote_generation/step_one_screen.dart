@@ -92,7 +92,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build the form view
   Widget _buildFormView(QuoteGenerationViewModel viewModel) {
     return Form(
       key: _formKey,
@@ -157,7 +156,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build the results view
   Widget _buildResultsView(QuoteGenerationViewModel viewModel) {
     final result = viewModel.calculationResult!;
 
@@ -267,7 +265,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build monthly bill input section
   Widget _buildMonthlyBillSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,7 +330,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build bill offset percentage section
   Widget _buildBillOffsetSection(QuoteGenerationViewModel viewModel) {
     return SliderInputWidget(
       label: AppStrings.billOffsetPercentageLabel,
@@ -347,7 +343,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build sun hours per day section
   Widget _buildSunHoursSection(QuoteGenerationViewModel viewModel) {
     return SliderInputWidget(
       label: AppStrings.sunHoursLabel,
@@ -361,7 +356,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build API integration section
   Widget _buildApiIntegrationSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +380,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build location input section
   Widget _buildLocationSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,7 +427,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build solar panel configuration section
   Widget _buildSolarPanelSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -482,7 +474,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build off-grid setup section
   Widget _buildOffGridSection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -521,7 +512,6 @@ class _StepOneScreenState extends State<StepOneScreen> {
     );
   }
 
-  // Build battery configuration section
   Widget _buildBatterySection(QuoteGenerationViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -573,8 +563,9 @@ class _StepOneScreenState extends State<StepOneScreen> {
   bool _canCalculate(QuoteGenerationViewModel viewModel) {
     if (viewModel.monthlyBillKwh <= 0) return false;
     if (viewModel.billOffsetPercentage <= 0) return false;
-    if (viewModel.usedPhpBilling && viewModel.electricityRate <= 0)
+    if (viewModel.usedPhpBilling && viewModel.electricityRate <= 0) {
       return false;
+    }
     if (!viewModel.useApiIntegration && viewModel.sunHoursPerDay <= 0) {
       return false;
     }

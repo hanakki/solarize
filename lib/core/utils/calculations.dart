@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import '../constants/app_constants.dart';
 
 // for solar  calculations
-
 class SolarCalculations {
   // target daily consumption
   // (Electric Bill in kWh × Offset %) ÷ Days per Month
@@ -15,7 +14,6 @@ class SolarCalculations {
       throw ArgumentError(
           'Monthly bill and bill offset must be greater than 0');
     }
-
     final targetDailyConsumption =
         (monthlyBillKwh * (billOffsetPercentage / 100)) /
             AppConstants.daysInMonth;
@@ -34,7 +32,6 @@ class SolarCalculations {
       throw ArgumentError(
           'Monthly bill and bill offset must be greater than 0');
     }
-
     if (isPhpBilling && electricityRate <= 0) {
       throw ArgumentError(
           'Electricity rate must be greater than 0 for PHP billing');
@@ -78,16 +75,12 @@ class SolarCalculations {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
-
       final response = await http.get(uri);
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
         if (data['errors'] != null && (data['errors'] as List).isNotEmpty) {
           throw Exception('PVWatts API error: ${data['errors']}');
         }
-
         // Get ac_annual from outputs
         final outputs = data['outputs'];
         if (outputs != null && outputs['ac_annual'] != null) {
@@ -117,16 +110,13 @@ class SolarCalculations {
       monthlyBillKwh: monthlyBillKwh,
       billOffsetPercentage: billOffsetPercentage,
     );
-
     // PVWatts annual output
     final pvwattsAnnualOutput = await getPvwattsAnnualOutput(
       latitude: latitude,
       longitude: longitude,
     );
-
     // PVWatts daily output
     final pvwattsDailyOutput = pvwattsAnnualOutput / 365;
-
     // system size
     final systemSize = targetDailyConsumption / pvwattsDailyOutput;
 
@@ -143,7 +133,6 @@ class SolarCalculations {
     if (monthlyBillKwh <= 0 || sunHoursPerDay <= 0) {
       throw ArgumentError('Monthly bill and sun hours must be greater than 0');
     }
-
     final systemSize = (monthlyBillKwh *
             (billOffsetPercentage / 100) *
             AppConstants.powerFactor) /
@@ -169,7 +158,6 @@ class SolarCalculations {
       throw ArgumentError(
           'Electricity rate must be greater than 0 for PHP billing');
     }
-
     // PHP to kWh
     final monthlyBillKwh = isPhpBilling
         ? convertPhpToKwh(
@@ -192,7 +180,6 @@ class SolarCalculations {
       throw ArgumentError(
           'Daily consumption and backup hours must be greater than 0');
     }
-
     final batterySize = ((dailyEnergyConsumption / 24) * backupHours) /
         (AppConstants.depthOfDischarge * AppConstants.batteryEfficiency);
 
@@ -212,7 +199,6 @@ class SolarCalculations {
     if (electricityRate <= 0) {
       throw ArgumentError('Electricity rate must be greater than 0');
     }
-
     return monthlyBillPhp / electricityRate;
   }
 
@@ -241,7 +227,6 @@ class SolarCalculations {
     if (systemSizeKw <= 0 || panelSizeKw <= 0) {
       throw ArgumentError('System size and panel size must be greater than 0');
     }
-
     return (systemSizeKw / panelSizeKw).ceil();
   }
 
@@ -254,7 +239,6 @@ class SolarCalculations {
     if (batterySizeKwh <= 0 || batterySizeKw <= 0 || batteryPricePhp <= 0) {
       throw ArgumentError('Battery size and price must be greater than 0');
     }
-
     final numberOfBatteries = (batterySizeKwh / batterySizeKw).ceil();
     final totalCost = numberOfBatteries * batteryPricePhp;
 
@@ -280,11 +264,9 @@ class SolarCalculations {
     double batteryCost = 0,
   }) {
     double totalCost = solarPanelCost;
-
     if (includesBattery && batteryCost > 0) {
       totalCost += batteryCost;
     }
-
     return double.parse(totalCost.toStringAsFixed(2));
   }
 
